@@ -1,0 +1,794 @@
+# Hillstone SG6000
+start_mode: enable
+hostname: hillstone
+line_feed: "\r\n"
+modes:
+  enable:
+    prompt: "# "
+    switch_mode_cmds:
+      - "configure"
+      - "exit"
+    cmds: []
+  config:
+    prompt: "(config)# "
+    switch_mode_cmds:
+      - "exit"
+      - "end"
+    cmds:
+    - cmd: "save"
+      output: ""
+    - cmd: "hostname hillstone"
+      output: ""
+common:
+  - cmd: "show version"
+    output: |
+      Hillstone Networks StoneOS software, Version 5.5
+      Copyright (c) 2009-2018 by Hillstone Networks
+
+      Product name: SG-6000-VM02 S/N: 0010214914117786 Assembly number: 0000
+      Boot file is SG6000-CloudEdge-5.5R4P10
+      Storage UUID is 72a9c729-01e5-4f08-8c9f-ed2d985ad330
+      Built by buildmaster8 2018/11/28 09:40:34
+
+      Uptime is 18 days 23 hours 0 minute 38 seconds
+      System language is "en"
+
+      VRouter feature: disabled
+
+      IPS feature: enabled
+      IPS magic: b26d646bed7eef3d20609a2e684517c5d97e
+
+      AV feature: enabled
+      AV magic: 82d5e1ae1aa9849dd32863a6e58f79b0571a
+
+      URLDB feature: enabled
+      URLDB magic: a4fa0e156885ab8b0063ce81aaa85c7b8c7a
+
+      APP feature: enabled
+      APP magic: ee6d0262ad1beb5e1e5ca03fd895c6e555dd
+                
+      SANDBOX feature: enabled
+      SANDBOX magic: 82d5e1ae1aa9849dd32863a6e58f79b0571a
+  - cmd: "save"
+    output: ""
+  - cmd: "save all"
+    output: ""
+  - cmd: "terminal length 0"
+    output: ""
+  - cmd: "show configuration"
+    output: |
+
+      Building configuration..
+      Running configuration:
+      !
+      Version 5.5R4
+
+      ip vrouter "twin-mode-vr"
+      exit
+      ip vrouter "trust-vr"
+      exit
+      vswitch "vswitch1"
+      exit
+      zone "trust"
+      exit
+      zone "untrust"
+      exit
+      zone "dmz"
+      exit
+      zone "l2-trust" l2
+      exit
+      zone "l2-untrust" l2
+      exit
+      zone "l2-dmz" l2
+      exit
+      zone "VPNHub"
+      exit
+      zone "HA"
+      exit
+      zone "twin-mode"
+      exit
+      interface vswitchif1
+      exit
+      interface ethernet0/0 local
+      exit
+      interface ethernet0/1
+      exit
+      interface ethernet0/2
+      exit
+      interface ethernet0/3
+      exit
+      interface ethernet0/4
+      exit
+      interface ethernet0/5
+      exit
+      interface ethernet0/6
+      exit
+      interface ethernet0/7
+      exit
+      address "private_network"
+      exit
+      address "test"
+      exit
+      address "2.2.2.2"
+      exit
+      address "3.3.3.3"
+      exit
+      address "WS-172.21.1.100_32"
+      exit
+      address "test1"
+      exit
+      address "aaa"
+      exit
+      aaa-server "local" type local
+      exit
+      service "top_18384"
+        tcp dst-port 18384
+      exit
+      ips sigset "dns" template dns
+        max-scan-bytes 30720
+      exit
+      ips sigset "ftp" template ftp
+        max-scan-bytes 30720
+      exit
+      ips sigset "http" template http
+        max-scan-bytes 30720
+        web-server "default"
+        exit
+      exit
+      ips sigset "pop3" template pop3
+        max-scan-bytes 30720
+      exit
+      ips sigset "smtp" template smtp
+        max-scan-bytes 30720
+      exit
+      ips sigset "telnet" template telnet
+        max-scan-bytes 30720
+      exit
+      ips sigset "other-tcp" template other-tcp
+        max-scan-bytes 30720
+      exit
+      ips sigset "other-udp" template other-udp
+        max-scan-bytes 30720
+      exit
+      ips sigset "imap" template imap
+        max-scan-bytes 30720
+      exit
+      ips sigset "finger" template finger
+        max-scan-bytes 30720
+      exit
+      ips sigset "sunrpc" template sunrpc
+        max-scan-bytes 30720
+      exit
+      ips sigset "nntp" template nntp
+        max-scan-bytes 30720
+      exit
+      ips sigset "tftp" template tftp
+        max-scan-bytes 30720
+      exit
+      ips sigset "snmp" template snmp
+        max-scan-bytes 30720
+      exit
+      ips sigset "mysql" template mysql
+        max-scan-bytes 30720
+      exit
+      ips sigset "mssql" template mssql
+        max-scan-bytes 30720
+      exit
+      ips sigset "oracle" template oracle
+        max-scan-bytes 30720
+      exit
+      ips sigset "msrpc" template msrpc
+        max-scan-bytes 30720
+      exit
+      ips sigset "netbios" template netbios
+        max-scan-bytes 30720
+      exit
+      ips sigset "dhcp" template dhcp
+        max-scan-bytes 30720
+      exit
+      ips sigset "ldap" template ldap
+        max-scan-bytes 30720
+      exit
+      ips sigset "voip" template voip
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_dns" template dns
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_ftp" template ftp
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_http" template http
+        max-scan-bytes 30720
+        web-server "default"
+        exit
+      exit
+      ips sigset "default_pop3" template pop3
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_smtp" template smtp
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_telnet" template telnet
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_other-tcp" template other-tcp
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_other-udp" template other-udp
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_imap" template imap
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_finger" template finger
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_sunrpc" template sunrpc
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_nntp" template nntp
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_tftp" template tftp
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_snmp" template snmp
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_mysql" template mysql
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_mssql" template mssql
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_oracle" template oracle
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_msrpc" template msrpc
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_netbios" template netbios
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_dhcp" template dhcp
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_ldap" template ldap
+        max-scan-bytes 30720
+      exit
+      ips sigset "default_voip" template voip
+        max-scan-bytes 30720
+      exit
+      ips sigset "loose_dns" template dns
+      exit
+      ips sigset "loose_ftp" template ftp
+      exit
+      ips sigset "loose_http" template http
+        web-server "default"
+        exit
+      exit
+      ips sigset "loose_pop3" template pop3
+      exit
+      ips sigset "loose_smtp" template smtp
+      exit
+      ips sigset "loose_telnet" template telnet
+      exit
+      ips sigset "loose_other-tcp" template other-tcp
+      exit
+      ips sigset "loose_other-udp" template other-udp
+      exit
+      ips sigset "loose_imap" template imap
+      exit
+      ips sigset "loose_finger" template finger
+      exit
+      ips sigset "loose_sunrpc" template sunrpc
+      exit
+      ips sigset "loose_nntp" template nntp
+      exit
+      ips sigset "loose_tftp" template tftp
+      exit
+      ips sigset "loose_snmp" template snmp
+      exit
+      ips sigset "loose_mysql" template mysql
+      exit
+      ips sigset "loose_mssql" template mssql
+      exit
+      ips sigset "loose_oracle" template oracle
+      exit
+      ips sigset "loose_msrpc" template msrpc
+      exit
+      ips sigset "loose_netbios" template netbios
+      exit
+      ips sigset "loose_dhcp" template dhcp
+      exit
+      ips sigset "loose_ldap" template ldap
+      exit
+      ips sigset "loose_voip" template voip
+      exit
+      ips profile "no-ips"
+      exit
+      ips profile "predef_default"
+        sigset "default_dns"
+        sigset "default_ftp"
+        sigset "default_http"
+        sigset "default_pop3"
+        sigset "default_smtp"
+        sigset "default_telnet"
+        sigset "default_other-tcp"
+        sigset "default_other-udp"
+        sigset "default_imap"
+        sigset "default_finger"
+        sigset "default_sunrpc"
+        sigset "default_nntp"
+        sigset "default_tftp"
+        sigset "default_snmp"
+        sigset "default_mysql"
+        sigset "default_mssql"
+        sigset "default_oracle"
+        sigset "default_msrpc"
+        sigset "default_netbios"
+        sigset "default_dhcp"
+        sigset "default_ldap"
+        sigset "default_voip"
+        filter-class 1
+          severity "Low"
+          severity "Medium"
+          severity "High"
+          action reset
+        exit
+      exit
+      ips profile "predef_loose"
+        sigset "loose_dns"
+        sigset "loose_ftp"
+        sigset "loose_http"
+        sigset "loose_pop3"
+        sigset "loose_smtp"
+        sigset "loose_telnet"
+        sigset "loose_other-tcp"
+        sigset "loose_other-udp"
+        sigset "loose_imap"
+        sigset "loose_finger"
+        sigset "loose_sunrpc"
+        sigset "loose_nntp"
+        sigset "loose_tftp"
+        sigset "loose_snmp"
+        sigset "loose_mysql"
+        sigset "loose_mssql"
+        sigset "loose_oracle"
+        sigset "loose_msrpc"
+        sigset "loose_netbios"
+        sigset "loose_dhcp"
+        sigset "loose_ldap"
+        sigset "loose_voip"
+        filter-class 1
+          severity "Low"
+          severity "Medium"
+          severity "High"
+        exit
+      exit
+      url-category "custom1"
+      exit
+      url-category "custom2"
+      exit
+      url-category "custom3"
+      exit
+      contentfilter
+      exit
+      av-profile "no-av"
+      exit
+      av-profile "predef_low"
+        file-type gzip
+        file-type html
+        file-type mail
+        file-type pe
+        file-type elf
+        protocol-type FTP action reset-conn
+        protocol-type HTTP action reset-conn
+        protocol-type IMAP4 action log-only
+        protocol-type POP3 action log-only
+        protocol-type SMTP action log-only
+      exit
+      av-profile "predef_middle"
+        file-type gzip
+        file-type html
+        file-type mail
+        file-type pe
+        file-type elf
+        file-type zip
+        file-type rar
+        file-type pdf
+        file-type raw-data
+        file-type office
+        protocol-type FTP action reset-conn
+        protocol-type HTTP action reset-conn
+        protocol-type IMAP4 action log-only
+        protocol-type POP3 action log-only
+        protocol-type SMTP action log-only
+      exit
+      av-profile "predef_high"
+        file-type gzip
+        file-type html
+        file-type mail
+        file-type pe
+        file-type elf
+        file-type zip
+        file-type rar
+        file-type jpeg
+        file-type bzip2
+        file-type riff
+        file-type tar
+        file-type pdf
+        file-type raw-data
+        file-type office
+        file-type others
+        protocol-type FTP action reset-conn
+        protocol-type HTTP action reset-conn
+        protocol-type IMAP4 action fill-magic
+        protocol-type POP3 action fill-magic
+        protocol-type SMTP action fill-magic
+      exit
+      sandbox-profile "predef_low"
+        file-type pe
+        protocol HTTP direction both
+        protocol FTP direction both
+        protocol SMTP direction upload
+        protocol POP3 direction download
+        protocol IMAP4 direction download
+        whitelist enable
+        certificate-validation enable
+      exit
+      sandbox-profile "predef_middle"
+        file-type pe
+        file-type apk
+        file-type jar
+        file-type pdf
+        file-type ms-office
+        protocol HTTP direction both
+        protocol FTP direction both
+        protocol SMTP direction upload
+        protocol POP3 direction download
+        protocol IMAP4 direction download
+        whitelist enable
+        certificate-validation enable
+      exit
+      sandbox-profile "predef_high"
+        file-type pe
+        file-type apk
+        file-type jar
+        file-type pdf
+        file-type ms-office
+        file-type swf
+        file-type rar
+        file-type zip
+        protocol HTTP direction both
+        protocol FTP direction both
+        protocol SMTP direction upload
+        protocol POP3 direction download
+        protocol IMAP4 direction download
+      exit
+      url-profile "no-url"
+      exit
+      admin user "hillstone"
+        password P4PAoAq/AsVuf1PgeCdoDr+QUt
+        role "admin"
+        access console
+        access telnet
+        access ssh
+        access http
+        access https
+      exit
+      admin user "admin"
+        password obvisROFico37wcg7CNj4vEA8v
+              password-expiration 1736920614
+        role "admin"
+        access console
+        access telnet
+        access ssh
+        access http
+        access https
+      exit
+      logging event to localdb
+      logging threat to localdb
+      logging network to localdb
+      logging configuration to localdb
+      pki trust-domain "trust_domain_default"
+        keypair "Default-Key"
+        enrollment self
+        subject commonName "SG-6000"
+        subject organization "Hillstone Networks"
+      exit
+      pki trust-domain "trust_domain_ssl_proxy"
+        keypair "Default-Key"
+        enrollment self
+        subject commonName "SG-6000"
+        subject organization "Hillstone Networks"
+      exit
+      pki trust-domain "trust_domain_ssl_proxy_2048"
+        keypair "Default-Key-2048"
+        enrollment self
+        subject commonName "SG-6000"
+        subject organization "Hillstone Networks"
+      exit
+      pki trust-domain "network_manager_ca"
+        enrollment terminal
+      exit
+      address "private_network"
+        ip 10.0.0.0/8
+        ip 172.16.0.0/12
+        ip 192.168.0.0/16
+      exit
+      address "test"
+        ip 1.1.1.0/24
+      exit
+      address "2.2.2.2"
+        ip 2.2.2.2/32
+      exit
+      address "3.3.3.3"
+        ip 3.3.3.3/32
+      exit
+      address "WS-172.21.1.100_32"
+        ip 172.21.1.100/32
+        ip 172.21.1.101/32
+        ip 172.21.1.102/32
+        ip 172.21.1.103/32
+        ip 172.21.1.105/32
+        ip 172.21.1.106/32
+        ip 172.21.1.107/32
+      exit
+      address "test1"
+        ip 2.2.2.2/32
+      exit
+      zone "untrust"
+        type wan
+        ad tear-drop
+        ad ip-spoofing
+        ad land-attack
+        ad ip-option
+        ad ip-fragment
+        ad ip-directed-broadcast
+        ad winnuke
+        ad port-scan
+        ad syn-flood
+        ad icmp-flood
+        ad ip-sweep
+        ad ping-of-death
+        ad udp-flood
+      exit
+      zone "l2-untrust" l2
+        type wan
+      exit
+      zone "twin-mode"
+        vrouter "twin-mode-vr"
+      exit
+      hostname "awen-hillstone"
+      admin host any any
+      isakmp proposal "psk-sha256-aes128-g2"
+        hash sha256
+        encryption aes
+      exit
+
+      isakmp proposal "psk-sha256-aes256-g2"
+        hash sha256
+        encryption aes-256
+      exit
+
+      isakmp proposal "psk-sha256-3des-g2"
+        hash sha256
+      exit
+
+      isakmp proposal "psk-md5-aes128-g2"
+        hash md5
+        encryption aes
+      exit
+
+      isakmp proposal "psk-md5-aes256-g2"
+        hash md5
+        encryption aes-256
+      exit
+
+      isakmp proposal "psk-md5-3des-g2"
+        hash md5
+      exit
+
+      isakmp proposal "rsa-sha256-aes128-g2"
+        authentication rsa-sig
+        hash sha256
+        encryption aes
+      exit
+
+      isakmp proposal "rsa-sha256-aes256-g2"
+        authentication rsa-sig
+        hash sha256
+        encryption aes-256
+      exit
+
+      isakmp proposal "rsa-sha256-3des-g2"
+        authentication rsa-sig
+        hash sha256
+      exit
+
+      isakmp proposal "rsa-md5-aes128-g2"
+        authentication rsa-sig
+        hash md5
+        encryption aes
+      exit
+
+      isakmp proposal "rsa-md5-aes256-g2"
+        authentication rsa-sig
+        hash md5
+        encryption aes-256
+      exit
+
+      isakmp proposal "rsa-md5-3des-g2"
+        authentication rsa-sig
+        hash md5
+      exit
+
+      isakmp proposal "dsa-sha-aes128-g2"
+        authentication dsa-sig
+        encryption aes
+      exit
+
+      isakmp proposal "dsa-sha-aes256-g2"
+        authentication dsa-sig
+        encryption aes-256
+      exit
+
+      isakmp proposal "dsa-sha-3des-g2"
+        authentication dsa-sig
+      exit
+
+      ipsec proposal "esp-sha256-aes128-g2"
+        hash sha256
+        encryption aes
+        group 2
+      exit
+
+      ipsec proposal "esp-sha256-aes128-g0"
+        hash sha256
+        encryption aes
+      exit
+
+      ipsec proposal "esp-sha256-aes256-g2"
+        hash sha256
+        encryption aes-256
+        group 2
+      exit
+
+      ipsec proposal "esp-sha256-aes256-g0"
+        hash sha256
+        encryption aes-256
+      exit
+
+      ipsec proposal "esp-sha256-3des-g2"
+        hash sha256
+        encryption 3des
+        group 2
+      exit
+
+      ipsec proposal "esp-sha256-3des-g0"
+        hash sha256
+        encryption 3des
+      exit
+
+      ipsec proposal "esp-md5-aes128-g2"
+        hash md5
+        encryption aes
+        group 2
+      exit
+
+      ipsec proposal "esp-md5-aes128-g0"
+        hash md5
+        encryption aes
+      exit
+
+      ipsec proposal "esp-md5-aes256-g2"
+        hash md5
+        encryption aes-256
+        group 2
+      exit
+
+      ipsec proposal "esp-md5-aes256-g0"
+        hash md5
+        encryption aes-256
+      exit
+
+      ipsec proposal "esp-md5-3des-g2"
+        hash md5
+        encryption 3des
+        group 2
+      exit
+
+      ipsec proposal "esp-md5-3des-g0"
+        hash md5
+        encryption 3des
+      exit
+
+      interface ethernet0/0 local
+        zone  "untrust"
+        ip address 192.168.60.123 255.255.255.0
+        manage ssh
+        manage ping
+        manage snmp
+        manage https
+        manage http
+      exit
+      interface ethernet0/1
+        zone  "trust"
+        ip address 30.1.1.1 255.255.255.0
+      exit
+      ip vrouter "trust-vr"
+        ip route 0.0.0.0/0 192.168.60.1
+      exit
+      qos-engine first
+        root-pipe "default" id 1
+          qos-mode "stat"
+        exit
+      exit
+      qos-engine second
+        disable
+        root-pipe "default" id 2
+          qos-mode "stat"
+        exit
+      exit
+      rule id 1
+      exit
+      rule id 2
+        action permit
+        src-zone "Any"
+        dst-zone "Any"
+        src-addr "2.2.2.2"
+        dst-addr "3.3.3.3"
+        service "Any"
+        description "测试字符集"
+      exit
+      rule id 3
+      exit
+      rule id 4
+        action deny
+        dst-addr "2.2.2.2"
+        name "12"
+      exit
+      l2-nonip-action drop
+      no tcp-mss all
+      tcp-mss tunnel 1380
+      ecmp-route-select by-src-and-dst
+        url-db-query server1 "url1.hillstonenet.com" port 8866 vrouter trust-vr
+        url-db-query server1 enable
+        url-db-query server2 "url2.hillstonenet.com" port 8866 vrouter trust-vr
+        url-db-query server2 enable
+      flow
+        icmp-unreachable-session-keep
+      exit
+      strict-tunnel-check
+      statistics-set "predef_if_bw"
+        target-data bandwidth id 0 record-history
+        group-by interface directional vsys
+      exit
+      statistics-set "predef_user_bw"
+        target-data bandwidth id 1 record-history
+        group-by user directional vsys
+      exit
+      statistics-set "predef_app_bw"
+        target-data bandwidth id 2 record-history
+        group-by application vsys
+      exit
+      statistics-set "predef_user_app_bw"
+        target-data bandwidth id 3
+        group-by user directional interface zone application vsys
+      exit
+      statistics-set "predef_zone_if_app_bw"
+        target-data bandwidth id 4
+        group-by interface zone directional application vsys
+      exit
+      no sms disable
+      lan-addr private_network
+
+      End
+welcome: |
+
+  Welcome to Hillstone Firewall. Please comply with the company's security policies.
+
+invalid_cmd_error: |
+            ^-----unrecognized keyword

@@ -1,0 +1,46 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        ".venv": true,
+    },
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/bases",
+        "${workspaceFolder}/components",
+        "${workspaceFolder}/development"
+    ],
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}/bases",
+        "${workspaceFolder}/components",
+        "${workspaceFolder}/development"
+    ],
+    "pylint.args": [
+        "--disable=C0114",
+        "--disable=C0115",
+        "--disable=C0116",
+        "--disable=C0209",
+        "--disable=C0301",
+        "--disable=C0415",
+        "--disable=W0221",
+        "--disable=W0613",
+        "--disable=W0718",
+        "--disable=W1203",
+        "--disable=R0903",
+        "--disable=E1101",
+    ],
+    "python.testing.pytestArgs": [
+        "-s",
+        "-v",
+        "--mock-dev",
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+}

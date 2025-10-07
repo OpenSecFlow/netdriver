@@ -1,0 +1,494 @@
+# H3C secpath Firewall
+start_mode: enable
+hostname: H3C
+line_feed: "\r\n"
+modes:
+  enable:
+    prompt: "<{}>"
+    switch_mode_cmds:
+      - "system-view"
+      - "sys"
+      - "quit"
+      - "exit"
+    cmds:
+      - cmd: "screen-length disable"
+        output: ""
+      - cmd: "save"
+        output: ""
+  config:
+    prompt: "[{}]"
+    switch_mode_cmds:
+      - "quit"
+      - "return"
+      - "exit"
+    cmds:
+      - cmd: "screen-length disable"
+        output: ""
+      - cmd: "save"
+        output: ""
+      - cmd: "hostname H3C"
+        output: ""
+common:
+  - cmd: "display version"
+    output: |
+      H3C Comware Software, Version 7.1.064, ESS 1171P23
+      Copyright (c) 2004-2021 New H3C Technologies Co., Ltd. All rights reserved.
+      H3C SecPath vFW1000 uptime is 1 week, 2 days, 21 hours, 0 minutes
+      Last reboot reason : Power on
+      Boot image: flash:/vFW1000-CMW710-BOOT-E1171P23-X64.bin
+      Boot image version: 7.1.064, ESS 1171P23
+        Compiled Jan 06 2021 14:00:00
+      System image: flash:/vFW1000-CMW710-SYSTEM-E1171P23-X64.bin
+      System image version: 7.1.064, ESS 1171P23
+        Compiled Jan 06 2021 14:00:00
+
+      CPU ID: 0x01000101, vCPUs: Total 2, Available 2
+      2.00G bytes RAM Memory
+      Basic    BootWare Version:  1.11
+      Extended BootWare Version:  1.11
+      [SLOT  1]VNIC-E1000             (Driver)1.0
+      [SLOT  2]VNIC-E1000             (Driver)1.0
+      [SLOT  3]VNIC-E1000             (Driver)1.0
+      [SLOT  4]VNIC-E1000             (Driver)1.0
+      [SLOT  5]VNIC-E1000             (Driver)1.0
+      [SLOT  6]VNIC-E1000             (Driver)1.0
+      [SLOT  7]VNIC-E1000             (Driver)1.0
+      [SLOT  8]VNIC-E1000             (Driver)1.0
+        
+  - cmd: "display current-configuration"
+    output: |
+      #
+      version 7.1.064, ESS 1171P23
+      #
+      sysname H3C
+      #
+      password-recovery enable
+      #
+      vlan 1
+      #
+      irf-port
+      #
+      object-group ip address 202406121929_2517
+      description 2323
+      0 network host address 187.133.114.241
+      10 network group-object test_98819546
+      20 network group-object test_08881182
+      30 network group-object test_78374034
+      40 network group-object test_82298081
+      #
+      object-group ip address test
+      0 network group-object test3
+      #
+      object-group ip address test3
+      #              
+      object-group ip address test_08881182
+      0 network group-object WS-250.187.73.42_32
+      10 network group-object WS-210.168.17.66_32
+      #
+      object-group ip address test_78374034
+      0 network host address 210.204.47.221
+      10 network host address 150.196.207.243
+      20 network host address 10.1.1.5
+      30 network host address 2.2.2.3
+      #
+      object-group ip address test_82298081
+      0 network host address 92.7.127.176
+      10 network host address 48.37.206.79
+      20 network host address 250.92.241.221
+      30 network host address 187.133.114.241
+      40 network host address 60.198.80.57
+      #
+      object-group ip address test_98819546
+      0 network host address 3.62.95.117
+      10 network host address 251.160.205.101
+      20 network host address 6.5.4.9
+      30 network host address 133.248.237.81
+      40 network host address 63.6.206.140
+      #
+      object-group ip address WS-10.28.1.55_32
+      0 network host address 10.28.1.55
+      #
+      object-group ip address WS-172.21.1.108_32
+      0 network host address 172.21.1.108
+      #
+      object-group ip address WS-20.20.20.2_32
+      0 network host address 20.20.20.2
+      #
+      object-group ip address WS-210.168.17.66_32
+      0 network host address 210.168.17.66
+      #
+      object-group ip address WS-250.187.73.42_32
+      0 network host address 250.187.73.42
+      #
+      object-group ip address WS-30.1.1.108_32
+      0 network host address 30.1.1.108
+      #
+      object-group ip address WS-30.1.1.109_32
+      0 network host address 30.1.1.109
+      #
+      object-group ip address WS-30.1.1.110_32
+      0 network host address 30.1.1.110
+      #
+      object-group ip address WS-30.1.1.111_32
+      #
+      object-group ip address WS-30.1.1.113_32
+      0 network host address 30.1.1.113
+      #
+      object-group ip address WS-30.1.1.122_32
+      0 network host address 30.1.1.122
+      #
+      object-group ip address WS-30.1.1.45_32
+      0 network host address 30.1.1.45
+      #
+      object-group ip address WS-30.1.1.56_32
+      0 network host address 30.1.1.56
+      #
+      object-group ip address WS-30.1.1.78_32
+      0 network host address 30.1.1.78
+      #
+      object-group ip address WS-30.1.1.86_32
+      0 network host address 30.1.1.86
+      #
+      object-group ip address WS-30.1.1.89_32
+      0 network host address 30.1.1.89
+      #
+      object-group ip address WS-4.2.4.6_32
+      0 network host address 4.2.4.6
+      #
+      object-group ip address WS-4.2.4.7_32
+      0 network host address 4.2.4.7
+      #
+      object-group ip address WS-4.2.4.8_32
+      0 network host address 4.2.4.8
+      #
+      object-group ip address WS-6.6.6.5_32
+      0 network host address 6.6.6.5
+      #
+      object-group ip address WS-66.6.6.96_32
+      0 network host address 66.6.6.96
+      #
+      object-group ip address WS-9.9.9.9_32
+      0 network host address 9.9.9.9
+      #
+      object-group ip address xxxxxxxx
+      #
+      object-group ip address ��������-2
+      description ��������-2
+      0 network host address 2.2.2.2
+      #
+      object-group ip address 测试中文-1
+      description 测试中文-1
+      0 network host address 1.1.1.1
+      #
+      object-group service 202406121929_6a8b
+      0 service group-object TCP-231
+      10 service group-object testsrv_41575994
+      20 service group-object testsrv_21781261
+      30 service group-object testsrv_08596994
+      40 service group-object testsrv_71611129
+      #
+      object-group service TCP-10225
+      0 service tcp destination eq 10225
+      #
+      object-group service TCP-12
+      0 service tcp destination eq 12
+      #
+      object-group service TCP-16833
+      0 service tcp destination eq 16833
+      #              
+      object-group service TCP-2112
+      0 service tcp destination eq 2112
+      #
+      object-group service TCP-231
+      0 service tcp destination eq 231
+      #
+      object-group service TCP-3188
+      0 service tcp destination eq 3188
+      #
+      object-group service TCP-41388
+      0 service tcp destination eq 41388
+      #
+      object-group service TCP-42806
+      0 service tcp destination eq 42806
+      #
+      object-group service TCP-45375
+      0 service tcp destination eq 45375
+      #
+      object-group service TCP-54691
+      0 service tcp destination eq 54691
+      #
+      object-group service TCP-555
+      0 service tcp destination eq 555
+      #
+      object-group service TCP-626
+      0 service tcp destination eq 626
+      #
+      object-group service TCP-66
+      0 service tcp destination eq 66
+      #
+      object-group service TCP-708
+      0 service tcp destination eq 708
+      #
+      object-group service TCP-999
+      0 service tcp destination eq 999
+      #
+      object-group service testsrv_08596994
+      0 service group-object TCP-708
+      10 service group-object TCP-16833
+      20 service group-object TCP-41388
+      30 service group-object TCP-42806
+      #
+      object-group service testsrv_21781261
+      0 service group-object TCP-10225
+      10 service group-object TCP-626
+      #              
+      object-group service testsrv_41575994
+      0 service group-object TCP-3188
+      #
+      object-group service testsrv_71611129
+      0 service group-object TCP-708
+      10 service group-object TCP-45375
+      20 service group-object TCP-54691
+      #
+      interface NULL0
+      #
+      interface GigabitEthernet1/0
+      port link-mode route
+      ip address 192.168.60.33 255.255.255.0
+      #
+      interface GigabitEthernet2/0
+      port link-mode route
+      ip address 30.1.1.1 255.255.255.0
+      #
+      interface GigabitEthernet3/0
+      port link-mode route
+      #
+      interface GigabitEthernet4/0
+      port link-mode route
+      #
+      interface GigabitEthernet5/0
+      port link-mode route
+      #
+      interface GigabitEthernet6/0
+      port link-mode route
+      #
+      interface GigabitEthernet7/0
+      port link-mode route
+      #
+      interface GigabitEthernet8/0
+      port link-mode route
+      #
+      security-zone name Local
+      #
+      security-zone name Trust
+      #
+      security-zone name DMZ
+      #
+      security-zone name Untrust
+      #
+      security-zone name Management
+      import interface GigabitEthernet1/0
+      #
+      scheduler logfile size 16
+      #
+      line class aux
+      user-role network-operator
+      #
+      line class console
+      user-role network-admin
+      #
+      line class vty
+      user-role network-operator
+      #
+      line aux 0
+      authentication-mode none
+      user-role network-admin
+      user-role network-operator
+      #
+      line con 0
+      user-role network-admin
+      #
+      line vty 0 4
+      authentication-mode scheme
+      user-role network-operator
+      #
+      line vty 5 63
+      authentication-mode none
+      user-role network-operator
+      #
+      ip route-static 0.0.0.0 0 192.168.60.1
+      #
+      ssh server enable
+      ssh user admin service-type all authentication-type any
+      #
+      domain system
+      #
+      domain default enable system
+      #
+      role name level-0
+      description Predefined level-0 role
+      #
+      role name level-1
+      description Predefined level-1 role
+      #
+      role name level-2
+      description Predefined level-2 role
+      #              
+      role name level-3
+      description Predefined level-3 role
+      #
+      role name level-4
+      description Predefined level-4 role
+      #
+      role name level-5
+      description Predefined level-5 role
+      #
+      role name level-6
+      description Predefined level-6 role
+      #
+      role name level-7
+      description Predefined level-7 role
+      #
+      role name level-8
+      description Predefined level-8 role
+      #
+      role name level-9
+      description Predefined level-9 role
+      #
+      role name level-10
+      description Predefined level-10 role
+      #
+      role name level-11
+      description Predefined level-11 role
+      #
+      role name level-12
+      description Predefined level-12 role
+      #
+      role name level-13
+      description Predefined level-13 role
+      #
+      role name level-14
+      description Predefined level-14 role
+      #
+      user-group system
+      #
+      local-user admin class manage
+      password hash $h$6$2k0lERPpoG8t88rn$hVw0J8VENDrLEnd3WDyDT2DRkG+xFRBvTICZ8VQNk/wclt7JMCD1hXhxOgpjqSnGjiwbnpMYb4HZFqkH+cAoTQ==
+      service-type ssh terminal http https
+      authorization-attribute user-role level-15
+      authorization-attribute user-role network-admin
+      #
+      ip http enable
+      #              
+      security-policy ip
+      rule 0 name 2024_06_12_62322
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.89_32
+        destination-ip test_08881182
+        service testsrv_71611129
+      rule 1 name 2024_06_12_e24f0
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.86_32
+        destination-ip 202406121929_2517
+        service 202406121929_6a8b
+      rule 2 name 2024_07_04_10b58
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.45_32
+        destination-ip WS-4.2.4.6_32
+        service TCP-12
+      rule 3 name 2024_10_22_b299d
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.78_32
+        destination-ip WS-66.6.6.96_32
+        service TCP-12
+      rule 4 name 2024_10_22_12a63
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.78_32
+        destination-ip WS-9.9.9.9_32
+        service TCP-2112
+      rule 5 name 2024_10_22_31f34
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.78_32
+        destination-ip WS-20.20.20.2_32
+        service TCP-66
+      rule 6 name 2024_11_14_4c431
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.56_32
+        destination-ip WS-6.6.6.5_32
+        service TCP-12
+      rule 7 name 2024_11_14_a638d
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.56_32
+        destination-ip WS-6.6.6.5_32
+        service TCP-12
+      rule 9 name 2024_12_02_ae3dc
+        action pass
+        source-zone Management
+        source-ip WS-10.28.1.55_32
+        destination-ip WS-30.1.1.122_32
+        service smb
+      rule 8 name 2024_11_28_6f889
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.56_32
+        destination-ip WS-6.6.6.5_32
+        service daytime
+      rule 10 name 2025_01_20_2ebb4
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.108_32
+        destination-ip WS-172.21.1.108_32
+      rule 11 name 2025_01_20_278fd
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.109_32
+        destination-ip WS-172.21.1.108_32
+        service smb
+      rule 12 name 2025_01_20_6fbda
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.110_32
+        destination-ip WS-172.21.1.108_32
+        service TCP-555
+      rule 13 name 2025_01_20_b6994
+        action pass
+        destination-zone Management
+        source-ip WS-30.1.1.113_32
+        destination-ip WS-172.21.1.108_32
+        service TCP-999
+      rule 14 name test
+        source-ip xxxxxxxx
+      rule 15 name rule_test
+      #
+      security-policy ipv6
+      rule 0 name test
+      rule 1 name rule_test
+      #              
+      return
+
+welcome: |
+  PTY allocation request failed on channel 0
+
+  *************************************************************************
+  *         Copyright (C) 2014-2015 Huawei Technologies Co., Ltd.         *
+  *                           All rights reserved.                        *
+  *               Without the owner's prior written consent,              *
+  *        no decompiling or reverse-engineering shall be allowed.        *
+  *************************************************************************
+
+
+  Info: The max number of VTY users is 10, and the number
+        of current VTY users on line is 1.
+        The current login time is 2024-12-20 15:31:01+00:00.
+
+invalid_cmd_error: |
+  ^
+  % Incomplete command found at '^' position.

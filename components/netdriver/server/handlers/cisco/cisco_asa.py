@@ -1,0 +1,87 @@
+#!/usr/bin/env python3.10.6
+# -*- coding: utf-8 -*-
+from pathlib import Path
+from asyncssh import SSHServerProcess
+from netdriver.client.mode import Mode
+from netdriver.exception.server import ClientExit
+from netdriver.server.handlers.command_handler import CommandHandler
+from netdriver.server.models import DeviceBaseInfo
+
+
+class CiscoASAHandler(CommandHandler):
+    """ Cisco ASA Command Handler """
+
+    info = DeviceBaseInfo(
+        vendor="cisco",
+        model="asa",
+        version="*",
+        description="Cisco ASA Command Handler"
+    )
+
+    @classmethod
+    def is_selectable(cls, vendor: str, model: str, version: str) -> bool:
+        # only check vendor and model, check version in the future
+        if cls.info.vendor == vendor and cls.info.model == model:
+            return True
+
+    def __init__(self, process: SSHServerProcess, conf_path: str = None):
+        # current file path
+        if conf_path is None:
+            cwd_path = Path(__file__).parent
+            conf_path = f"{cwd_path}/cisco_asa.yml"
+        self.conf_path = conf_path
+        super().__init__(process)
+
+    async def switch_vsys(self, command: str) -> bool:
+        return False
+
+    async def switch_mode(self, command: str) -> bool:
+        if command not in self.config.modes[self._mode].switch_mode_cmds:
+            return False
+
+        match self._mode:
+            case Mode.LOGIN:
+                if command == "exit" or command == "quit":
+                    # logout
+                    self._logger.info("Logout")
+                    raise ClientExit
+                elif command == "enable":
+                    # switch to enable mode
+                    self._logger.info("Switching mode [login -> enable]")
+                    self.write("Password: ")
+                    passwd = await self._process.stdin.readline()
+                    passwd = passwd.rstrip("\n")
+                    if passwd != self.config.enable_password:
+                        self.write("Invalid password\nAccess denied\n")
+                        return True
+                    else:
+                        self._mode = Mode.ENABLE
+                        return True
+            case Mode.ENABLE:
+                if command == "disable":
+                    # switch to login mode
+                    self._logger.info("Switching mode [enable -> login]")
+                    self._mode = Mode.LOGIN
+                    return True
+                elif command == "exit" or command == "quit":
+                    # logout
+                    self._logger.info("Logout")
+                    raise ClientExit
+                elif command == "configure terminal":
+                    # switch to config mode
+                    self._mode = Mode.CONFIG
+                    return True
+            case Mode.CONFIG:
+                if command == "exit" or command == "quit" or command == "end":
+                    # exit config mode
+                    self._logger.info("Switching mode [config -> enable]")
+                    self._mode = Mode.ENABLE
+                    return True
+                elif command == "disable":
+                    # switch to login mode
+                    self._logger.info("Switching mode [config -> login]")
+                    self._mode = Mode.LOGIN
+                    return True
+            case _:
+                return False
+        return False

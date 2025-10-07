@@ -1,0 +1,1444 @@
+# QiAnXin NSG
+start_mode: enable
+hostname: 奇安信
+line_feed: "\r\n"
+enable_password: ""
+modes:
+  enable:
+    prompt: ">"
+    switch_mode_cmds:
+      - "config terminal"
+      - "exit"
+      - "quit"
+    cmds: 
+      - cmd: "show version"
+        output: |
+          Version:V3.6.6.0(-6.1.13.122100)
+
+          Version alias:6.1.13
+      - cmd: "show ip route"
+        output: |
+          Destination/Mask     Gateway           RouteProto     Dev            Weight    Status    
+          172.21.1.100/32      0.0.0.0           Host           ge1-1          1         enable    
+          172.21.1.64/26       0.0.0.0           Connected      ge1-1          1         enable    
+          172.21.1.177/32      0.0.0.0           Host           ge1            1         enable    
+          172.21.1.200/32      0.0.0.0           Host           ge1-1          1         enable    
+          172.21.1.192/26      0.0.0.0           Connected      ge1-1          1         enable    
+          172.21.1.0/24        0.0.0.0           Connected      ge1            1         enable    
+          0.0.0.0/0            172.21.1.1        Static         ge1            1         enable
+      - cmd: "show running config"
+        output: |
+          # Module config_SYSTEM
+
+          #Auto upgrade
+          auto-upgrade day starttime 00:00:00
+          auto-upgrade pub-server ngfwup.sg.qianxin.com
+          auto-upgrade public
+          auto-upgrade ioc server ngfwup.sg.qianxin.com 
+          auto-upgrade ioc interval 21600
+          auto-upgrade tenant proxy_status disable
+          auto-upgrade cloud_protection proxy_status disable
+          set app-pending disable
+          set app-option bypass 2 M
+          set app-option trickle 32 K
+          set app http-html
+
+          #hwsensor state
+          cpu usage enable
+          cpu usage sample time 4
+
+          #ai ips lua status
+          set ai enable
+          set ips enable
+          set lua enable
+
+          # rest api config
+          rest api port 8080 proto http status disable
+
+          #lms server config
+
+          # Module config_PKI
+
+          #PKI config information
+          pki reload
+
+          #PKI auth configure
+
+          # Module config_LOCALUSER
+
+          #local users information
+
+          # Module config_AAA
+
+          #local groups information
+
+          #local role information
+
+          #authsrv information
+          authsrv local "local"
+          exit
+          authsrv remote add
+
+          #user bind information
+
+          # Module config_ADMIN
+          admin role load saveinfo
+          admin user "admin"
+          encrypt-password "2746E8A7F5D8E320EB2215B28B10C0A6"
+          vsys-name "root-vsys"
+          role "super-admin"
+          authentication-type "local"
+          access "console"
+          access "telnet"
+          access "ssh"
+          access "http"
+          access "https"
+          create "2025-01-06"
+          exit
+
+          admin policy session-timeout 0
+          admin policy password-minlen 10
+          admin policy password-expiration 0
+          admin policy login-verify
+          admin policy login-failed 5 interval 30 deny 3600 lockmode ip
+          admin policy passwd-complexity char
+          admin policy passwd-complexity number
+          admin policy passwd-complexity special
+
+          # Module config_NETWORK
+
+          #Network information
+          ipv6
+
+          #HA Interface information
+
+          #Sgrp group information
+          ha group 0
+          priority 100
+          adver_int 1
+          nopreempt
+          wait_haif_time 0
+          exit
+
+          #Sgrp global information
+          ha port 6260
+          ha sync_conf disable
+          ha sync_rto disable
+          ha asymmetric disable
+          ha sync_alg_packet enable
+          ha layer2_interface_refresh enable
+          ha tcp_noflow_sync disable
+          ha auxiliary_port 6260
+          ha disable
+
+          vxlan disable
+
+          vxlan source address 0.0.0.0
+
+          vxlan destination port 4789
+
+          #Dns Proxy Object information
+
+          #Dns Proxy Object dynamically generated information
+
+          #Interface information
+          jumbo disable
+          bridge 1 virtual wire disable
+          interface channel ch1
+          interface layer3
+          alias "聚合口"
+          channel mode 802.3ad
+          miimon interval 3
+          hash type layer3+4
+          symmetric route
+          netflow export off
+          reverse path filter off
+          exit
+          interface channel ch1-1
+          interface layer3
+          alias "聚合子接口"
+          symmetric route
+          netflow export off
+          reverse path filter off
+          exit
+          interface channel ch2
+          interface sniffer
+          alias "聚合口"
+          channel mode 802.3ad
+          miimon interval 3
+          hash type layer3+4
+          netflow export off
+          reverse path filter off
+          exit
+
+          interface ethernet ge1
+          interface layer3
+          alias "物理口"
+          manage mode ssh on
+          manage mode https on
+          manage mode ping on
+          manage mode http on
+          ip address 172.21.1.177 netmask 255.255.255.0
+          ipv6 address dhcp client
+          ipv6 address auto default
+          netflow export off
+          reverse path filter off
+          exit
+          interface ethernet ge1-1
+          interface layer3
+          alias "物理子接口"
+          manage mode http on
+          ip address 172.21.1.100 netmask 255.255.255.192
+          ip address 172.21.1.200 netmask 255.255.255.192
+          netflow export off
+          reverse path filter off
+          exit
+          interface ethernet ge1-2
+          interface layer2
+          alias "物理子接口"
+          access vlan 20
+          netflow export off
+          reverse path filter off
+          exit
+
+          interface loopback lo1
+          alias "回环口"
+          virtual hardware address 
+          netflow export off
+          reverse path filter off
+          exit
+
+          vlan 10
+          vlan 20
+          interface vlan vlan10
+          alias "vlan口"
+          l2-nat disable
+          virtual hardware address 00:00:0a:20:00:00
+          symmetric route
+          netflow export off
+          reverse path filter off
+          exit
+
+          interface bridge br1
+          alias "桥接口"
+          mtu 1300
+          symmetric route
+          trunk vlan 0
+          netflow export off
+          reverse path filter off
+          exit
+
+          interface tunnel tun1
+          alias "隧道口"
+          virtual hardware address 
+          symmetric route
+          netflow export off
+          reverse path filter off
+          exit
+
+
+          #Vsys assign interface information
+
+          #Obj lkdt information
+
+          #Sgrp group track interface information
+
+          #Sgrp group track ip information
+
+          #Arp information
+
+          #Neigh information
+
+          #Mac information
+
+          #IGMP Snooping information
+
+          #Zone information
+          zone "trust" layer3 default
+          bind interface ge1
+          bind interface ge1-1
+          bind interface vlan10
+          bind interface br1
+          bind interface ch1
+          bind interface ch1-1
+          bind interface lo1
+          bind interface tun1
+          exit
+          zone "untrust" layer3 default
+          exit
+          zone "dmz" layer3 default
+          exit
+          zone "l2trust" layer2 default
+          exit
+          zone "l2untrust" layer2 default
+          exit
+          zone "xxx yy" layer3
+          exit
+
+          #isp information
+
+          #ipv4 route information
+          ip route net 0.0.0.0 netmask 0.0.0.0 gw 172.21.1.1 weight 1
+
+          #ipv6 route information
+
+          #Router rip
+          router rip
+          exit
+
+          #Router bgp information
+
+          #Syslog conifg information
+
+          #Log conifg information
+
+          #Log export num information
+
+          #Log module rate-limit information
+          log module admin rate-limit 30
+          log module webauth rate-limit 30
+          log module sslvpn rate-limit 30
+          log http-server ip ngfwyf.sg.qianxin.com port 443
+          log type operate http disable
+          log type system http disable
+          log type traffic-end http disable
+          log type url http disable
+          log type content http disable
+          log type behavior http disable
+          log type mail http disable
+          log type threat http disable
+          log type dns http disable
+          log type im http disable
+
+          #Vswitch Stp information
+
+          #Vlan Stp information
+
+          #If Stp information
+
+          #If Multicast route cfg information
+
+          #Candidate RP cfg information
+
+          #Candidate BSR cfg information
+
+          #Static multicast route cfg information
+
+          #IP Multicast route cfg information
+          ip multicast-routing disable pim-sm
+
+          #alert	information
+          alert config-modify smtp disable
+          alert config-modify sound disable
+          alert config-modify trap disable
+          alert config-modify mess disable
+          alert detct-virus smtp disable
+          alert detct-virus sound disable
+          alert detct-virus trap disable
+          alert detct-virus mess disable
+          alert detct-attack smtp disable
+          alert detct-attack sound disable
+          alert detct-attack trap disable
+          alert detct-attack mess disable
+          alert detct-abnomal smtp disable
+          alert detct-abnomal sound disable
+          alert detct-abnomal trap disable
+          alert detct-abnomal mess disable
+          alert fall-host smtp disable
+          alert fall-host sound disable
+          alert fall-host trap disable
+          alert fall-host mess disable
+          alert detct-start smtp disable
+          alert detct-start sound disable
+          alert detct-start trap disable
+          alert detct-start mess disable
+          alert cpu 80
+          alert cpu smtp disable
+          alert cpu sound disable
+          alert cpu trap disable
+          alert cpu mess disable
+          alert disk 80
+          alert disk smtp disable
+          alert disk sound disable
+          alert disk trap disable
+          alert disk mess disable
+          alert memory 80
+          alert memory smtp disable
+          alert memory sound disable
+          alert memory trap disable
+          alert memory mess disable
+          alert interface-global 80
+          alert interface-global smtp disable
+          alert interface-global sound disable
+          alert interface-global trap disable
+          alert interface-global mess disable
+          alert nat-pool 80
+          alert nat-pool smtp disable
+          alert nat-pool sound disable
+          alert nat-pool trap disable
+          alert nat-pool mess disable
+          alert cpu-temp smtp disable
+          alert cpu-temp sound disable
+          alert cpu-temp trap disable
+          alert cpu-temp mess disable
+          alert cpu-fan-speed smtp disable
+          alert cpu-fan-speed sound disable
+          alert cpu-fan-speed trap disable
+          alert cpu-fan-speed mess disable
+          alert sys-fan-speed smtp disable
+          alert sys-fan-speed sound disable
+          alert sys-fan-speed trap disable
+          alert sys-fan-speed mess disable
+          alert power smtp disable
+          alert power sound disable
+          alert power trap enable
+          alert power mess disable
+          alert power enable
+          alert concurrent-connection 85
+          alert concurrent-connection smtp disable
+          alert concurrent-connection sound disable
+          alert concurrent-connection trap disable
+          alert concurrent-connection mess disable
+
+          #alert	information
+          alert interface ge1 80
+          alert interface ge1 smtp disable
+          alert interface ge1 sound disable
+          alert interface ge1 trap disable
+          alert interface ge1 mess disable
+          alert interface ge1 disable
+
+          #smtp	information
+
+          #emailinformation
+
+          #Dhcp server information
+          dhcp server version new
+          dhcp server enable
+
+          #Dhcp relay information
+
+          #dyn black list information
+          dyn-blacklist enable
+          dyn-blacklist action log
+          dyn-blacklist ageing_time 60 module IPS
+          dyn-blacklist ageing_time 60 module WPS
+          dyn-blacklist ageing_time 60 module skyeye
+          dyn-blacklist ageing_time 300 module trojan
+
+          #linkage information
+          linkage name skylar server_port 65191
+          linkage name skylar status disable
+
+          #sms information
+          sms speed 20
+
+          #802.1x configure information
+
+          #MPLS information
+          mpls app enable
+
+          #Portlink information
+
+          #Dhcp6 server information
+          dhcp6 server duid 00:03:00:01:0e:ff:a6:b8:fb:5d
+          dhcp6 server enable
+
+          #Dhcp6 relay information
+
+          #Dhcp client information
+
+          #lte4g information
+
+          lte4g reset disable
+
+          lte4g status disable
+
+          # Module config_OBJ
+
+          #object address item information
+          object address "测试编码" description "测试编码" network "6.6.6.0/255.255.255.0,7.7.7.0/255.255.255.0" host "1.1.1.1,5.5.5.5" range "8.8.8.8-8.8.8.10,9.9.9.9-10.10.10.10" domain " " exclude network " " exclude host " " exclude range " "
+          object address "1.1.1.1" description " " network " " host "1.1.1.1" range " " domain " " exclude network " " exclude host " " exclude range " "
+          object address "2.2.2.2" description " " network " " host "2.2.2.2" range " " domain " " exclude network " " exclude host " " exclude range " "
+          object address "10.1.1.1" description " " network " " host " " range " " domain " " exclude network " " exclude host " " exclude range " "
+          object address "101.1.1.1" description "101.1.1.1" network " " host "101.1.1.2,101.1.1.3" range " " domain " " exclude network " " exclude host " " exclude range " "
+          object address "102.1.1.1" description " " network " " host " " range " " domain " " exclude network " " exclude host " " exclude range " "
+          object address "100.1.1.1" description " " network " " host "100.1.1.1" range " " domain "sssssssssssssssssssssssssssssssssssssss" exclude network " " exclude host " " exclude range " "
+          object address "108.1.1.1" description " " network " " host " " range " " domain " " exclude network " " exclude host " " exclude range " "
+          object address "zxc scd" description " " network " " host " " range " " domain " " exclude network " " exclude host " " exclude range " "
+          object address "WS-172.20.80.102_32" description " " network "172.20.80.102/255.255.255.255" host " " range " " domain " " exclude network " " exclude host " " exclude range " "
+          object address "WS-172.20.80.101_32" description " " network "172.20.80.101/255.255.255.255" host " " range " " domain " " exclude network " " exclude host " " exclude range " "
+          object address "201.1.1.1" description " " network " " host "201.1.1.1" range " " domain " " exclude network " " exclude host " " exclude range " "
+
+          #object address group item information
+          object address-group "隔热片" description " " address " " address-group " "
+          object address-group "test-3-5-01" description " " address " " address-group " "
+          object address-group "grp" description " " address "100.1.1.1&101.1.1.1" address-group " "
+          object address-group "2025-03-10" description " " address "100.1.1.1&101.1.1.1" address-group " "
+          object address-group "test" description " " address "WS-172.20.80.101_32&WS-172.20.80.102_32" address-group " "
+          object address-group "201.1.1.1-ref" description " " address "201.1.1.1" address-group " "
+          object address-group "ref-ref" description " " address " " address-group "201.1.1.1-ref"
+          object service-group "grp"
+          exit
+          object service-group "svc_grp"
+          exit
+          object service-group "tcp-33-ref"
+          exit
+          object service custom "test"
+          service-item icmp type 8 min-code 0 max-code 0
+          service-item other protocol 10
+          service-item tcp src-port 1 65535 dst-port 10 50
+          service-item tcp src-port 1 65535 dst-port 50 100
+          service-item tcp src-port 70 65535 dst-port 55 55
+          service-item udp src-port 1 65535 dst-port 10 10
+          service-item icmpv6 type 10 min-code 0 max-code 0
+          description cccc ddddd dddddd
+          exit
+          object service custom "svc"
+          service-item icmp type 5 min-code 1 max-code 1
+          service-item icmp type 5 min-code 1 max-code 2
+          exit
+          object service custom "tcp-22"
+          exit
+          object service custom "TCP-12"
+          exit
+          object service custom "EGP"
+          service-item other protocol 8
+          exit
+          object service custom "UDP-s_20-d_10"
+          service-item udp src-port 20 20 dst-port 10 10
+          exit
+          object service custom "ICMP-0_0"
+          service-item icmp type 0 min-code 0 max-code 0
+          exit
+          object service custom "IPV6_ICMP-2_0"
+          service-item icmpv6 type 2 min-code 0 max-code 0
+          exit
+          object service custom "tcp-33"
+          service-item tcp src-port 0 65535 dst-port 33 33
+          exit
+
+          #object service-group information
+          object service-group "svc_grp" description " " service "FTP,NTP" service-group " "
+
+          #object service-group information
+          object service-group "t1" description " " service "TCP-12,EGP,UDP-s_20-d_10,ICMP-0_0,IPV6_ICMP-2_0" service-group " "
+
+          #object service-group information
+          object service-group "tcp-33-ref" description " " service "tcp-33" service-group " "
+
+          #object service-group information
+          object service-group "grp" description " " service "test,svc,HTTP,HTTPS,tcp-22" service-group "svc_grp"
+
+          #object service-group information
+          object service-group "ref-ref" description " " service " " service-group "tcp-33-ref"
+
+          #object service-group information
+          object service-group "grp-1" description " " service " " service-group "grp"
+
+          #Schedule information
+          object schedule "time_5"
+          schedule-once startdate 2025-03-19 starttime 00:00:00 enddate 2025-03-29 endtime 00:00:00
+          exit
+          object schedule "time_5" desc "time_5"
+          object schedule "time_1"
+          schedule-day starttime 00:00:00 endtime 01:00:00
+          schedule-day starttime 11:00:00 endtime 15:00:00
+          schedule-day starttime 18:00:00 endtime 20:00:00
+          exit
+          object schedule "time_1" desc "time 1"
+          object schedule "time6"
+          schedule-day starttime 00:00:00 endtime 01:00:00
+          exit
+          object schedule "none"
+          schedule-day starttime 00:00:00 endtime 01:00:00
+          exit
+          object schedule "time11"
+          schedule-day starttime 11:00:00 endtime 12:00:00
+          schedule-day starttime 15:00:00 endtime 16:00:00
+          schedule-day starttime 16:00:00 endtime 17:00:00
+          exit
+          object schedule "time11" desc "2345"
+          object schedule "time_4"
+          schedule-month startday 10 endday 31
+          exit
+          object schedule "time_4" desc "time_4"
+          object schedule "time_2"
+          schedule-week monday "time_1" tuesday "none" wednesday "time_1" thursday "none" friday "time_1" saturday "none" sunday "none"
+          exit
+          object schedule "time_2" desc "time_2"
+          object schedule "time_3"
+          schedule-week monday "time_1" tuesday "time_1" wednesday "time_1" thursday "time_1" friday "time_1" saturday "time_1" sunday "time_1"
+          exit
+          object schedule "time_3" desc "time_3"
+          object schedule "ww"
+          schedule-week monday "none" tuesday "none" wednesday "none" thursday "none" friday "none" saturday "none" sunday "none"
+          exit
+          object schedule "cc"
+          schedule-week monday "none" tuesday "none" wednesday "none" thursday "none" friday "none" saturday "none" sunday "none"
+          exit
+
+          #area information
+
+          #object area custom 
+          object area "内网"
+          longitude 0 latitude 0
+          range 10.0.0.0-10.255.255.255
+          range 172.16.0.0-172.31.255.255
+          range 192.168.0.0-192.168.255.255
+          exit
+          #object app-signature
+          commit app-sig
+          #object app-group
+
+          object app-group userdefine "重点关注应用组"
+
+          description ""
+
+          exit
+          #app-group
+
+          # Module config_IPSEC
+          isakmp proposal "p1-l2tp-over-ipsec-windows"
+          authentication "pre-share"
+          encryption "des"
+          encryption "3des"
+          encryption "aes-128"
+          hash "md5"
+          hash "sha-1"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "psk-aes128-sha1-g2"
+          authentication "pre-share"
+          encryption "aes-128"
+          hash "sha-1"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "psk-des-sha1-g2"
+          authentication "pre-share"
+          encryption "des"
+          hash "sha-1"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "psk-3des-sha1-g2"
+          authentication "pre-share"
+          encryption "3des"
+          hash "sha-1"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "psk-aes256-sha1-g2"
+          authentication "pre-share"
+          encryption "aes-256"
+          hash "sha-1"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "psk-aes128-md5-g2"
+          authentication "pre-share"
+          encryption "aes-128"
+          hash "md5"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "psk-des-md5-g2"
+          authentication "pre-share"
+          encryption "des"
+          hash "md5"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "psk-3des-md5-g2"
+          authentication "pre-share"
+          encryption "3des"
+          hash "md5"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "psk-aes256-md5-g2"
+          authentication "pre-share"
+          encryption "aes-256"
+          hash "md5"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "rsa-aes128-sha1-g2"
+          authentication "cert-sign"
+          encryption "aes-128"
+          hash "sha-1"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "rsa-des-sha1-g2"
+          authentication "cert-sign"
+          encryption "des"
+          hash "sha-1"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "rsa-3des-sha1-g2"
+          authentication "cert-sign"
+          encryption "3des"
+          hash "sha-1"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "rsa-aes256-sha1-g2"
+          authentication "cert-sign"
+          encryption "aes-256"
+          hash "sha-1"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "rsa-aes128-md5-g2"
+          authentication "cert-sign"
+          encryption "aes-128"
+          hash "md5"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "rsa-des-md5-g2"
+          authentication "cert-sign"
+          encryption "des"
+          hash "md5"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "rsa-3des-md5-g2"
+          authentication "cert-sign"
+          encryption "3des"
+          hash "md5"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          isakmp proposal "rsa-aes256-md5-g2"
+          authentication "cert-sign"
+          encryption "aes-256"
+          hash "md5"
+          group "2"
+          lifetime "86400"
+          priority "predefine" 
+          exit
+          ipsec proposal "p2-l2tp-over-ipsec-windows"
+          protocol "esp"
+          encryption "des"
+          encryption "3des"
+          encryption "aes-128"
+          hash "md5"
+          hash "sha-1"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          lifesize "4194303"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-aes128-sha1-g0"
+          protocol "esp"
+          encryption "aes-128"
+          hash "sha-1"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-des-sha1-g0"
+          protocol "esp"
+          encryption "des"
+          hash "sha-1"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-3des-sha1-g0"
+          protocol "esp"
+          encryption "3des"
+          hash "sha-1"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-aes256-sha1-g0"
+          protocol "esp"
+          encryption "aes-256"
+          hash "sha-1"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-null-sha1-g0"
+          protocol "esp"
+          encryption "null"
+          hash "sha-1"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-aes128-md5-g0"
+          protocol "esp"
+          encryption "aes-128"
+          hash "md5"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-des-md5-g0"
+          protocol "esp"
+          encryption "des"
+          hash "md5"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-3des-md5-g0"
+          protocol "esp"
+          encryption "3des"
+          hash "md5"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-aes256-md5-g0"
+          protocol "esp"
+          encryption "aes-256"
+          hash "md5"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-null-md5-g0"
+          protocol "esp"
+          encryption "null"
+          hash "md5"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "ah-sha1-g0"
+          protocol "ah"
+          hash "sha-1"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "ah-md5-g0"
+          protocol "ah"
+          hash "md5"
+          compress "null"
+          group "nopfs"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-aes128-sha1-g2"
+          protocol "esp"
+          encryption "aes-128"
+          hash "sha-1"
+          compress "null"
+          group "2"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-des-sha1-g2"
+          protocol "esp"
+          encryption "des"
+          hash "sha-1"
+          compress "null"
+          group "2"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-3des-sha1-g2"
+          protocol "esp"
+          encryption "3des"
+          hash "sha-1"
+          compress "null"
+          group "2"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-aes256-sha1-g2"
+          protocol "esp"
+          encryption "aes-256"
+          hash "sha-1"
+          compress "null"
+          group "2"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-aes128-md5-g2"
+          protocol "esp"
+          encryption "aes-128"
+          hash "md5"
+          compress "null"
+          group "2"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-des-md5-g2"
+          protocol "esp"
+          encryption "des"
+          hash "md5"
+          compress "null"
+          group "2"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "esp-3des-md5-g2"
+          protocol "esp"
+          encryption "3des"
+          hash "md5"
+          compress "null"
+          group "2"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "ah-sha1-g2"
+          protocol "ah"
+          hash "sha-1"
+          compress "null"
+          group "2"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+          ipsec proposal "ah-md5-g2"
+          protocol "ah"
+          hash "md5"
+          compress "null"
+          group "2"
+          lifetime "28800"
+          priority "predefine" 
+          exit
+
+          # Module config_TUNNEL
+
+          #GRE tunnel information
+
+          #IPV6IP tunnel information
+
+          #L2TP/PPTP tunnel information
+
+          #SSL tunnel information
+
+          #IPIP6 tunnel information
+
+          # Module config_FIREWALL
+
+          #wifi information
+          wifi fragm_rts status disable
+          wifi wmm status enable
+          wifi hostapd_ht status enable
+          wifi hostapd_log status disable
+          wifi fragm_threshold 2346
+          wifi rts_threshold 2347
+
+          #Ad information
+
+          #AD link information for ip spoofing
+
+          #Ad bmcast information
+          bmcast global threshold 100 action alarm disable
+          bmcast interface ge1-2 threshold 100 action alarm disable
+
+          #Blacklist information
+
+          #Dns domain information open
+          dns domain open both
+
+          #Dns domain information wbl
+
+          #Dns honeypot domain#
+
+          #Dns honeypot server#
+
+          #IPMAC information
+
+          #route gate 
+          route gate set detect-frequency 1
+
+          #route balance algorithm
+          route balance algorithm SRC-HASH
+
+          #route policy information
+          route policy-apply "default"
+
+          #isproute information
+
+          #ips cfg
+          ips load engine
+
+          #IPS sig information
+          ips-sig commit
+
+          #ips profile
+
+          #keyword-group
+          keyword-group commit
+
+          #url class
+          url-class commit
+
+          #content-filter profile
+          #file filter profile
+          #file detect global configuration
+
+          file-detect time-out "10" 
+          file-detect uncompress-layer "3" 
+          file-detect file-size "2097152" 
+          file-detect cache "enable" 
+
+          #AC profile
+
+          #AV configure
+
+          #av custom config
+
+          #av cache config
+
+          #av config
+          av scan-too-long disable 1000
+          av scan-timeout 5
+          av cache enable
+          av cache timeout 90
+
+          #av profile config
+
+          #Skylar_sec profile configure
+
+          #mail-filter profile
+
+          #Anti Spam cfg
+          anti-spam unset rbl-addr
+
+          #profile group
+
+          #long session information
+          session long icmp off
+          session long udp off
+          session long udp-one-way off
+          session long bmcast off
+
+          #session timtout information
+          session set type SESSION_TCP_HANDSHAKE timeout 30
+          session set type SESSION_TCP_ESTABLISHED timeout 1800
+          session set type SESSION_TCP_CLOSING timeout 60
+          session set type SESSION_CLOSED timeout 1
+          session set type SESSION_UDP_ONE_WAY timeout 120
+          session set type SESSION_UDP_DNS timeout 120
+          session set type SESSION_UDP_OTHER timeout 180
+          session set type SESSION_OTHER_PROTO timeout 30
+          session set type SESSION_GRE timeout 80
+          session set type SESSION_DSLITE timeout 3600
+          session set type SESSION_LONG_TCP timeout 86400
+          session set type SESSION_LONG_UDP timeout 3600
+          session set type SESSION_LONG_OTHER timeout 3600
+
+          #flow asymmetric information
+          flow asymmetric disable
+          security policy long command "测试" sip "any" sarea "#NULL#" dip "any" darea "#NULL#" szone "any" dzone "any" service "any" application "any" user "#NULL#" schedule "#NULL#" spyware "#NULL#" vulnerablity "#NULL#" url-filter "#NULL#" av "#NU
+          LL#" skylar_sec "#NULL#" content-filter "#NULL#" l7-filter "#NULL#" mail-filter "#NULL#" file-filter "#NULL#" profile-group "#NULL#" vlan "#NULL#" long access "disable" "#NULL#" log-begin "disable" log-end "enable" description "测试。。。。。。。。。。。。测试长度。。。。。。。。。。。。" action
+          "permit" "#NULL#" from-tunnel "#NULL#" status "enable" 
+          security policy long command "test" sip "any" sarea "#NULL#" dip "any" darea "#NULL#" szone "any" dzone "any" service "any" application "any" user "#NULL#" schedule "#NULL#" spyware "#NULL#" vulnerablity "#NULL#" url-filter "#NULL#" av 
+          "#NULL#" skylar_sec "#NULL#" content-filter "#NULL#" l7-filter "#NULL#" mail-filter "#NULL#" file-filter "#NULL#" profile-group "#NULL#" vlan "#NULL#" long access "disable" "#NULL#" log-begin "disable" log-end "disable" description "#NU
+          LL#" action "permit" "#NULL#" from-tunnel "#NULL#" status "enable" 
+          security policy long command "xxx" sip "2.2.2.2" sarea "#NULL#" dip "any" darea "#NULL#" szone "trust,untrust" dzone "any" service "any" application "any" user "#NULL#" schedule "#NULL#" spyware "#NULL#" vulnerablity "#NULL#" url-filter
+          "#NULL#" av "#NULL#" skylar_sec "#NULL#" content-filter "#NULL#" l7-filter "#NULL#" mail-filter "#NULL#" file-filter "#NULL#" profile-group "#NULL#" vlan "#NULL#" long access "disable" "#NULL#" log-begin "disable" log-end "enable" desc
+          ription "#NULL#" action "permit" "#NULL#" from-tunnel "#NULL#" status "enable" 
+          security policy long command "yyyy sss" sip "1.1.1.1,2.2.2.2" sarea "#NULL#" dip "zxc scd" darea "#NULL#" szone "xxx yy" dzone "dmz" service "any" application "any" user "#NULL#" schedule "time11" spyware "#NULL#" vulnerablity "#NULL#" 
+          url-filter "#NULL#" av "#NULL#" skylar_sec "#NULL#" content-filter "#NULL#" l7-filter "#NULL#" mail-filter "#NULL#" file-filter "#NULL#" profile-group "#NULL#" vlan "#NULL#" long access "disable" "#NULL#" log-begin "disable" log-end "en
+          able" description "sssv sss ss" action "permit" "#NULL#" from-tunnel "#NULL#" status "enable" 
+          security policy long command "17-46" sip "IPv4_any" sarea "#NULL#" dip "any" darea "#NULL#" szone "any" dzone "any" service "any" application "any" user "#NULL#" schedule "#NULL#" spyware "#NULL#" vulnerablity "#NULL#" url-filter "#NULL
+          #" av "#NULL#" skylar_sec "#NULL#" content-filter "#NULL#" l7-filter "#NULL#" mail-filter "#NULL#" file-filter "#NULL#" profile-group "#NULL#" vlan "#NULL#" long access "disable" "#NULL#" log-begin "disable" log-end "disable" descriptio
+          n " " action "permit" "#NULL#" from-tunnel "#NULL#" status "enable" 
+          security policy long command "2025-3-12" sip "ref-ref" sarea "#NULL#" dip "any" darea "#NULL#" szone "any" dzone "any" service "ref-ref" application "any" user "#NULL#" schedule "time_5" spyware "#NULL#" vulnerablity "#NULL#" url-filter
+          "#NULL#" av "#NULL#" skylar_sec "#NULL#" content-filter "#NULL#" l7-filter "#NULL#" mail-filter "#NULL#" file-filter "#NULL#" profile-group "#NULL#" vlan "#NULL#" long access "disable" "#NULL#" log-begin "disable" log-end "disable" des
+          cription "#NULL#" action "permit" "#NULL#" from-tunnel "#NULL#" status "enable" 
+          security default-policy deny
+          security default-policy log-begin disable
+          security default-policy log-end disable
+
+          #session limit information
+
+          #alg
+          alg ftp enable
+          alg tftp enable
+          alg h323-ras enable
+          alg h323-q931 enable
+          alg sip enable
+          alg pptp enable
+          alg sqlnet enable
+          alg mms enable
+          alg rtsp enable
+          alg xdmcp enable
+          alg msrpc enable
+          alg sunrpc enable
+
+          #snat
+
+          snat policy-rematch on
+
+          nat ip-pool-arp enable
+
+          nat ip-pool-neigh disable
+          snat "test" sip addr-object "测试编码" dip addr-object "any" egress-interface any service "any" dynamic-port type SYMMETRIC trans-ip by_route enable
+          snat "test" ingress-interface "any"
+          snat "test" descrip "nat测试" 
+
+          #service-status
+          service-status tcp-port 21 on
+          service-status tcp-port 22 on
+          service-status tcp-port 80 on
+          service-status tcp-port 443 on
+
+          #statistics
+          statistics traffic disable
+          statistics attack disable
+
+          #Qos config
+          qos bypass 0pkt OFF
+          qos bypass private-address ON
+          qos eth overhead 14
+          qos remove-wscale ON
+
+          #Qos policy information
+
+          #Watchd status
+          watchd enable
+          reboot_after_panic default
+
+          #UPNP information
+
+          #DHCP snoop information
+
+          #Interface monitor status information
+
+          #DLL Rule information
+          dll default-rule action permit
+
+          #Arp proxy information
+
+          #Property information
+          property server timeout 86400
+          property terminal timeout 86400
+          property monitor disable
+          property ppp disable
+          property terminal load saveinfo
+
+          #Dns static information
+
+          #web list show
+          web-list-show func "sec-policy" list "NAME" status "enable" 
+          web-list-show func "sec-policy" list "SRC_ZONE" status "enable" 
+          web-list-show func "sec-policy" list "DST_ZONE" status "enable" 
+          web-list-show func "sec-policy" list "SRC_ADDR" status "enable" 
+          web-list-show func "sec-policy" list "DST_ADDR" status "enable" 
+          web-list-show func "sec-policy" list "SERVICE" status "enable" 
+          web-list-show func "sec-policy" list "APP" status "enable" 
+          web-list-show func "sec-policy" list "SCHEDULE" status "enable" 
+          web-list-show func "sec-policy" list "IPS-PROFILE" status "enable" 
+          web-list-show func "sec-policy" list "URL-PROFILE" status "enable" 
+          web-list-show func "sec-policy" list "AV-PROFILE" status "enable" 
+          web-list-show func "sec-policy" list "CONTENT-PROFILE" status "enable" 
+          web-list-show func "sec-policy" list "FILE-PROFILE" status "enable" 
+          web-list-show func "sec-policy" list "MAIL-PROFILE" status "enable" 
+          web-list-show func "sec-policy" list "L7FILTER-PROFILE" status "enable" 
+          web-list-show func "sec-policy" list "ACTION" status "enable" 
+          web-list-show func "sec-policy" list "RULE_TYPE" status "enable" 
+          web-list-show func "sec-policy" list "HIT_NUM" status "enable" 
+          web-list-show func "sec-policy" list "LOG" status "enable" 
+          web-list-show func "sec-policy" list "STATE" status "enable" 
+
+          #HTTP report information
+          http-report rate 10
+
+          #snmp walk	information
+          snmp-walk time_interval 60 
+          snmp-walk disable 
+
+          #app_cloud	information
+          app_cloud enable 
+
+          # capture packet configure
+
+          #SSL inspection profile
+
+          #SSL inspection profile cert reload
+          ssl inspection cert reload
+
+          #decrypt configuration
+
+          #decrypt CA issue config
+
+          #decrypt mirror config
+
+          #decrypt session
+
+          # tcpdump filter configure
+
+          #Dns Proxy Policy information
+          dns-proxy layer2 "disable"
+          asset access
+          exit
+          asset sig
+          exit
+          asset sig
+          add asset_id 0 name "未知"
+          add asset_id 1 name "普通PC"
+          add asset_id 2 name "移动终端"
+          add asset_id 3 name "网络摄像头"
+          exit
+
+          # Ip WhiteList information
+
+          #SampleUpload status
+          SampleUpload enable
+          net detect
+          exit
+          net detect
+          exit
+          net detect
+          exit
+
+          #skydas_hub status
+          set skydas_hub enable
+
+          # Module config_WEBAUTH
+
+          # webauth basic configuration
+          webauth http-port 65080
+          webauth https-port 65443
+          webauth redirect-port 65141
+          webauth timeout 180
+          webauth customstatus disable
+          webauth http
+          webauth modify_pw_permssions disable
+          webauth status disable
+
+          # webauth customsize configuration
+
+          #url redirect configuration
+          url redirect http-port 65081
+          url redirect traffic-timeout
+          url redirect traffic-timeout 60
+          url redirect force-timeout 60
+          url redirect hold-time 30
+          url redirect push-method auto
+          url redirect http
+          url redirect status disable
+
+          # webauth policy configuration
+
+          # access port
+          admin port http 80
+          admin port ssh 22
+          admin port telnet 23
+          admin port https 443
+
+          # access mac
+          admin mac disable
+
+          # access ctl
+          admin host disable 
+          admin host 10.0.0.44 service manage
+
+          # Module config_CLOUD
+
+          #cloud client configuration
+          cloud client av protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/cloud_service/"
+          status "enable"
+          period "never"
+          exit
+          cloud client shm protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/cloud_service/"
+          status "enable"
+          period "never"
+          exit
+          cloud client report protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/cloud_service/"
+          status "enable"
+          period "never"
+          exit
+          cloud client sandbox protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/firewall/sandbox/upload/"
+          status "enable"
+          period "30s"
+          exit
+          cloud client sandbox_report protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/firewall/sandbox/report/"
+          status "enable"
+          period "1h"
+          exit
+          cloud client dispose protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/firewall/dispose/"
+          status "disable"
+          period "5m"
+          exit
+          cloud client detect protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/firewall/detect/"
+          status "enable"
+          period "5m"
+          exit
+          cloud client notice protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/firewall/notice/"
+          status "enable"
+          period "10m"
+          exit
+          cloud client ioc_url protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/firewall/cloud_threat/get_ioc_info/"
+          status "enable"
+          period "never"
+          exit
+          cloud client threat_log_upload protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/cloud_service/3.0/"
+          status "enable"
+          period "1h"
+          exit
+          cloud client bwlist_upload protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/cloud_service/3.0/"
+          status "enable"
+          period "1d"
+          exit
+          cloud client remote_timestamp protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/firewall/skydas/timestamp"
+          status "enable"
+          period "never"
+          exit
+          cloud client threat protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/firewall/cloud_threat/"
+          status "enable"
+          period "1h"
+          exit
+          cloud client trojan_protec protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/cloud_service/"
+          status "enable"
+          period "5s"
+          exit
+          cloud client tenant_auth protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/firewall/portal/auth/"
+          status "enable"
+          period "10m"
+          exit
+          cloud client tenant_status protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/firewall/portal/status/"
+          status "enable"
+          period "1m"
+          exit
+          cloud client healthy protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/firewall/healthy/"
+          status "enable"
+          period "1m"
+          exit
+          cloud client property protocol https
+          address "ngfwyf.sg.qianxin.com"
+          port "443"
+          url "/firewall/property/"
+          status "enable"
+          period "3m"
+          exit
+
+          #cloud ring configuration
+          cloud ring ioc enable
+          cloud ring av_cloud enable
+          cloud ring report enable
+          cloud ring storage enable
+          cloud basic load info
+
+          #cloud tenant configuration
+          cloud tenant permis_modify "disable"  on_landing "enable" auto_landing "enable"
+          cloud notice load info
+
+          #cloud notice configuration
+          cloud notice status enable
+          cloud notice mode auto
+          exit
+
+          #global configuration
+          cloud Av enable 
+          cloud Url enable 
+          cloud App enable 
+          cloud Sandbox enable 
+          cloud Intelligence enable 
+          ioc enable 
+          cloud disposals disable 
+          cloud preset_action enable 
+
+          #cloud skyeye sandbox configuration
+
+
+
+  config:
+    prompt: "-config]"
+    switch_mode_cmds:
+      - "exit"
+      - "end"
+      - "quit"
+    cmds:
+    - cmd: "hostname 奇安信-网神"
+      output: ""
+
+common: []
+welcome: "The remote SSH server rejected X11 forwarding request."
+invalid_cmd_error: |
+ % Unknown command.

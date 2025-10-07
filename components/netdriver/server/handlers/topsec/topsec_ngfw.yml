@@ -1,0 +1,673 @@
+# TopSec NGFW
+start_mode: enable
+hostname: TopsecOS
+line_feed: "\r\n"
+enable_password: ""
+modes:
+  enable:
+    prompt: "# "
+    switch_mode_cmds:
+      - "exit"
+    cmds: []
+common:
+  - cmd: "network route show"
+    output: |
+      Flags: U-Up, G-Gateway, H-Host, S-Static, L-Local, C-Connected, A-Auto, i-Interface, r-Router Advertisements,
+            O-OSPF(OSPFv3),R-RIP(RIPng),B-BGP
+      ==========================================IPv4==============================================
+      ID    Destination         Gateway          Flags   Metric  Weight  Iface            probe-id
+      0     10.17.0.20/32       *                ULi     0       0       lo               *
+      0     10.17.0.21/32       *                ULi     0       0       lo               *
+      0     10.17.55.30/32      *                ULi     0       0       lo               *
+      0     10.17.113.62/32     *                ULi     0       0       lo               *
+      0     10.17.113.158/32    *                ULi     0       0       lo               *
+      =======================================================IPv6============================================================
+  - cmd: "show"
+    output: |
+      helpmode english
+      system time set timezone +8
+      system devname set TopsecOS_208
+      system ntp start
+      network start
+      network reset
+      ID 7000 network attribute add name eth0
+      ID 7001 network attribute add name eth1
+      ID 7002 network attribute add name eth10
+      ID 7003 network attribute add name eth11
+      ID 7004 network attribute add name eth12
+      ID 7005 network attribute add name eth13
+      ID 7006 network attribute add name eth14
+      ID 7007 network attribute add name eth15
+      ID 7008 network attribute add name eth16
+      ID 7009 network attribute add name eth17
+      ID 7010 network attribute add name adsl
+      ID 7011 network attribute add name adsl1
+      ID 7012 network attribute add name adsl2
+      ID 7013 network attribute add name adsl3
+      ID 7014 network attribute add name adsl4
+      ID 7015 network attribute add name adsl5
+      ID 7016 network attribute add name adsl6
+      ID 7017 network attribute add name adsl7
+      ID 7018 network attribute add name ipsec0
+      ID 7019 network attribute add name ipsec1
+      ID 7020 network attribute add name ipsec2
+      ID 7021 network attribute add name ipsec3
+      ID 7022 network attribute add name wan
+      ID 7023 network attribute add name lan
+      ID 7024 network attribute add name ssn
+      ID 7025 network attribute add name ppp
+      ID 7026 network attribute add name l2tp
+      ID 7027 network attribute add name pptp
+      ID 7028 network attribute add name bond0
+      ID 7029 network attribute add name bond1
+      ID 7030 network attribute add name bond2
+      ID 7031 network attribute add name bond3
+      network interface eth0 description 'intranet'
+      network interface eth0 mtu 1500
+      network interface eth0 lpe off
+      network interface eth0 ip add 192.168.1.208 mask 255.255.255.0 label 0
+      network interface eth0 speed auto
+      network interface eth0 duplex auto
+      network interface eth0 no switchport
+      network interface eth0 switchport mode access
+      network interface eth0 switchport trunk encapsulation dot1q
+      network interface eth0 switchport trunk native-vlan 1
+      network interface eth0 switchport access-vlan 1
+      network interface eth0 switchport trunk allowed-vlan 1-1000
+      network interface eth0 ha-metric 0
+      network interface eth0 attribute add eth0
+      network interface eth0 bandwidth 0Bps
+      network interface eth0 mss-adjust off
+      network interface eth0 mode-set ips
+      network interface eth0 reverse-path off
+      network interface eth0 gratuitous-arp-interval 0
+      network interface eth0 vsid 0
+      network interface eth0 vrid 0
+      network interface eth0 no shutdown
+      network interface eth1 description 'internet'
+      network interface eth1 mtu 1500
+      network interface eth1 lpe off
+      network interface eth1 speed auto
+      network interface eth1 duplex auto
+      network interface eth1 no switchport
+      network interface eth1 switchport mode access
+      network interface eth1 switchport trunk encapsulation dot1q
+      network interface eth1 switchport trunk native-vlan 1
+      network interface eth1 switchport access-vlan 1
+      network interface eth1 switchport trunk allowed-vlan 1-1000
+      network interface eth1 ha-metric 0
+      network interface eth1 attribute add eth1
+      network interface eth1 bandwidth 0Bps
+      network interface eth1 mss-adjust off
+      network interface eth1 mode-set ips
+      network interface eth1 reverse-path off
+      network interface eth1 gratuitous-arp-interval 0
+      network interface eth1 vsid 0
+      network interface eth1 vrid 0
+      network interface eth1 no shutdown
+      network interface eth10 description 'trust_vlan13'
+      network interface eth10 mtu 1500
+      network interface eth10 ip add 10.1.208.1 mask 255.255.255.0 label 0
+      network interface eth10 speed auto
+      network interface eth10 duplex auto
+      network interface eth10 no switchport
+      network interface eth10 switchport mode access
+      network interface eth10 switchport trunk encapsulation dot1q
+      network interface eth10 switchport trunk native-vlan 1
+      network interface eth10 switchport access-vlan 1
+      network interface eth10 switchport trunk allowed-vlan 1-1000
+      network interface eth10 ha-metric 0
+      network interface eth10 attribute add eth10
+      network interface eth10 bandwidth 0Bps
+      network interface eth10 mss-adjust off
+      network interface eth10 mode-set ips
+      network interface eth10 reverse-path off
+      network interface eth10 gratuitous-arp-interval 0
+      network interface eth10 vsid 0
+      network interface eth10 vrid 0
+      network interface eth10 no shutdown
+      network interface eth11 description 'dmz_vlan14'
+      network interface eth11 mtu 1500
+      network interface eth11 ip add 172.16.208.1 mask 255.255.255.0 label 0
+      network interface eth11 speed auto
+      network interface eth11 duplex auto
+      network interface eth11 no switchport
+      network interface eth11 switchport mode access
+      network interface eth11 switchport trunk encapsulation dot1q
+      network interface eth11 switchport trunk native-vlan 1
+      network interface eth11 switchport access-vlan 1
+      network interface eth11 switchport trunk allowed-vlan 1-1000
+      network interface eth11 ha-metric 0
+      network interface eth11 attribute add eth11
+      network interface eth11 bandwidth 0Bps
+      network interface eth11 mss-adjust off
+      network interface eth11 mode-set ips
+      network interface eth11 reverse-path off
+      network interface eth11 gratuitous-arp-interval 0
+      network interface eth11 vsid 0
+      network interface eth11 vrid 0
+      network interface eth11 no shutdown
+      network interface eth12 mtu 1500
+      network interface eth12 speed auto
+      network interface eth12 duplex auto
+      network interface eth12 no switchport
+      network interface eth12 switchport mode access
+      network interface eth12 switchport trunk encapsulation dot1q
+      network interface eth12 switchport trunk native-vlan 1
+      network interface eth12 switchport access-vlan 1
+      network interface eth12 switchport trunk allowed-vlan 1-1000
+      network interface eth12 ha-metric 0
+      network interface eth12 attribute add eth12
+      network interface eth12 bandwidth 0Bps
+      network interface eth12 mss-adjust off
+      network interface eth12 mode-set ips
+      network interface eth12 reverse-path off
+      network interface eth12 gratuitous-arp-interval 0
+      network interface eth12 vsid 0
+      network interface eth12 vrid 0
+      network interface eth12 no shutdown
+      network interface eth13 mtu 1500
+      network interface eth13 speed auto
+      network interface eth13 duplex auto
+      network interface eth13 no switchport
+      network interface eth13 switchport mode access
+      network interface eth13 switchport trunk encapsulation dot1q
+      network interface eth13 switchport trunk native-vlan 1
+      network interface eth13 switchport access-vlan 1
+      network interface eth13 switchport trunk allowed-vlan 1-1000
+      network interface eth13 ha-metric 0
+      network interface eth13 attribute add eth13
+      network interface eth13 bandwidth 0Bps
+      network interface eth13 mss-adjust off
+      network interface eth13 mode-set ips
+      network interface eth13 reverse-path off
+      network interface eth13 gratuitous-arp-interval 0
+      network interface eth13 vsid 0
+      network interface eth13 vrid 0
+      network interface eth13 no shutdown
+      network interface eth14 mtu 1500
+      network interface eth14 speed auto
+      network interface eth14 duplex auto
+      network interface eth14 no switchport
+      network interface eth14 switchport mode access
+      network interface eth14 switchport trunk encapsulation dot1q
+      network interface eth14 switchport trunk native-vlan 1
+      network interface eth14 switchport access-vlan 1
+      network interface eth14 switchport trunk allowed-vlan 1-1000
+      network interface eth14 ha-metric 0
+      network interface eth14 attribute add eth14
+      network interface eth14 bandwidth 0Bps
+      network interface eth14 mss-adjust off
+      network interface eth14 mode-set ips
+      network interface eth14 reverse-path off
+      network interface eth14 gratuitous-arp-interval 0
+      network interface eth14 vsid 0
+      network interface eth14 vrid 0
+      network interface eth14 no shutdown
+      network interface eth15 mtu 1500
+      network interface eth15 speed auto
+      network interface eth15 duplex auto
+      network interface eth15 no switchport
+      network interface eth15 switchport mode access
+      network interface eth15 switchport trunk encapsulation dot1q
+      network interface eth15 switchport trunk native-vlan 1
+      network interface eth15 switchport access-vlan 1
+      network interface eth15 switchport trunk allowed-vlan 1-1000
+      network interface eth15 ha-metric 0
+      network interface eth15 attribute add eth15
+      network interface eth15 bandwidth 0Bps
+      network interface eth15 mss-adjust off
+      network interface eth15 mode-set ips
+      network interface eth15 reverse-path off
+      network interface eth15 gratuitous-arp-interval 0
+      network interface eth15 vsid 0
+      network interface eth15 vrid 0
+      network interface eth15 no shutdown
+      network interface eth16 mtu 1500
+      network interface eth16 speed auto
+      network interface eth16 duplex auto
+      network interface eth16 no switchport
+      network interface eth16 switchport mode access
+      network interface eth16 switchport trunk encapsulation dot1q
+      network interface eth16 switchport trunk native-vlan 1
+      network interface eth16 switchport access-vlan 1
+      network interface eth16 switchport trunk allowed-vlan 1-1000
+      network interface eth16 ha-metric 0
+      network interface eth16 attribute add eth16
+      network interface eth16 bandwidth 0Bps
+      network interface eth16 mss-adjust off
+      network interface eth16 mode-set ips
+      network interface eth16 reverse-path off
+      network interface eth16 gratuitous-arp-interval 0
+      network interface eth16 vsid 0
+      network interface eth16 vrid 0
+      network interface eth16 no shutdown
+      network interface eth17 mtu 1500
+      network interface eth17 speed auto
+      network interface eth17 duplex auto
+      network interface eth17 no switchport
+      network interface eth17 switchport mode access
+      network interface eth17 switchport trunk encapsulation dot1q
+      network interface eth17 switchport trunk native-vlan 1
+      network interface eth17 switchport access-vlan 1
+      network interface eth17 switchport trunk allowed-vlan 1-1000
+      network interface eth17 ha-metric 0
+      network interface eth17 attribute add eth17
+      network interface eth17 bandwidth 0Bps
+      network interface eth17 mss-adjust off
+      network interface eth17 mode-set ips
+      network interface eth17 reverse-path off
+      network interface eth17 gratuitous-arp-interval 0
+      network interface eth17 vsid 0
+      network interface eth17 vrid 0
+      network interface eth17 no shutdown
+      network spantree set mode off
+      network cdp_neighbors set cdpthru on
+      network mpls handle off
+      network session timeout default
+      network session timeout established 18000
+      network session timeout close 200
+      network session timeout udp 600
+      network session timeout other 7200
+      network session protocol default
+      network session icmp-redirect off
+      network session tcp-reset off
+      network session session-integrity on
+      network session only-syn-create on
+      network session packet-checksum off
+      network session syn-reset off
+      network session log-op delete on
+      network session log-op create off
+      network session log-op statistics off
+      network session quota tcp 0
+      network session quota udp 0
+      network session quota other 0
+      network session count off
+      network session count interval 5
+      network ra service stop
+      network port-statistic off
+      network port-statistic set port1 80 port2 8080 port3 20 port4 21 port5 110 port6 25
+      network port-statistic set statistic 1800
+      network port-statistic set send 1
+      network anti-proxy blacklist-handle off
+      network anti-proxy blacklist-timeout 3600
+      network anti-proxy alarm off
+      network anti-proxy tolerate-time 10
+      network arp limit off
+      network arp reverse-path on
+      network route intelligent-opt off
+      network route ip-probe on
+      network link-backup set master-id 0 slave-id 0
+      network link-backup stop
+      network natpt set inside_interface  outside_interface  v6_prefix 2000:ffff::/96 
+      system authset setdefault
+      system authset authfail set maxnum 5
+      system authset usermaxlogin set maxnum 10
+      system authset maxonlineadm set maxnum 32
+      system authset managermaxlogin set maxnum 32
+      system authset faillock set time 60
+      system authset passwd-type set type plain
+      system authset timeout set num 100
+      system authset get-lostinfo set type disable
+      system authset passwd-policy set-user policy weak first-login no min-length 6
+      system authset passwd-policy set-manager policy strong min-length 8
+      system authset secpolicy-set set before on after off after-timer 30
+      system authset manager-login-number set status off
+      aaa config reset
+      aaa auth-map modify server cert mapping-type default status valid
+      aaa sms clean
+      aaa sms modify server-addr 0.0.0.0 port 2016 id 0 time-out 5 outdate 10000 shared-secret ' '
+      aaa sms sms-type mode server
+      system top-policy set-ip ip 0.0.0.0 notify-port 2010 policy-port 2010 type master local no
+      system top-policy set-ip ip 0.0.0.0 notify-port 2010 policy-port 2010 type slave local no
+      network mroute clean
+      network ospf stop
+      network rip stop
+      network dns clear
+      network suitstate poll-interval val 4
+      network suitstate disable
+      ID 8002 define area add name area_eth0 attribute 'eth0 ' access on comment 'hhhhn mam '
+      ID 8034 define area add name trust attribute 'eth10 ' access on
+      ID 8035 define area add name dmz attribute 'eth11 ' access on
+      ID 8028 define host add name host_172.16.208.1 ipaddr '172.16.208.1 '
+      ID 8046 define host add name host_192.168.1.99 ipaddr '192.168.1.99 '
+      ID 8054 define host add name host_192.168.1.100 ipaddr '192.168.1.100 '
+      ID 8055 define host add name host_10.208.208.1 ipaddr '10.208.208.1 '
+      ID 8057 define host add name host_172.16.208.2 ipaddr '172.16.208.2 '
+      ID 8066 define host add name host_172.16.208.1* ipaddr '172.16.208.1 '
+      ID 8067 define host add name host_172.16.208.1() ipaddr '172.16.208.1 '
+      ID 8068 define host add name host_172.16.208.1_ ipaddr '172.16.208.1 '
+      ID 8069 define host add name host_172.16.208.1- ipaddr '172.16.208.1 '
+      ID 8070 define host add name host_172.16.208.1{} ipaddr '172.16.208.1 '
+      ID 8071 define host add name host_172.16.208.1: ipaddr '172.16.208.1 '
+      ID 8072 define host add name host_172.16.208.1; ipaddr '172.16.208.1 '
+      ID 8073 define host add name host_172.16.208.1/ ipaddr '172.16.208.1 '
+      ID 8074 define host add name host_172.16.208.1{ ipaddr '172.16.208.1 '
+      ID 8075 define host add name host_172.16.208.1, ipaddr '172.16.208.1 '
+      ID 8076 define host add name host_172.16.208.1. ipaddr '172.16.208.1 '
+      ID 8104 define host add name WS-172.16.209.1_32 ipaddr '172.16.209.1 '
+      ID 8105 define host add name WS-10.1.208.1_32 ipaddr '10.1.208.1 '
+      ID 8115 define host add name test_192.168.1.21 ipaddr '192.168.1.21 '
+      ID 8116 define host add name ju_10.10.217.21 ipaddr '10.10.217.21 '
+      ID 8123 define host add name topsec_10.1.208.11 ipaddr '10.1.208.11 '
+      ID 8124 define host add name topsec_172.16.209.21 ipaddr '172.16.209.21 '
+      ID 8129 define host add name WS-10.1.208.115_32 ipaddr '10.1.208.115 '
+      ID 8130 define host add name Host_10.196.208.15_32 ipaddr '10.196.208.15 '
+      ID 8131 define host add name Host_10.196.208.16_32 ipaddr '10.196.208.16 '
+      ID 8132 define host add name Host_10.196.208.17_32 ipaddr '10.196.208.17 '
+      ID 8133 define host add name Host_10.1.208.15_32 ipaddr '10.1.208.15 '
+      ID 8134 define host add name Host_10.1.208.16_32 ipaddr '10.1.208.16 '
+      ID 8135 define host add name Host_10.1.208.17_32 ipaddr '10.1.208.17 '
+      ID 8136 define host add name Host_172.16.208.15_32 ipaddr '172.16.208.15 '
+      ID 8137 define host add name Host_172.16.208.16_32 ipaddr '172.16.208.16 '
+      ID 8138 define host add name Host_172.16.208.17_32 ipaddr '172.16.208.17 '
+      ID 8146 define host add name WS-10.1.208.13_32 ipaddr '10.1.208.13 '
+      ID 8147 define host add name WS-172.16.209.13_32 ipaddr '172.16.209.13 '
+      ID 8150 define host add name ss ipaddr '1.1.1.1 '
+      ID 8156 define host add name WS-172.16.208.0_32 ipaddr '172.16.208.0 '
+      ID 8157 define host add name WS-10.1.208.0_32 ipaddr '10.1.208.0 '
+      ID 8168 define host add name WS-172.16.208.4_32 ipaddr '172.16.208.4 '
+      ID 8171 define host add name WS-10.1.208.6_32 ipaddr '10.1.208.6 '
+      ID 8172 define host add name WS-172.16.208.6_32 ipaddr '172.16.208.6 '
+      ID 8180 define host add name WS-172.16.22.5_32 ipaddr '172.16.22.5 '
+      ID 8186 define host add name topsec-10.1.208.31 ipaddr '10.1.208.31 '
+      ID 8187 define host add name topsec-172.16.208.21 ipaddr '172.16.208.21 '
+      ID 8031 define subnet add name net_192.168.1.0_29 ipaddr 192.168.1.0 mask 255.255.255.248
+      ID 8001 define range add name any ip1 0.0.0.0 ip2 255.255.255.255
+      ID 8030 define range add name range_10.1.208.1_2 ip1 10.1.208.1 ip2 10.1.208.2
+      ID 8139 define range add name range_10.196.208.15 ip1 10.196.208.15 ip2 10.196.208.15
+      ID 8140 define range add name range_10.1.208.15 ip1 10.1.208.15 ip2 10.1.208.15
+      ID 8141 define range add name range_172.16.208.15 ip1 172.16.208.15 ip2 172.16.208.15
+      ID 8176 define range add name WS-172.16.208.6-9 ip1 172.16.208.6 ip2 172.16.208.9
+      ID 8183 define range add name WS-172.16.22.5-6 ip1 172.16.22.5 ip2 172.16.22.6
+      ID 8185 define range add name WS-172.16.22.5-61 ip1 172.16.22.5 ip2 172.16.22.6
+      ID 8190 define range add name topsec-10.1.208.7-8 ip1 10.1.208.7 ip2 10.1.208.8
+      ID 8191 define range add name topsec-172.16.208.16-17 ip1 172.16.208.16 ip2 172.16.208.17
+      ID 8061 define group_address add name add_g1 member 'host_172.16.208.1 net_192.168.1.0_29 range_10.1.208.1_2 '
+      ID 8077 define group_address add name add_g1* member 'host_172.16.208.1 range_10.1.208.1_2 '
+      ID 8078 define group_address add name add_g1( member 'host_172.16.208.1 range_10.1.208.1_2 '
+      ID 8079 define group_address add name add_g1) member 'host_172.16.208.1 range_10.1.208.1_2 '
+      ID 8080 define group_address add name add_g1_ member 'host_172.16.208.1 range_10.1.208.1_2 '
+      ID 8081 define group_address add name add_g1- member 'host_172.16.208.1 range_10.1.208.1_2 '
+      ID 8082 define group_address add name add_g1: member 'host_172.16.208.1 range_10.1.208.1_2 '
+      ID 8083 define group_address add name add_g1; member 'host_172.16.208.1 range_10.1.208.1_2 '
+      ID 8084 define group_address add name add_g1{ member 'host_172.16.208.1 range_10.1.208.1_2 '
+      ID 8085 define group_address add name add_g1} member 'host_172.16.208.1 range_10.1.208.1_2 '
+      ID 8086 define group_address add name add_g1/ member 'host_172.16.208.1 range_10.1.208.1_2 '
+      ID 8087 define group_address add name add_g1, member 'host_172.16.208.1 range_10.1.208.1_2 '
+      ID 8088 define group_address add name add_g1. member 'host_172.16.208.1 range_10.1.208.1_2 '
+      ID 8089 define group_address add name add_g11
+      ID 8036 define service add name srv1 protocol 6 port 228
+      ID 8037 define service add name srv2 protocol 17 port 225 port2 229
+      ID 8038 define service add name srv3 protocol 1 port 222
+      ID 8062 define service add name srv5 protocol 1 port 12 port2 2 comment 'hehe nmsl'
+      ID 8102 define service add name srv11 protocol 555 port 22
+      ID 8103 define service add name srv12 protocol 55556 port 22
+      ID 8125 define service add name tcp_80 protocol 6 port 80 comment 'NAP managed service'
+      ID 8148 define service add name TCP-77 protocol 6 port 77 comment 'create by NAP 4156aae6-c960-46f9-854a-1e9f91a4878e'
+      ID 8158 define service add name TCP-778 protocol 6 port 778 comment 'create by NAP 3952d6b3-67bf-4c48-ac25-c70ff66ca4b0'
+      ID 8178 define service add name TCP-222 protocol 6 port 222 comment 'Created at 2020-05-13 16:22:53'
+      ID 8181 define service add name TCP-8080 protocol 6 port 8080 comment 'create by NAP b7c55a1c-20ea-4923-9930-e7917e5273f7'
+      ID 8188 define service add name tcp28 protocol 6 port 28 comment 'NAP managed service'
+      ID 8192 define service add name tcp-101 protocol 6 port 101 comment 'NAP managed service'
+      ID 8041 define group_service add name Srvg_1 member 'Quotd(TCP) srv1 tcp_80 '
+      ID 8042 define schedule add name schedule_1 cyctype weekcyc week 12345 start 12:00 end 23:59
+      ID 8043 define schedule add name schedule_2 cyctype weekcyc week 67 start 00:00 end 23:59
+      ID 8045 define schedule add name schedule_4 cyctype yearcyc sdate 2010-01-01 stime 00:00:00 edate 2010-01-02 etime 23:59:59
+      ID 8090 define schedule add name schedule_1* cyctype weekcyc week 123 start 12:00 end 12:02
+      ID 8091 define schedule add name schedule_1( cyctype weekcyc week 123 start 12:00 end 12:02
+      ID 8092 define schedule add name schedule_1) cyctype weekcyc week 123 start 12:00 end 12:02
+      ID 8093 define schedule add name schedule_1_ cyctype weekcyc week 123 start 12:00 end 12:02
+      ID 8094 define schedule add name schedule_1- cyctype weekcyc week 123 start 12:00 end 12:02
+      ID 8095 define schedule add name schedule_1: cyctype weekcyc week 123 start 12:00 end 12:02
+      ID 8096 define schedule add name schedule_1; cyctype weekcyc week 123 start 12:00 end 12:02
+      ID 8097 define schedule add name schedule_1{ cyctype weekcyc week 123 start 12:00 end 12:02
+      ID 8098 define schedule add name schedule_1} cyctype weekcyc week 123 start 12:00 end 12:02
+      ID 8099 define schedule add name schedule_1/ cyctype weekcyc week 123 start 12:00 end 12:02
+      ID 8100 define schedule add name schedule_1, cyctype weekcyc week 123 start 12:00 end 12:02
+      ID 8101 define schedule add name schedule_1. cyctype weekcyc week 123 start 12:00 end 12:02
+      ar dfi-params set dst_num_limits 128
+      ar dfi-params set multithread_limits 4
+      ar dfi-params set activity_limits 8
+      ar dfi-params set activity 2
+      ar dfi-params set expires 1800
+      ar dfi-params set monitor_timer 4
+      qos config aging set 30min
+      qos config queuelen set 60
+      ID 8154 qos rule add name QOSAUTO_20200427114147 policy-type exclusive down-share-limit 222KBps down-exclusive-limit 100KBps down-priority 3
+      ar interface_quota set name eth0 value 0
+      ar interface_quota set name eth1 value 0
+      ar interface_quota set name eth10 value 0
+      ar interface_quota set name eth11 value 0
+      ar interface_quota set name eth12 value 0
+      ar interface_quota set name eth13 value 0
+      ar interface_quota set name eth14 value 0
+      ar interface_quota set name eth15 value 0
+      ar interface_quota set name eth16 value 0
+      ar interface_quota set name eth17 value 0
+      ar group_quota set_flow name P2PЂ՘` flow 0
+      ar group_quota set_session name P2PЂ՘` session 0
+      ar group_quota set_flow name P2PӴƵ` flow 0
+      ar group_quota set_session name P2PӴƵ` session 0
+      ar group_quota set_flow name P2P˓Ƶ` flow 0
+      ar group_quota set_session name P2P˓Ƶ` session 0
+      ar group_quota set_flow name ¼´ʱͨѶ` flow 0
+      ar group_quota set_session name ¼´ʱͨѶ` session 0
+      ar group_quota set_flow name ԯӴµ绰` flow 0
+      ar group_quota set_session name ԯӴµ绰` session 0
+      ar group_quota set_flow name θʏӸѐ` flow 0
+      ar group_quota set_session name θʏӸѐ` session 0
+      ar group_quota set_flow name µ蘓ʌϱ` flow 0
+      ar group_quota set_session name µ蘓ʌϱ` session 0
+      ar group_quota set_flow name ²ƾ­ɭ¼þ` flow 0
+      ar group_quota set_session name ²ƾ­ɭ¼þ` session 0
+      ar group_quota set_flow name θçԎϷ` flow 0
+      ar group_quota set_session name θçԎϷ` session 0
+      ar group_quota set_flow name ʧ½»θç` flow 0
+      ar group_quota set_session name ʧ½»θç` session 0
+      ar group_quota set_flow name θҳ˓Ƶ` flow 0
+      ar group_quota set_session name θҳ˓Ƶ` session 0
+      ar group_quota set_flow name θҳӴƵ` flow 0
+      ar group_quota set_session name θҳӴƵ` session 0
+      ar group_quota set_flow name θƌ´洢` flow 0
+      ar group_quota set_session name θƌ´洢` session 0
+      ar group_quota set_flow name θҳԊФ` flow 0
+      ar group_quota set_session name θҳԊФ` session 0
+      ar group_quota set_flow name ¼ԃ݋񰁠 flow 0
+      ar group_quota set_session name ¼ԃ݋񰁠 session 0
+      ar group_quota set_flow name ±뗼Эө` flow 0
+      ar group_quota set_session name ±뗼Эө` session 0
+      ar group_quota set_flow name Զ³ٖ̿ǀ󾟦low 0
+      ar group_quota set_session name Զ³ٖ̿ǀ󾟳ession 0
+      ar group_quota set_flow name ˽¾ݿだ flow 0
+      ar group_quota set_session name ˽¾ݿだ session 0
+      ar group_quota set_flow name ӆ¶¯Ӧԃ` flow 0
+      ar group_quota set_session name ӆ¶¯Ӧԃ` session 0
+      ar group_quota set_flow name HTTPӦԃ` flow 0
+      ar group_quota set_session name HTTPӦԃ` session 0
+      ar group_quota set_flow name ɭ¼þ¸󁞠flow 0
+      ar group_quota set_session name ɭ¼þ¸󁞠session 0
+      ar group_quota set_flow name Ǥ̻Ӧԃ` flow 0
+      ar group_quota set_session name Ǥ̻Ӧԃ` session 0
+      ar tcp-quota set 0
+      ar udp-quota set 0
+      ar other-quota set 0
+      ar max-session set 0
+      ar monitor-switch set off
+      ar flow_log set off
+      ar dfi off
+      ar dev statistic off
+      ar rules autoupdate set dayofweek 7 time 23:6 url topsec type ar enable yes
+      anti-spam reset
+      anti-spam rbl clean
+      anti-spam rbl server add name cbl server-addr cbl.anti-spam.org.cn enable on
+      anti-spam rbl server add name xbl server-addr xbl.spamhaus.org enable off
+      anti-spam rbl server add name dnsbl server-addr dnsbl.njabl.org enable off
+      anti-spam greylist timeset repeat 4
+      anti-spam greylist timeset waittime 31
+      anti-spam greylist timeset greylisttime 36
+      anti-spam greylist workingenable on
+      anti-spam greylist workingset hour1 8 min1 0 hour2 18 min2 0
+      anti-spam policy clean
+      dpi policy clean
+      ID 8019 dpi policy add net 0.0.0.0 mask 0.0.0.0 protocol tcp port 21 name ftp enable yes
+      ID 8020 dpi policy add net 0.0.0.0 mask 0.0.0.0 protocol tcp port 25 name smtp enable yes
+      ID 8021 dpi policy add net 0.0.0.0 mask 0.0.0.0 protocol udp port 69 name tftp enable yes
+      ID 8022 dpi policy add net 0.0.0.0 mask 0.0.0.0 protocol tcp port 80 name http enable yes
+      ID 8023 dpi policy add net 0.0.0.0 mask 0.0.0.0 protocol tcp port 110 name pop3 enable yes
+      ID 8024 dpi policy add net 0.0.0.0 mask 0.0.0.0 protocol tcp port 1521 name sqlnet enable yes
+      ID 8025 dpi policy add net 0.0.0.0 mask 0.0.0.0 protocol tcp port 23 name telnet enable yes
+      ID 8026 dpi policy add net 0.0.0.0 mask 0.0.0.0 protocol udp port 53 name dns enable yes
+      dpi max-connection set 60000
+      dpi global url-lib-update set time 0:0
+      dpi global url-lib-update set host
+      dpi global webfilter-update set time 0:0
+      dpi global webfilter-update set host
+      dpi global tcp-splice enable on
+      dpi global mail-warning subject '´̓ʼþΥ·´°²ȫ²ࠂҧ
+      dpi global mail-warning body 'θ¹ٌ⊾:\r\n********************************\r\n\r\n´̓ʼþΥ·´°²ȫ²ࠂԣ¬±»¹򛱜n\r\n********************************\r\n\r\n'
+      dpi global load-balance http least-connection
+      dpi global load-balance ftp least-connection
+      dpi global load-balance smtp least-connection
+      dpi global load-balance pop3 least-connection
+      dpi global load-balance imap least-connection
+      dpi global freeram_limit set 100
+      ids attack clear
+      ids source-check off
+      ids white-list-check off
+      ids tcp-trust-check off
+      ids sessions set 10
+      ids list-expire-time set 30
+      ids packet set 5
+      ids max-source set 10000
+      ids max-destination set 5000
+      ids expire-time set 60
+      ids log set off
+      ID 8160 nat policy add srcarea 'dmz ' orig-src 'Host_172.16.208.15_32 ' orig-dst 'Host_10.196.208.16_32 ' trans-dst Host_10.1.208.15_32 comment 'dnat'
+      ID 8153 nat policy add srcarea 'trust ' dstarea 'dmz ' orig-src 'Host_10.1.208.15_32 ' orig-dst 'Host_172.16.208.15_32 ' orig-service 'TCP-77 ' orig-sport 'tcp_80 ' trans-src Ho
+      st_10.196.208.15_32 comment 'snat'
+      ID 8058 nat policy add srcarea 'area_eth0 ' dstarea 'trust ' orig-src 'host_192.168.1.99 ' orig-dst 'host_172.16.208.1 ' trans-src host_10.208.208.1
+      ID 8059 nat policy add srcarea 'trust ' orig-src 'host_172.16.208.1 host_192.168.1.99 host_192.168.1.100 ' orig-dst 'host_10.208.208.1 Host_10.196.208.15_32 ' trans-dst host_192
+      .168.1.99
+      ID 8060 nat policy add srcarea 'area_eth0 ' orig-src 'host_192.168.1.99 ' orig-dst 'host_172.16.208.1 ' trans-src host_172.16.208.1 trans-dst host_172.16.208.1
+      ID 8152 nat policy add
+      ID 8166 nat policy add srcarea 'trust ' dstarea 'dmz ' orig-src 'Host_10.1.208.15_32 host_192.168.1.99 host_192.168.1.100 ' orig-dst 'Host_172.16.208.15_32 Host_172.16.208.17_32
+      ' orig-service 'tcp_80 ' trans-src Host_10.196.208.15_32
+      ID 8165 nat policy add srcarea 'trust ' dstarea 'dmz ' orig-src 'Host_10.1.208.15_32 ' orig-dst 'Host_172.16.208.15_32 ' trans-src Host_10.196.208.15_32
+      ID 8162 nat policy add srcarea 'trust ' orig-src 'Host_10.1.208.15_32 ' orig-dst 'Host_10.196.208.17_32 ' trans-src Host_10.196.208.15_32 trans-dst Host_172.16.208.15_32 comment
+      'bnat'
+      ID 8164 nat policy add srcarea 'trust dmz ' orig-src 'Host_10.1.208.15_32 ' orig-dst 'Host_10.196.208.17_32 ' orig-service 'TCP-77 ' orig-sport 'QQ tcp_80 ' trans-src Host_10.19
+      6.208.15_32 trans-dst Host_172.16.208.15_32 trans-service srv1 pat no comment 'bnat'
+      ID 8179 nat policy add srcarea 'trust ' dstarea 'dmz ' orig-src 'range_10.1.208.15 ' orig-dst 'Host_172.16.208.15_32 ' orig-service 'TCP-222 ' trans-src range_10.196.208.15 comm
+      ent 'Created at 2020-05-13 16:22:53'
+      nat enhancement switch accelerate off 
+      ID 8163 firewall policy add action accept srcarea 'trust ' dstarea 'dmz ' src 'Host_10.1.208.15_32 ' dst 'Host_10.196.208.17_32 ' comment 'bnat_policy'
+      ID 8161 firewall policy add action accept srcarea 'dmz ' dstarea 'trust ' src 'Host_172.16.208.15_32 ' dst 'Host_10.1.208.15_32 ' comment 'dnat_policy'
+      ID 8155 firewall policy add action accept srcarea 'trust ' dstarea 'dmz ' src 'Host_10.1.208.15_32 ' dst 'Host_172.16.208.15_32 ' comment 'snat_policy'
+      ID 8047 firewall policy add action accept srcarea 'area_eth0 ' dstarea 'trust ' src 'host_192.168.1.99 ' dst 'range_10.1.208.1_2 '
+      ID 8052 firewall policy add action accept service 'LDAP ' schedule 'schedule_1 schedule_2 schedule_4 '
+      ID 8053 firewall policy add action accept srcarea 'area_eth0 ' dstarea 'trust dmz ' src 'host_192.168.1.99 host_192.168.1.100 ' dst 'range_10.1.208.1_2 host_172.16.208.1 ' servi
+      ce 'LDAP PPTP '
+      ID 8106 firewall policy add action accept srcarea 'dmz ' dstarea 'trust ' src 'WS-172.16.209.1_32 ' dst 'WS-10.1.208.1_32 ' service 'SSH ' comment 'Created at 2020-04-13 16:40:4
+      9'
+      ID 8151 firewall policy add action accept srcarea 'trust ' src 'WS-10.1.208.13_32 ' dst 'WS-172.16.209.13_32 ' service 'TCP-77 ' comment 'create by NAP d3102cd8-aa13-470b-95c2-0
+      b78aa4cdd7f'
+      ID 8149 firewall policy add action accept srcarea 'trust ' src 'WS-10.1.208.13_32 ' dst 'WS-172.16.209.13_32 ' service 'TCP-77 ' comment 'create by NAP 4156aae6-c960-46f9-854a-1
+      e9f91a4878e'
+      ID 8065 firewall policy add action accept service 'LDAP ' schedule 'schedule_1 schedule_2 schedule_4 ' comment 'hhhhnii mmm '
+      ID 8126 firewall policy add action accept src 'topsec_10.1.208.11 ' dst 'topsec_172.16.209.21 ' service 'tcp_80 ' comment 'create by NAP 3263f1c1-9e92-426c-abbc-a097d09353a8'
+      ID 8159 firewall policy add action accept srcarea 'dmz ' dstarea 'trust ' src 'WS-172.16.208.0_32 ' dst 'WS-10.1.208.0_32 ' service 'TCP-778 ' comment 'create by NAP 3952d6b3-67
+      bf-4c48-ac25-c70ff66ca4b0'
+      ID 8167 firewall policy add action accept srcarea 'dmz ' dstarea 'trust ' src 'WS-172.16.208.0_32 ' dst 'WS-10.1.208.0_32 ' service 'TCP-778 ' comment 'create by NAP 0ec55bbf-7d
+      8b-45ee-ac53-faa9d729e2b5'
+      ID 8169 firewall policy add action accept srcarea 'dmz ' dstarea 'trust ' src 'WS-172.16.208.4_32 ' dst 'WS-10.1.208.0_32 ' service 'TCP-778 ' comment 'create by NAP 251cbf45-8a
+      5f-46df-877e-f80adf6f8de9'
+      ID 8174 firewall policy add action accept srcarea 'dmz ' dstarea 'trust ' src 'Host_172.16.208.16_32 ' dst 'Host_10.1.208.16_32 ' service 'SSH ' comment 'Created at 2020-05-08 1
+      6:53:13'
+      ID 8173 firewall policy add action accept srcarea 'dmz ' dstarea 'trust ' src 'Host_172.16.208.16_32 ' dst 'Host_10.1.208.16_32 ' service 'SSH ' comment 'Created at 2020-05-08 1
+      6:51:55'
+      ID 8177 firewall policy add action accept srcarea 'trust ' dstarea 'dmz ' src 'WS-10.1.208.6_32 ' dst 'WS-172.16.208.6-9 ' service 'HTTP ' comment 'create by NAP 1067f43f-0b2a-4
+      2b8-8209-e382f0ca14cc'
+      ID 8175 firewall policy add action accept srcarea 'trust ' dstarea 'dmz ' src 'WS-10.1.208.6_32 ' dst 'WS-172.16.208.6_32 ' service 'HTTP ' comment 'create by NAP 4a16b90f-3ab7-
+      4fa7-a877-17c6285b7ec1'
+      ID 8184 firewall policy add action accept srcarea 'dmz ' dstarea 'trust ' src 'WS-172.16.22.5-6 ' dst 'WS-10.1.208.6_32 ' service 'TCP-8080 ' comment 'create by NAP 692cf444-bdc
+      e-4758-a73d-8f8118917611'
+      ID 8182 firewall policy add action accept srcarea 'dmz ' dstarea 'trust ' src 'WS-172.16.22.5_32 ' dst 'WS-10.1.208.6_32 ' service 'TCP-8080 ' comment 'create by NAP b7c55a1c-20
+      ea-4923-9930-e7917e5273f7'
+      ID 8189 firewall policy add action accept srcarea 'trust ' dstarea 'dmz ' src 'topsec-10.1.208.31 ' dst 'topsec-172.16.208.21 ' service 'tcp28 ' comment 'create by NAP 8c67bc83-
+      05bd-4a52-8bde-ce8692cc98b4'
+      ID 8193 firewall policy add action accept srcarea 'trust ' dstarea 'dmz ' src 'topsec-10.1.208.7-8 ' dst 'topsec-172.16.208.16-17 ' service 'tcp-101 ' comment 'create by NAP b54
+      5a3b5-4426-4205-adfa-117bd9680fb0'
+      firewall enhancement switch accelerate on overlap-exam off
+      log log set ipaddr '192.168.1.253' port UDP:514 logtype syslog trans disable trans_gather yes log_lang english
+      log log log_key set
+      log log log_crypt disable
+      log log type_set add none
+      log log level_set 0
+      system topguard func disable
+      system topguard set freq 3600
+      system topguard set option enable cpuload
+      system topguard set option enable memload
+      system topguard set option enable curconn
+      system topguard set option enable cps
+      system topguard set option enable flow
+      system topguard set option enable hamode
+      system topguard set option enable hastat
+      pf idsserver seq off
+      pf service log off
+      ID 8013 pf service add name ping area area_eth0 addressname any
+      ID 8014 pf service add name webui area area_eth0 addressname any
+      ID 8027 pf service add name ssh area area_eth0 addressname any
+      ID 8048 pf service add name ssh area trust addressname any
+      ID 8049 pf service add name ping area trust addressname any
+      ID 8050 pf service add name ssh area dmz addressname any
+      ID 8051 pf service add name ping area dmz addressname any
+      pf idbprule log off
+      pf idbprule drop-log off
+      pf rule set default action accept log no
+      l3ipmac cfg snmp-get-interval 30
+      l3ipmac cfg snmp-get-timeout 5
+      l3ipmac cfg snmp-get-retrytimes 1
+      ha clean
+      ha mode as
+      ha as-vrid 100
+      ha gratuitous-arp enable
+      ha hello-interval 1
+      ha ip-probe disable
+      ha rtosync ack disable
+      ha rtosync ack time-out 10
+      ha rtosync ack resend-count 2
+      ha rtosync fast disable
+      ha rtconfig-sync disable
+      ha disable
+      ha sync-incremental disable
+      network pptp set port 1723
+      network l2tp set port 1701
+      system sshd start
+      system telnetd start
+      system httpd start
+      system monitord start
+      system probe-time set 10
+      system probe-server-time set 3
+      system probe-package set 1
+      system webui idle-timeout 0
+      system webui ssl-verify-client no
+      system webui max-client 10
+      system webui language chinese
+      system admin-auth-mode local
+      system netflow set ipaddr '1.2.3.4'
+      system netflow set port udp:9991
+      system netflow set transfer disable
+      system config upload-set stop
+      avse update-stream reset
+      avse update-stream host default
+      avse update-stream update-time 04:35
+      system sync-manager on
+      system warning set cpu 0 memory 0 session 0 port-flow-rate 0Mbps
+      dns switch off 
+      system vline_management disable
+      system ssh-limit set 32
+      system modsec autoupdate set time 23:30 url TOPSEC enable yes
+      system config implement
+welcome: ""
+invalid_cmd_error: "error-8010: invalid input, parse error"

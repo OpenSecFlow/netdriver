@@ -1,0 +1,736 @@
+# Venustech USG
+start_mode: login
+hostname: venustech
+line_feed: "\r\n"
+enable_password: ""
+modes:
+  login:
+    prompt: ">"
+    switch_mode_cmds:
+      - "enable"
+      - "exit"
+    cmds: 
+      - cmd: "enable"
+        output: ""
+  enable:
+    prompt: "#"
+    switch_mode_cmds:
+      - "configure terminal"
+      - "exit"
+      - "disable"
+    cmds: []
+  config:
+    prompt: "(config)#"
+    switch_mode_cmds:
+      - "exit"
+      - "end"
+      - "disable"
+    cmds: []
+common:
+  - cmd: "show ip route"
+    output: |
+      Codes: K - kernel route, C - connected, S - static,  I - ISP, R - RIP, O - OSPF,
+       D - DHCP, P - PPPOE, > - selected route, * - FIB route
+
+      S>* 0.0.0.0/0 [1/0] via 172.21.1.1, mgt weight: 1
+      K   127.0.0.0/8 via 127.0.0.1, lo inactive weight: 0
+      C>* 127.0.0.0/8 is directly connected, lo weight: 0
+      C>* 172.21.1.0/24 is directly connected, mgt weight: 0
+      K>* 172.21.1.138/32 is directly connected, mgt weight: 0
+  - cmd: "show ipv6 route"
+    output: |
+      Codes: K - kernel route, C - connected, S - static, R - RIPng, O - OSPFv3,
+       B - BGP, * - FIB route.
+
+      C>* ::1/128 is directly connected, lo weight: 0
+      C * fe80::/64 is directly connected, tunssl weight: 0
+      C * fe80::/64 is directly connected, ge0/1 weight: 0
+      C * fe80::/64 is directly connected, ge0/0 weight: 0
+      C>* fe80::/64 is directly connected, mgt weight: 0
+  - cmd: "show running-config"
+    output: |
+      !config
+      authorized-table audit
+          description Default authority table used for audit administrator
+          authorized read log-config 
+          authorized write log-config 
+      !
+      authorized-table admin
+          description Default authority table with all authority enable
+          authorized read all 
+          authorized write all 
+      !
+      authorized-table useradmin
+          description Default authority table used for useradmin administrator
+          authorized read admin-user 
+          authorized write admin-user 
+      !
+      !
+      hardware watchdog disable
+      !
+      user administrator admin local secret $d2CdUUgWEY87aCr9lHTAezhUxxWyKUeGth55dj2VZeTYLFgc3U1QKPDH3oc/CzU06a2FTJyNEcjJIQNVFMWFDw== authorized-table admin  
+
+      user administrator admin local secret-second $NhNdqVhmUqoL3v7mKAAcTE62kB4nikQjOiPNKBHq3BkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= authorized-table admin  
+
+      user administrator admin authorized-address first 0.0.0.0/0
+
+      user administrator admin description default super administrator
+
+      --More-- (7% of 13459 bytes)
+                                  
+      user administrator audit local secret $I/1sOFUP5vFFiHTPS3+kTkkTh9DqaLthpw4V4JYohYGheIvXv6w67JeJckyUcmGyLY6KsSUg2mXT2PJw4PCsOA== authorized-table audit  
+
+      user administrator audit local secret-second $Ivi8tXeuv8Y0qFbdFAYRIzPgYs90Iz8nLXs4KhfvRDEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= authorized-table audit  
+
+      user administrator audit description default audit administrator
+
+      user administrator useradmin local secret $3GLX5etsqU/EjgE9JshL5nVAm0aXt0Z4oTAuODZ46IIATYPHX48qNvGF1MHphRlSjRUyp73Sp+nbrY6KHD4YbQ== authorized-table useradmin  
+
+      user administrator useradmin local secret-second $GDxQPHhUpBD4OH7SeuObrEAn6vGM/K9rmz5cEx0xiw0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= authorized-table useradmin  
+
+      user administrator useradmin description default user administrator
+
+      auth-code is-need disable
+      !
+      !
+      language chinese 
+      !
+      web-client-verify disable
+
+      server http-port default https-port default
+
+      server-ssh port default
+
+      server-telnet port default
+
+      !
+
+      log system-info memory upto notifications
+      vcloud encrypt enable
+      !
+
+      forward-log-limit 20
+      df-flag-check disable
+      healthcheck dns-requery-interval 60
+      address-domain-timer set 20
+      --More-- (17% of 13459 bytes)
+                                  
+      address-domain-up-num set 20
+      address-domain-member-rtt set 3600
+      address-domain www.gg.com
+      address-domain www.baidu.com
+      !
+      timezone 57 
+      !
+      cacenter ca crl config period 30
+      !
+      !
+      detect-stat limit-cpu 80
+      detect-stat limit-insert-db 10000
+      report engine statistics enable
+      !
+      !
+      !
+
+      !
+      interface mgt
+      ip address 172.21.1.138/24
+
+      allow https
+      allow ssh
+      allow ping
+      !
+      --More-- (20% of 13459 bytes)
+                                  
+      interface ge0/0
+      !
+      interface ge0/1
+      !
+      interface lo
+      !
+      !!
+      !
+      address WS-172.21.1.65_32
+      host-address 172.21.1.65
+      host-address 11.1.1.1
+      address WS-127.0.0.123_32
+      host-address 127.0.0.123
+      address WS-127.0.0.87_32
+      host-address 127.0.0.87
+      address WS-172.1.1.45_32
+      host-address 172.1.1.45
+      address WS-127.0.0.69_32
+      host-address 127.0.0.69
+      address WS-19.1.1.3_32
+      host-address 19.1.1.3
+      address Net-127.1.1.0_24
+      net-address 127.1.1.0/24
+      --More-- (23% of 13459 bytes)
+                                  
+      address WS-127.0.0.33_32
+      host-address 127.0.0.33
+      address Net-2.2.20.0_24
+      net-address 2.2.20.0/24
+      address WS-19.1.1.66_32
+      host-address 19.1.1.66
+      address WS-19.5.4.4-69
+      range-address 19.5.4.4 19.5.4.69
+      address WS-19.1.1.55_32
+      host-address 19.1.1.55
+      address WS-19.5.5.6-89
+      range-address 19.5.5.6 19.5.5.89
+      address WS-16.2.2.2_32
+      host-address 16.2.2.2
+      address WS-127.0.0.82_32
+      host-address 127.0.0.82
+      address WS-12.1.1.101_32
+      host-address 12.1.1.101
+      !
+      address-v6 WS-::1_128
+      host-v6 ffff:ffff::1
+      address-v6 Net-fe80::_64
+      address-v6 WS-fe80::6_128
+      --More-- (27% of 13459 bytes)
+                                  
+      !
+      address-group 202401301417_6e1d
+        address-object WS-127.0.0.69_32
+        address-object Net-127.1.1.0_24
+        address-object WS-127.0.0.33_32
+      address-group 202401301417_5320
+        address-object WS-19.1.1.3_32
+        address-object Net-2.2.20.0_24
+      address-group 202401301438_1987
+        address-object WS-19.1.1.55_32
+        address-object WS-19.5.5.6-89
+      address-group 202401301429_625f
+        address-object www.gg.com
+        address-object www.baidu.com
+        address-object WS-19.1.1.66_32
+      !
+      service ICMP-any
+      service icmp-any
+      service IPv4
+      ip 4
+
+      service TCP-98
+      tcp dest 98
+      service TCP-45
+      --More-- (31% of 13459 bytes)
+                                  
+      tcp dest 45
+      service TCP-56
+      tcp dest 56
+      tcp dest 89
+      service TCP-96
+      tcp dest 96
+      service TCP-85-95
+      tcp dest 85 95
+      service UDP-56:89-96
+      udp dest 89 96 source 56
+      !
+      service-group 202401301148_c6fc
+      service-object TCP-98
+      service-object TCP-45
+      service-group 202401301417_4c5d
+      service-object TCP-56
+      service-object TCP-96
+      service-object TCP-85-95
+      service-object UDP-56:89-96
+      !
+      schedule recurring Schedule_08d84048ee6f3176
+      absolute 23-01-30 11:00:00 31-01-27 11:00:00
+      periodic 04:00:00 09:00:00 monday null null null null null null
+      --More-- (35% of 13459 bytes)
+                                  
+      schedule recurring Schedule_7c039a3f9a703aec
+      periodic 00:00:00 03:00:00 monday tuesday wednesday thursday friday saturday sunday
+      periodic 04:00:00 09:00:00 monday null null null null null null
+      schedule recurring Schedule_W_12_000000_020000
+      periodic 00:00:00 02:00:00 monday tuesday null null null null null
+      schedule recurring Schedule_DAILY_110000_140000
+      periodic 11:00:00 14:00:00 monday tuesday wednesday thursday friday saturday sunday
+      periodic 11:02:00 14:00:00 monday tuesday wednesday thursday friday saturday sunday
+      !
+      zone a
+      include interface ge0/0
+      zone b
+      include interface ge0/1
+      !
+      router rip
+      !
+      ips set All
+      description 除网络娱乐类之外的事件
+      ips set Mid_high
+      description 包含中高级事件
+      ips set Zombie_Worm_Trojan
+      description 包含僵尸、木马、蠕虫事件
+      ips set Web-set
+      --More-- (41% of 13459 bytes)
+                                  
+      description 网页相关的攻击事件
+      !
+      !
+      !
+      !
+      ipsec-ha disable
+      fast-ipsec disable
+      ipsec multi-core-balance disable
+      ipsec-allow-nat disable
+      ipsec-high-performance disable
+      sslvpn
+
+      sysmon
+      !
+
+
+      healthcheck ICMP icmp
+      interval 16
+      maxretrys 3
+      timeout 5
+
+      ip route 0.0.0.0/0 172.21.1.1
+      !
+      !
+      !
+
+      --More-- (43% of 13459 bytes)
+                                  
+      !
+
+      !
+      global-dest-persist disable
+      global-dest-persist timeout 30
+      global-dest-persist mask 255.255.255.0
+      global-ipv6-dest-persist mask 64
+      !
+      ftp_check enable
+      sip_check disable
+      h323_check disable
+      rtsp_check disable
+      pptp_check disable
+      oracle_check disable
+      !
+      !
+      ospf-config
+      !
+      ospf6-config
+      !
+      blacklist-group default enable
+      blacklist-group non_manually_addition_block enable
+      blacklist-group abnormal_assets_block enable valid_time_type min timeout 0 configtime 24-01-29 17:39:26
+      !
+      --More-- (47% of 13459 bytes)
+                                  
+      blacklist enable
+      blacklist timeout-del-off
+      blacklist match type sip
+      domain-blacklist disable
+      whitelist disable
+      whitelist match type sip
+      !
+      !
+      ct-log regular-report-num 1000
+      !
+      iot-terminal-detect udp-ports 53,69,123,161,162,520,1701,1812,
+      iot-terminal-detect switch-linkage off
+      iot-terminal-detect switch-linkage-timeout 1
+      iot-terminal-detect switch-linkage-interval 30
+      iot-terminal-detect cpu-limit 50
+      !
+      tcp full-connect-state all-connect
+      tcp-congestion-control-bbr disable 
+      tianxun-interaction
+      !
+      bind-interface disable
+      !
+      !
+      --More-- (50% of 13459 bytes)
+                                  
+      !
+      !
+      !
+      apt-file *.exe enable
+      apt-file *.dll enable
+      apt-file *.sys enable
+      apt-file *.js enable
+      apt-file *.pdf enable
+      !
+      apt-file any disable
+      !
+      !
+      web-security-profile default sql-enable deny xss-enable deny
+      !
+      tcp profile tcp
+        set rst_timeout
+        set tw_recycle
+        set delayed_ack
+        no set proxy_mss
+        no set proxy_opt
+        no set nagle
+        no set deferred
+        no set ts
+      --More-- (53% of 13459 bytes)
+                                  
+        no set wscale
+        no set sack
+
+      ssl-client-profile sslclient
+      certificate default 12345678
+      ciphers DEFAULT
+      options 2048
+      ssl-mod disable
+      cache-size 262144
+      cache-timeout 3600
+      alert-timeout 60
+      handshake-timeout 60
+      renegotiation disable
+      renegotiation-timeout 0
+      renegotiation-size 0
+      renegotiation-record 10
+      unclean-shutdown enable
+      strict-resume disable
+      non-ssl disable
+      client-auth ignore
+      auth-travel-depth 2
+      !
+      ssl-server-profile sslserver
+      --More-- (56% of 13459 bytes)
+                                  
+      certificate default 
+      ciphers DEFAULT
+      options 536872960
+      ssl-mod disable
+      cache-size 262144
+      cache-timeout 3600
+      alert-timeout 60
+      handshake-timeout 60
+      renegotiation disable
+      renegotiation-timeout 0
+      renegotiation-size 0
+      unclean-shutdown enable
+      strict-resume disable
+      client-auth ignore
+      auth-travel-depth 2
+      !
+              proxy-ssl ca-cert-push-interval 1
+      proxy-ssl whitelist-ip-days 1
+      flow-update-interval 10
+      !
+      anti-arp broadcast interval 1
+      anti-arp flood block-time 60
+      anti-arp flood threshold 300
+      --More-- (60% of 13459 bytes)
+                                  
+      !
+      !
+      default-local-policy action accept
+      local-policy-match disable
+      !
+
+      ha-group
+      unitID 1
+
+      groupID 0
+
+
+      sysmon-switch default
+      float mac disable
+      !
+      gratuitous-arp 30
+      !
+      na-ndp 30
+      !
+      dns-proxy 
+      !
+      dns-proxy 
+      dns-proxy ip 0.0.0.0 port 53
+      algorithm rr
+      all-vlan disable
+      --More-- (62% of 13459 bytes)
+                                  
+      !
+      !
+      no dns forwarder
+
+      !
+      dns forwarder max-cache 200
+
+      !
+      !
+      !
+      !
+      firewall policy 3 
+      action permit
+      name 2024_01_29_e4b66
+      description 我是策略
+      enable
+      firewall-policy-group default
+      src-zone any
+      dst-zone any
+      src-addr WS-172.1.1.45_32
+      dst-addr WS-127.0.0.87_32
+      service IPv4
+      timerange Schedule_7c039a3f9a703aec
+      firewall policy 2 
+      action permit
+      --More-- (65% of 13459 bytes)
+                                  
+      name 2024_01_30_93be7
+      description 我是策略
+      enable
+      log session-start
+      log session-end
+      firewall-policy-group default
+      src-zone any
+      dst-zone any
+      src-addr 202401301417_6e1d
+      dst-addr 202401301417_5320
+      dst-addr 202401301429_625f
+      dst-addr WS-19.5.4.4-69
+      dst-addr 202401301438_1987
+      service 202401301417_4c5d
+      timerange Schedule_DAILY_110000_140000
+      user any
+      app any
+      firewall policy 1 
+      action permit
+      name 2024_01_29_8c715
+      description 我是策略
+      enable
+      log session-start
+      --More-- (68% of 13459 bytes)
+                                  
+      log session-end
+      firewall-policy-group default
+      src-zone any
+      dst-zone any
+      src-addr WS-172.21.1.65_32
+      dst-addr WS-127.0.0.123_32
+      service IPv4
+      timerange Schedule_08d84048ee6f3176
+      user any
+      app any
+      firewall policy 8 
+      action deny
+      name 2024_01_30_79a90
+      description 我是策略
+      enable
+      firewall-policy-group default
+      src-zone any
+      dst-zone any
+      src-addr WS-127.0.0.82_32
+      dst-addr WS-16.2.2.2_32
+      service TCP-56
+      timerange Schedule_DAILY_110000_140000
+      firewall policy 4 
+      --More-- (72% of 13459 bytes)
+                                  
+      action deny
+      name 2024_01_30_549d3
+      description 我是策略
+      enable
+      firewall-policy-group default
+      src-zone any
+      dst-zone any
+      dst-addr WS-16.2.2.2_32
+      service TCP-56
+      timerange Schedule_DAILY_110000_140000
+      firewall policy 5 
+      action deny
+      description 鎴戞槸绛栫暐
+      enable
+      firewall-policy-group default
+      src-zone any
+      dst-zone any
+      dst-addr WS-16.2.2.2_32
+      service TCP-56
+      timerange Schedule_DAILY_110000_140000
+      firewall policy 6 
+      action deny
+      name 2024_01_30_ccb49
+      --More-- (75% of 13459 bytes)
+                                  
+      description 我是策略
+      enable
+      firewall-policy-group default
+      src-zone any
+      dst-zone any
+      src-addr WS-127.0.0.82_32
+      dst-addr WS-16.2.2.2_32
+      service TCP-56
+      timerange Schedule_DAILY_110000_140000
+      firewall policy 7 
+      action deny
+      name 2024_01_30_f9534
+      description 我是策略
+      enable
+      firewall-policy-group default
+      src-zone any
+      dst-zone any
+      service TCP-56
+      timerange Schedule_DAILY_110000_140000
+      firewall policy 9 
+      action deny
+      description 鎴戞槸绛栫暐
+      enable
+      --More-- (79% of 13459 bytes)
+                                  
+      firewall-policy-group default
+      src-zone any
+      dst-zone any
+      !
+      firewall policy ipv6 1 
+      action permit
+      name 2024_01_30_08791
+      description 我是策略
+      enable
+      firewall-policy-group default
+      src-zone any
+      dst-zone any
+      src-addr WS-::1_128
+      dst-addr Net-fe80::_64
+      service 202401301148_c6fc
+      timerange Schedule_W_12_000000_020000
+      firewall policy ipv6 2 
+      action permit
+      name 2024_01_30_72bf4
+      description 我是策略
+      enable
+      firewall-policy-group default
+      src-zone any
+      --More-- (82% of 13459 bytes)
+                                  
+      dst-zone any
+      src-addr WS-::1_128
+      dst-addr WS-fe80::6_128
+      service 202401301148_c6fc
+      timerange Schedule_W_12_000000_020000
+      !
+      default-policy action drop
+      policy-match enable
+      !
+      !
+      !
+      av-file *.exe enable
+      av-file *.dll enable
+      av-file *.sys enable
+      av-file *.js enable
+      av-file *.docx enable
+      av-file *.doc enable
+      av-file *.xlsx enable
+      av-file *.xls enable
+      av-file *.pptx enable
+      av-file *.ppt enable
+      av-file *.jar enable
+      av-file *.pdf enable
+      --More-- (85% of 13459 bytes)
+                                  
+      av-file *.eml enable
+      av-file *.lnk enable
+      av-file *.py enable
+      av-file *.pyc enable
+      av-file *.zip disable
+      av-file *.rar disable
+      av-file *.gzip disable
+      av-file *.dmg disable
+      !
+      av-file any disable
+      !
+      av-profile All protocol http.smtp.imap.ftp.pop3 action deny 
+      !
+      threat-intelligence update-time 25
+      !
+      malfile-detect All                 
+      action deny
+      malfile-protocol http
+      malfile-protocol pop3
+      malfile-protocol smtp
+      malfile-protocol imap
+      malfile-protocol ftp
+      !
+      --More-- (89% of 13459 bytes)
+                                  
+      malfile *.exe enable
+      malfile *.dll enable
+      malfile *.sys enable
+      malfile *.js enable
+      malfile *.docx enable
+      malfile *.doc enable
+      malfile *.xlsx enable
+      malfile *.xls enable
+      malfile *.pptx enable
+      malfile *.ppt enable
+      malfile *.jar enable
+      malfile *.pdf enable
+      malfile *.eml enable
+      malfile *.lnk enable
+      malfile *.py enable
+      malfile *.pyc enable
+      malfile *.zip disable
+      malfile *.rar disable
+      malfile *.gzip disable
+      malfile *.dmg disable
+      !
+      !
+      protect-policy-match enable
+      --More-- (92% of 13459 bytes)
+                                  
+      !
+      kernel-tcp-syncookies enable
+      !
+      !
+      stated disable
+      stated interval 300
+      stated retention 3
+      !
+      !
+      !
+      woc accelerate nodelay enable
+      woc accelerate fast-send 0
+      woc accelerate interval 10
+      woc accelerate timer-interval 40
+      woc accelerate resend 2
+      woc accelerate nc disable
+      woc accelerate sndwnd 1024
+      woc accelerate rcvwnd 2048
+      woc accelerate minrto 2500
+      woc accelerate cpu 70
+      woc accelerate memory 70
+      woc accelerate item-limit 25000
+      woc accelerate halfopen disable
+      --More-- (96% of 13459 bytes)
+                                  
+      woc accelerate packet-loss-rate enable
+      woc accelerate interface disable
+      !
+      waf set ALL
+      description 包含全部事件
+      waf set HIGH
+      description 包含高风险事件
+      waf set MID
+      description 包含中风险事件
+      waf set LOW
+      description 包含低风险事件
+      !
+      !
+      waf check-url-maxlen 2048
+      waf check-host-maxlen 512
+      waf check-cookie-maxlen 100
+      waf check-user-agent-maxlen 512
+      waf check-content-type-maxlen 64
+      waf check-referer-maxlen 512
+      waf check-msgbody-maxlen 730
+      waf check-pkt-num 10
+      waf check-req-num 2
+      waf check-resp-num 2
+      --More-- (99% of 13459 bytes)
+                                  
+      waf check-url-param-num 3
+      waf check-body-num 6
+      scanner-interaction
+      !
+      !end
+welcome: ""
+invalid_cmd_error: |
+ % Unknown command.
