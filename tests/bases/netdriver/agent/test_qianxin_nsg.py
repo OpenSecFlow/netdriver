@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from uuid import uuid4
+
+import pytest
+from fastapi.testclient import TestClient
+
+
+@pytest.mark.asyncio
+@pytest.mark.integration
+async def test_switch_mode(test_client: TestClient, qianxin_nsg_dev: dict):
+    trace_id = uuid4().hex
+    response = test_client.post("/api/v1/cmd", headers={"x-correlation-id": trace_id}, json={
+        "protocol": qianxin_nsg_dev.get("protocol"),
+        "ip": qianxin_nsg_dev.get("ip"),
+        "port": qianxin_nsg_dev.get("port"),
+        "username": qianxin_nsg_dev.get("username"),
+        "password": qianxin_nsg_dev.get("password"),
+        "enable_password": qianxin_nsg_dev.get("enable_password"),
+        "vendor": "qianxin",
+        "model": "nsg",
+        "version": "6.1.13",
+        "encode": "utf-8",
+        "vsys": "default",
+        "commands": [
+            {
+                "type": "raw",
+                "mode": "enable",
+                "command": "show version"
+            },
+            {
+                "type": "raw",
+                "mode": "config",
+                "command": "hostname 奇安信-网神",
+            }
+        ],
+        "timeout": 10
+    })
+    assert response.status_code == 200
+    assert response.json().get("code") == "OK"
+    assert response.headers.get("x-correlation-id") == trace_id
+    assert not response.json().get("err_msg")
+    assert len(response.json().get("result")) == 2
+
+
+@pytest.mark.asyncio
+@pytest.mark.integration
+async def test_pull_config(test_client: TestClient, qianxin_nsg_dev: dict):
+    trace_id = uuid4().hex
+    response = test_client.post("/api/v1/cmd", headers={"x-correlation-id": trace_id}, json={
+        "protocol": qianxin_nsg_dev.get("protocol"),
+        "ip": qianxin_nsg_dev.get("ip"),
+        "port": qianxin_nsg_dev.get("port"),
+        "username": qianxin_nsg_dev.get("username"),
+        "password": qianxin_nsg_dev.get("password"),
+        "enable_password": qianxin_nsg_dev.get("enable_password"),
+        "vendor": "qianxin",
+        "model": "nsg",
+        "version": "6.1.13",
+        "encode": "utf-8",
+        "vsys": "default",
+        "commands": [
+            {
+                "type": "raw",
+                "mode": "enable",
+                "command": "show running config",
+                "template": ""
+            }
+        ],
+        "timeout": 10
+    })
+
+    assert response.status_code == 200
+    assert response.json().get("code") == "OK"
+    assert response.headers.get("x-correlation-id") == trace_id
+    assert not response.json().get("err_msg")
+    assert len(response.json().get("result")) == 1

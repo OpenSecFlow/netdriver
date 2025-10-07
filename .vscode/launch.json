@@ -1,0 +1,74 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "debug agent",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "netdriver.agent.main:app",
+                "--host=0.0.0.0",
+                "--port=8000",
+                "--reload"
+            ],
+            "jinja": true,
+            "justMyCode": false,
+            "subProcess": true
+        },
+        {
+            "name": "debug simunet",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "netdriver.simunet.main:app",
+                "--host=0.0.0.0",
+                "--port=8001",
+                "--reload"
+            ],
+            "jinja": true,
+            "justMyCode": false
+        },
+        {
+            "name": "degbug current",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "justMyCode": false
+        },
+        {
+            "name": "debug pytest current",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "-s",
+                "-vv",
+                "${input:mock-dev}",
+                "${file}",
+                "-k",
+                "${input:func}"
+            ],
+            "justMyCode": false
+        },
+    ],
+    "inputs": [
+        {
+            "id": "func",
+            "type": "promptString",
+            "description": "Enter the test function name, keep empty can test all funcs.",
+            "default": ""
+        },
+        {
+            "id": "mock-dev",
+            "type": "pickString",
+            "default": "",
+            "options": [
+                "",
+                "--mock-dev"
+            ],
+            "description": "use mock device or not? keep empth will not use mock device."
+        }
+    ]
+}

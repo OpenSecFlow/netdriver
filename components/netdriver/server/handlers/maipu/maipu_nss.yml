@@ -1,0 +1,588 @@
+# MaiPu NSS
+start_mode: login
+hostname: maipu
+line_feed: "\r\n"
+enable_password: ""
+modes:
+  login:
+    prompt: ">"
+    switch_mode_cmds:
+      - "enable"
+      - "exit"
+    cmds: 
+      - cmd: "enable"
+        output: "password:"
+  enable:
+    prompt: "#"
+    switch_mode_cmds:
+      - "configure terminal"
+      - "exit"
+      - "disable"
+    cmds: 
+      - cmd: "more off"
+        output: ""
+  config:
+    prompt: "(config)#"
+    switch_mode_cmds:
+      - "exit"
+      - "end"
+      - "disable"
+    cmds:
+    - cmd: "hostname maipu_nss"
+      output: ""
+common:
+  - cmd: "show ip route"
+    output: |
+      CSPY_ECC_MP5810_SW_STACK_C2U43/41#                        sh ip route
+      Codes: C - Connected, L - Local, S - static, R - RIP,  B - BGP, i-ISIS
+            U - Per-user Static route
+            O - OSPF, OE-OSPF External, M - Management, E - IRMP, EX - IRMP external 
+
+
+
+      S   0.0.0.0/0 [1/0] via 10.203.191.4, 72w0d:23:53:50, vlan960
+      C   10.203.20.0/22 is directly connected, 70w4d:07:20:54, dc0
+      L   10.203.20.41/32 is directly connected, 70w4d:07:20:54, dc0
+      O   10.203.127.0/24 [110/12] via 10.203.191.4, 72w0d:23:52:53, vlan960
+      C   10.203.128.0/22 is directly connected, 70w2d:07:04:52, vlan1961
+      L   10.203.131.254/32 is directly connected, 70w2d:07:04:52, vlan1961
+      C   10.203.135.0/24 is directly connected, 70w2d:07:04:52, vlan1963
+      L   10.203.135.254/32 is directly connected, 70w2d:07:04:52, vlan1963
+      C   10.203.136.0/22 is directly connected, 70w2d:07:04:52, vlan1962
+      L   10.203.139.254/32 is directly connected, 70w2d:07:04:52, vlan1962
+      C   10.203.191.0/29 is directly connected, 72w0d:23:53:50, vlan960
+      L   10.203.191.1/32 is directly connected, 72w0d:23:53:50, vlan960
+      O   10.203.191.8/29 [110/11] via 10.203.191.4, 72w0d:23:52:53, vlan960
+      C   127.0.0.0/8 is directly connected, 77w2d:02:18:53, lo0
+      L   127.0.0.1/32 is directly connected, 77w2d:02:18:53, lo0
+
+
+  - cmd: "show running-config"
+    output: |
+      Building Configuration...done
+
+      ! Current configuration : 13014 bytes
+      ! startup vst mode
+      !
+      ! Last configuration change at BJ(UTC+08:00) Tue Jun 18 17:46:50 2024 by admin
+      ! Flash config last updated at BJ(UTC+08:00) Tue Jun 18 17:47:09 2024 by liguodong
+      ! Configuration version 0.30
+      !
+
+      !software version 9.7.40.8(integrity)
+      !software image file flash0: /flash/sp23-g-9.7.40.8(R).pck
+      !compiled on May  9 2022, 20:54:28
+
+      hostname CSPY_ECC_MP5810_SW_STACK_C2U43/41
+                  
+
+      clock timezone BJ 8
+
+
+      enable password fe48dcc1b321d760239e encrypt
+
+
+
+
+      login-secure max-online-num 5
+                  
+      password-control complexity min-length 12
+      password-control complexity composition type-number 4
+
+      role audit-admin
+      exit
+      role network-admin
+      exit
+      role network-operator
+      exit
+      role security-admin
+      exit
+
+      local-user admin class manager
+      service-type console ssh web
+      privilege 15
+      password 7 6bc8bd55e9045bda7c9f701b5c3d280766c63a8fddd1db894306fd64b20aca38
+      exit
+      local-user liguodong class manager
+      service-type console ssh web
+      privilege 15
+      password 7 04835d496a2dcf872df4648052ffb3476a104215d495459772b117e491048628
+      exit
+      local-user malin class manager
+      service-type console ssh web
+      privilege 15
+      password 7 22013943d0feee60ae0970edb893c8bcd919d70dfc5cc795977c2f62086f1aca
+      exit
+
+
+      ip load-sharing per-destination
+      ipv6 load-sharing per-destination
+
+
+      ip vrf DWGL
+      rd 1:1
+      exit
+
+
+      split-mode interface 40ge0/0/49 to 100ge0/0/54 enable
+      split-mode interface 40ge1/0/49 to 100ge1/0/54 enable
+      ip access-list standard ACL_SSH
+      109 permit 10.163.0.0 0.0.255.255
+      110 permit 10.203.0.0 0.0.255.255
+      10000 deny any
+      exit
+
+      ip access-list extended bingdu
+      10 deny tcp any any eq 135
+      20 deny tcp any any eq 136
+      30 deny tcp any any eq 137
+      40 deny tcp any any eq 138
+      50 deny tcp any any eq 139
+      70 deny tcp any any eq 1025
+      80 deny tcp any any eq 1068
+      90 deny tcp any any eq 2745
+      100 deny tcp any any eq 3127
+      110 deny tcp any any eq 4444
+      120 deny tcp any any eq 4899
+      130 deny tcp any any eq 5554
+      140 deny tcp any any eq 6129
+      150 deny tcp any any eq 9995
+      160 deny udp any any eq 135
+      170 deny udp any any eq 136
+      180 deny udp any any eq 1033
+      190 deny udp any any eq 1322
+      200 deny udp any any eq 1434
+      210 deny tcp any any eq 593
+      900 permit ip any any
+      exit
+
+
+
+                  
+
+
+      domain system
+      aaa authentication login local 
+      aaa authorization login local 
+      exit
+
+      aaa authorization console
+
+
+
+
+      link-aggregation 62 mode lacp
+      link-aggregation 63 mode lacp
+      link-aggregation 64 mode lacp
+
+
+      vlan 1
+      exit
+
+      vlan 960
+      name CSPY_ECC_WS_FW_SVI
+      exit
+                  
+      vlan 1961-1963
+
+      vlan 4094
+      mad fast-hello control-vlan
+      exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      lldp run
+      lldp mode-ap
+
+
+                  
+      !slot_0/0_NSS5810-54XQFP(V1)
+      !slot 0/0
+      !cardtype_0/0_0x303c
+      interface tengigabitethernet0/0/14
+      speed 1000
+      duplex auto
+      switchport access vlan 1961
+      spanning-tree portfast edgeport enable
+      exit
+      interface tengigabitethernet0/0/15
+      switchport access vlan 1961
+      spanning-tree portfast edgeport enable
+      exit
+      interface tengigabitethernet0/0/16
+      switchport mode trunk
+      switchport trunk allowed vlan add 1-4093
+      switchport trunk pvid vlan 1
+      exit
+      interface tengigabitethernet0/0/17
+      switchport mode trunk
+      switchport trunk allowed vlan add 1-4093
+      switchport trunk pvid vlan 1
+      exit
+      interface tengigabitethernet0/0/45
+      link-aggregation 63 active
+      exit
+      interface tengigabitethernet0/0/46
+      link-aggregation 63 active
+      exit
+      interface tengigabitethernet0/0/47
+      description To-4330_01-0/0/49
+      link-aggregation 64 active
+      exit
+      interface tengigabitethernet0/0/48
+      description To-4330_02-1/0/49
+      link-aggregation 64 active
+      exit
+      interface 40ge0/0/50
+      switchport mode trunk
+      switchport trunk allowed vlan add 4094
+      switchport trunk pvid vlan 1
+      no spanning-tree enable
+      mad fast-hello vlan 4094
+      exit
+      !end
+
+      !slot_1/0_NSS5810-54XQFP(V1)
+      !slot 1/0    
+      !cardtype_1/0_0x303c
+      interface tengigabitethernet1/0/14
+      switchport access vlan 1961
+      spanning-tree portfast edgeport enable
+      exit
+      interface tengigabitethernet1/0/15
+      switchport access vlan 1961
+      spanning-tree portfast edgeport enable
+      exit
+      interface tengigabitethernet1/0/16
+      switchport mode trunk
+      switchport trunk allowed vlan add 1-4093
+      switchport trunk pvid vlan 1961
+      exit
+      interface tengigabitethernet1/0/17
+      switchport mode trunk
+      switchport trunk allowed vlan add 1-4093
+      switchport trunk pvid vlan 1961
+      exit
+      interface tengigabitethernet1/0/45
+      link-aggregation 62 active
+      exit
+      interface tengigabitethernet1/0/46
+      link-aggregation 62 active
+      exit
+      interface tengigabitethernet1/0/47
+      description To-4330_01-0/0/50
+      link-aggregation 64 active
+      exit
+      interface tengigabitethernet1/0/48
+      description To-4330_02-1/0/50
+      link-aggregation 64 active
+      exit
+      interface 40ge1/0/50
+      switchport mode trunk
+      switchport trunk allowed vlan add 4094
+      switchport trunk pvid vlan 1
+      no spanning-tree enable
+      mad fast-hello vlan 4094
+      exit
+      !end
+
+
+      interface link-aggregation62
+      description TO-CSPY_ECC_WS_FW_02_C2-08U31
+      switchport access vlan 960
+      spanning-tree portfast edgeport enable
+      exit        
+      interface link-aggregation63
+      description TO-CSPY_ECC_WS_FW_01_C2-07U31
+      switchport access vlan 960
+      spanning-tree portfast edgeport enable
+      exit
+      interface link-aggregation64
+      switchport mode trunk
+      switchport trunk allowed vlan add 1-4093
+      switchport trunk pvid vlan 1
+      exit
+
+
+
+      telnet server disable
+
+
+                            
+
+
+      interface dc0
+      description For-DWGL
+      ip address 10.203.20.41 255.255.252.0
+      exit
+                  
+
+      interface vlan960
+      ip address 10.203.191.1 255.255.255.248
+      exit
+
+
+      interface vlan1961
+      ip address 10.203.131.254 255.255.252.0
+      exit
+
+
+      interface vlan1962
+      ip address 10.203.139.254 255.255.252.0
+      exit
+
+
+      interface vlan1963
+      ip address 10.203.135.254 255.255.255.0
+      exit
+
+
+      interface null0
+      exit
+                  
+                                          
+      router ospf 10
+      network 10.203.128.0 0.0.3.255 area 0.0.0.203
+      network 10.203.132.0 0.0.0.255 area 0.0.0.203
+      network 10.203.136.0 0.0.3.255 area 0.0.0.203
+      network 10.203.191.0 0.0.0.7 area 0.0.0.203
+      exit
+
+      ip route 0.0.0.0 0.0.0.0 10.203.191.4
+      ip route vrf DWGL 0.0.0.0 0.0.0.0 10.203.23.254
+
+      ip http server webrom-sp35-V009R007C06B045.rom
+      ip http secure-server
+
+
+      ntp enable
+      ntp source dc0
+      ntp server 10.161.20.8
+      ntp server 10.161.20.9
+
+      login-secure ssh user forbid-time 5
+
+
+
+      snmp-server start 
+      snmp-server view default 1.2 include
+      snmp-server view default 1.0.8802 include
+      snmp-server view default 1.1.2 include
+      snmp-server view default 1.3.111 include
+      snmp-server view default 1.3.6.1 include
+      snmp-server community 9f2abbb7c27f0e7165ew default rw
+      snmp-server host 10.91.18.1 traps community 0b51c72a3e8faa549crsion 2 
+      snmp-server enable traps bgp established
+      snmp-server enable traps bgp backward-transition
+      snmp-server enable traps ospf if-authen-failure
+      snmp-server enable traps ospf virtif-authen-failure
+      snmp-server enable traps ospf if-config-error
+      snmp-server enable traps ospf virtif-config-error
+      snmp-server enable traps ospf if-state-change
+      snmp-server enable traps ospf virtif-state-change
+      snmp-server enable traps ospf nbr-state-change
+      snmp-server enable traps ospf virtnbr-state-change
+      snmp-server enable traps ospf if-rx-bad-packet
+      snmp-server enable traps ospf virtif-rx-bad-packet
+      snmp-server enable traps ospf tx-retransmit
+      snmp-server enable traps ospf virtif-tx-retransmit
+      snmp-server enable traps ospf originate-lsa
+      snmp-server enable traps ospf max-age-lsa
+      snmp-server enable traps ospf lsdb-approaching-overflow
+      snmp-server enable traps ospf lsdb-overflow
+      snmp-server enable traps ospfv3
+      snmp-server enable traps ospfv3 if-state-change
+      snmp-server enable traps ospfv3 virtif-state-change
+      snmp-server enable traps ospfv3 nbr-state-change
+      snmp-server enable traps ospfv3 virtnbr-state-change
+      snmp-server enable traps ospfv3 if-config-error
+      snmp-server enable traps ospfv3 virtif-config-error
+      snmp-server enable traps ospfv3 if-rx-bad-packet
+      snmp-server enable traps ospfv3 virtif-rx-bad-packet
+      snmp-server enable traps l2-multicast change
+      snmp-server enable traps snmp authentication
+      snmp-server enable traps snmp coldstart
+      snmp-server enable traps snmp warmstart
+      snmp-server enable traps snmp linkdown
+      snmp-server enable traps snmp linkup
+      snmp-server enable traps system coldstart
+      snmp-server enable traps system warmstart
+      snmp-server enable traps system cpu-utilize-alarm
+      snmp-server enable traps system memory-utilize-alarm
+      snmp-server enable traps system device-abnormal-reboot-alarm
+      snmp-server enable traps snmp enterprise snmp-agent-up
+      snmp-server enable traps snmp enterprise snmp-agent-down
+      snmp-server enable traps snmp enterprise rmon-rising
+      snmp-server enable traps snmp enterprise rmon-falling
+      snmp-server enable traps mac-ping delay
+      snmp-server enable traps mac-ping rt-delay
+      snmp-server enable traps mac-ping jitter
+      snmp-server enable traps mac-ping lost-rate
+      snmp-server enable traps isis
+      snmp-server enable traps ethernet cfm fault
+      snmp-server enable traps ethernet oam threshold
+      snmp-server enable traps ethernet oam none-threshold
+      snmp-server enable traps vlan
+      snmp-server enable traps port-security
+      snmp-server enable traps remote-ping probe-failed
+      snmp-server enable traps remote-ping test-failed
+      snmp-server enable traps remote-ping test-complete
+      snmp-server enable traps arp-inspection
+      snmp-server enable traps ip-sla
+      snmp-server enable traps port-storm
+      snmp-server enable traps spanning-tree topology-change
+      snmp-server enable traps spanning-tree new-root-port
+      snmp-server enable traps spanning-tree new-root-bridge
+      snmp-server enable traps vrf
+      snmp-server enable traps port-shutdown
+      snmp-server enable traps in-usage-rate
+      snmp-server enable traps out-usage-rate
+      snmp-server enable traps crc-error
+      snmp-server enable traps in-packet-error
+      snmp-server enable traps out-packet-error
+      snmp-server enable traps filesystem startup changed
+      snmp-server enable traps reboot
+      snmp-server enable traps eips
+      snmp-server enable traps telnetauthenfail
+      snmp-server enable traps mtlk
+      snmp-server enable traps ulpp
+      snmp-server enable traps mad
+      snmp-server enable traps vst
+      snmp-server enable traps poe power-status
+      snmp-server enable traps poe alarm-threshold
+      snmp-server enable traps shell running-changed
+      snmp-server enable traps shell history
+      snmp-server enable traps arp
+      snmp-server enable traps snmpif
+      snmp-server enable traps optical-module temperature-high
+      snmp-server enable traps optical-module temperature-low
+      snmp-server enable traps optical-module rx-power-low
+      snmp-server enable traps optical-module tx-fault
+      snmp-server enable traps lacp port-status
+      snmp-server enable traps lldp neighbor-change
+      snmp-server enable traps user-login success
+      snmp-server enable traps user-login failure
+      snmp-server enable traps user logout
+      snmp-server enable traps system card-plugIn-alarm
+      snmp-server enable traps system card-plugOut-alarm
+      snmp-server enable traps system card-abnormal-alarm
+      snmp-server enable traps system chip-temperature-alarm
+      snmp-server enable traps system device-slave-to-master-alarm
+      snmp-server enable traps system environment-temperature-alarm
+      snmp-server enable traps system fan-plugIn-alarm
+      snmp-server enable traps system fan-plugOut-alarm
+      snmp-server enable traps system fan-normal-alarm
+      snmp-server enable traps system fan-abnormal-alarm
+      snmp-server enable traps system hotswap-card-operate-alarm
+      snmp-server enable traps system power-plugIn-alarm
+      snmp-server enable traps system power-plugOut-alarm
+      snmp-server enable traps system power-normal-alarm
+      snmp-server enable traps system power-abnormal-alarm
+      snmp-server enable traps system over-temp-protect-alarm
+      snmp-server enable traps system reload-device-operate-alarm
+      snmp-server enable traps aaa
+      snmp-server enable traps anti-attack fraggle
+      snmp-server enable traps anti-attack fragment
+      snmp-server enable traps anti-attack icmp-flood
+      snmp-server enable traps anti-attack syn-flood
+      snmp-server enable traps anti-attack scan
+      snmp-server enable traps anti-attack small-packet
+      snmp-server enable traps anti-attack tcp-land
+      snmp-server enable traps erps node-state
+      snmp-server enable traps erps port-status
+      snmp-server enable traps erps signal-status
+      snmp-server enable traps filesystem utilization
+      snmp-server enable traps user changePwd
+      snmp-server enable traps ntp sync-success sync-lost stratum-change
+
+      ip ssh server sshv1-compatible
+      ssh hostKey length 2048
+
+
+
+
+
+      line con 0
+      exec-timeout 10 0
+      login aaa 
+
+      line vty 0 15
+      access-class ACL_SSH in
+      exec-timeout 10 0
+      protocol input ssh
+      login aaa 
+      exit
+
+
+      logging server 10.161.13.90 ip 10.161.13.90
+      logging timestamp-format timezone
+      logging server source interface dc0
+      logging operation to-server
+
+      !vst_config
+
+      !mode member information
+      switch mode virtual
+      switch virtual member 0
+      priority 255
+      exit
+      switch virtual member 1
+      priority 200
+      exit
+      !mode member end
+
+
+
+      !mode vsl information
+      vsl-channel 0/1
+      exit
+      vsl-channel 1/1
+      exit
+      !mode vsl end
+
+      !slot_0/0_NSS5810-54XQFP(V1)
+      !vsl  mode
+      !slot 0/0
+      interface 100ge0/0/53
+      speed 40000
+      vsl-channel 0/1 mode on
+      exit
+      interface 100ge0/0/54
+      speed 40000
+      vsl-channel 0/1 mode on
+      exit
+      !end
+
+      !slot_1/0_NSS5810-54XQFP(V1)
+      !vsl  mode
+      !slot 1/0
+      interface 100ge1/0/53
+      speed 40000 
+      vsl-channel 1/1 mode on
+      exit
+      interface 100ge1/0/54
+      speed 40000
+      vsl-channel 1/1 mode on
+      exit
+      !end
+
+      !vst_end
+
+      !end 
+
+
+welcome: ""
+invalid_cmd_error: |
+  % Invalid input

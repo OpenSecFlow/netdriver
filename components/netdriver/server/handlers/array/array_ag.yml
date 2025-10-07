@@ -1,0 +1,894 @@
+# Array AG VPN
+start_mode: login
+hostname: S-DGB2-E09-VPN-JGJR-AG1100-B
+line_feed: "\n"
+enable_password: ""
+modes:
+  login:
+    prompt: ">"
+    switch_mode_cmds:
+      - "enable"
+      - "exit"
+    cmds:
+    - cmd: "no pager"
+      output: ""
+  enable:
+    prompt: "#"
+    switch_mode_cmds:
+      - "exit"
+      - "disable"
+      - "configure terminal"
+    cmds:
+    - cmd: "show vpn active"
+      output: |
+                username           source IP        allocated IP         age   idle_time        type
+    - cmd: "show running all"
+      output: |
+        show running all
+        ####################################
+        # Global configurations
+        ####################################
+        #Last configuration change at Wed Dec 11 06:05:15 2024 by array
+        #version Rel.AG.9.4.0.514 build on Sun Apr 28 18:25:25 2024
+
+
+        #user configuration
+        admin user "array"       "XXXXXXXXXqzYCM/mvr6Gmw" config global all
+
+        #admin role configuration
+
+        #command timeout configuration
+        system command timeout 120
+
+        #hostname configuration
+        hostname "S-DGB2-E09-VPN-JGJR-AG1100-B"
+        config timeout 180
+
+        #system timezone configuration
+        system timezone "GMT"
+
+        #rts configuration
+        ip rts off
+        ip rts expire 60
+
+        #interface mtu
+        interface mtu port1 1500
+        interface mtu port2 1500
+        interface mtu port3 1500
+        interface mtu port4 1500
+
+        #dhcp configuration
+
+        #interface configuration
+        interface name "port1" "port1"
+        interface name "port2" "port2"
+        interface name "port3" "port3"
+        interface name "port4" "port4"
+        interface speed "port1" auto
+        interface speed "port2" auto
+        interface speed "port3" auto
+        interface speed "port4" auto
+
+        #ip configuration
+        ip address "port1" 172.21.1.170 255.255.255.0
+        ip address "port2" 1.1.1.2 255.255.255.0
+
+        #admin access configuration
+
+        #support ip configuration
+
+        #bond configuration
+
+        #ssh configuration
+        ssh on
+        ssh idletimeout 9999999 inputonly
+        ssh auth passwd on "array"
+        ssh auth key off "array"
+
+        #vlan configuration
+
+        #mnet configuration
+
+        #route configuration
+        ip route default 172.21.1.1
+
+        #ip arp configuration
+
+        #ip statistic configuration
+        ip statistic off
+
+        #synconfig challenge configuration
+        synconfig challenge "XXXXXQkf3EExSvMUwX2N"
+
+        #synconfig configuration
+        synconfig peer S-DGB2-E09-VPN-JGJR-AG1100-A 172.21.1.171
+        synconfig peer S-DGB2-E09-VPN-JGJR-AG1100-B 172.21.1.170
+
+        #cluster configuration
+        cluster virtual arp interval 60
+
+
+        #enable password
+        passwd enable "XXXXXXXXXsaFLGt/QKS6yw"
+
+        #activation server
+
+        #ip license server configuration
+
+        #xmlrpc configuration
+        xmlrpc off
+        xmlrpc port 9999
+        xmlrpc ip 0.0.0.0
+        xmlrpc authentication off
+
+        #fastlog configuration
+        log facility "local0"
+        log level "info"
+        log off
+        log filtermode whitelist
+        log source port 514
+        log option levelinfo off
+        log option logid off
+        log option uniqueid off
+        log option showlogidkey off
+        log http squid
+
+        #ntp configuration
+
+        #system mail configuration
+        system mail from "%h<alert@log.domain>"
+        system mail hostname "%l.alert_pseudo_domain"
+        system mail external off
+
+        #system mail relay configuration
+        system mail relay off
+
+        #tune configuration
+        system tune hwcksum on
+        system tune tcpidle 300
+        system tune tcp retransmit timeout 1000
+        system tune tcp retransmit dupacks 3
+        system tune tcp delack count 4
+        system tune tcp delack timeout 100
+        system tune tcp slowstart on
+        system tune tcp retransmit policy newreno
+        system tune tcp syntimeout 60
+        system tune tcp zwdefend off
+        system tune tcp pktdropopt 0
+        system tune udp pktdropopt 0
+        system tune defraglimit 0
+        system tune ip randomid off
+        system tune vpn nattimeout 300
+
+        #dump flag when panic
+        system dump on
+
+        #system interactive configuration
+        system interactive off
+
+        #port forwarding configuration
+        fwd mode transparent
+
+        #nat configuration
+
+        #RIP routing configuration
+
+        #Bypass configuration
+
+        #graph configuration
+
+        #Qos configuration
+
+        #statmon configuration
+        statmon off
+
+        #rip configuration
+        rip off
+
+        #ospf configuration
+        ospf off
+
+        #debug monitor configuration
+        debug monitor on
+
+        #DNS configuration
+        ip dns cache on
+        ip dns cache expire 60 3600
+        ip dns request timeout 1 0
+        ip dns staticttl 43200
+        ip dns serverredundancy off
+
+        #system ha configuration
+        ha unit 2 172.21.1.170 65521
+        ha unit 1 172.21.1.171 65521
+
+        ha unitname 2 "unit2" ""
+        ha unitname 1 "unit1" ""
+
+        ha group id 1
+        ha group fip 1 172.21.1.190 ""
+        ha group priority 1 1 200
+        ha group priority 2 1 150
+        ha group preempt off 1
+        ha group enable 1
+
+        ha log on
+        ha log level "info"
+        ha arp interval 30
+        ha synconfig bootup off
+        ha synconfig runtime off
+        ha synconfig module "all"
+        ha hc memory interval 5000
+        ha hc peerunit 1000 3
+        ha ssf off
+        ha on
+        ha rejoin off
+
+        #virtual site global configuration
+        virtual site name "vpndg" "" "exclusive" ""
+        virtual site ip "vpndg" 172.21.1.180 443
+
+        #session global configuration
+        virtual site session reuse off "vpndg"
+
+        #ssl configuration
+        #ssl global settings
+        ssl globals verifycert on
+        ssl globals ems off
+        ssl globals ignoreclosenotify on
+        ssl globals sendclosenotify on
+        ssl globals sessiontimeout 43200
+        ssl globals renegotiation off
+        ssl globals fastcrl off
+        ssl globals sm2 off
+
+        #http proxy configuration
+        http buffer nomsglen on
+        http cookie check on
+        http shuntreset off
+        http mask server off
+        http mask via off
+        http serverconnreuse on
+        http serverpersist on
+
+        #webui configuration
+        webui port 8080
+        webui on
+        webui ip 172.21.1.170
+        webui language en
+        webui idletimeout 15
+        webui ssl protocol "v12"
+        webui ssl ciphersuite "AES128-GCM-SHA256:AES256-GCM-SHA384"
+
+        #restful api configuration
+        restapi off
+
+        #ipsec configuration
+        ipsec turbo "off"
+        ipsec natt keepalive 20
+        ipsec expiretime phase1 15
+        ipsec expiretime phase2 10
+
+        #vpn client auto-upgrade configuration
+        vpn clientupgrade on
+
+        #vpn motionpro configuration
+        vpn motionpro on
+
+        #vpn radius agent configuration
+        vpn radiusagent off
+
+        #snmp configuration
+        snmp community "public"
+        snmp contact ""
+        snmp location ""
+        no snmp enable traps
+        snmp ipcontrol off
+        snmp off
+
+        #access list and webwall configuration
+
+        #host monitor configuration
+        monitor off
+
+        #Display all art configurations
+        Features: < DesktopDirect >
+        	  is not licensed on this system.
+        "
+        Please contact Array Networks support for a valid License Key.
+        1-877-992-7729 (1-877-99-ARRAY)   E-Mail: support@arraynetworks.net
+        ERROR - The DesktopDirect feature license is missing !
+
+        #Error writing #Display all art configurations commands
+
+        #admin aaa configuration
+        admin aaa off
+        admin aaa localuser alwayson
+        admin aaa method rank off
+        no admin aaa group in dn
+
+        #admin group configuration
+
+        #http compression configuration
+        http compression off
+
+        #ip mcastfwd
+
+        #vpn accelerate
+        vpn accelerate off
+
+        #vpn turbo
+        vpn turbo off
+
+
+        ####################################
+        # Virtual site 'vpndg' configurations
+        ####################################
+        #Last configuration change at Wed Dec 11 06:05:15 2024 by array
+        #version Rel.AG.9.4.0.514 build on Sun Apr 28 18:25:25 2024
+
+
+        #SSL configurations for virtual sites
+        ssl settings protocol "SSLv3:TLSv1:TLSv12"
+        ssl settings ciphersuite "RC4-MD5:RC4-SHA:DES-CBC3-SHA:AES128-SHA:AES256-SHA:AES128-SHA256:AES256-SHA256:EXP-RC4-MD5"
+        no ssl settings renegotiation
+        no ssl settings reneg legacy
+        no ssl settings reneg clientinit
+        ssl settings reuse
+        no ssl settings clientauth
+        no ssl settings ocsp
+        no ssl settings crl online
+        no ssl settings crl offline
+        ssl settings clientcert signalgo "sha256ECDSA:sha256RSA:sha384ECDSA:sha384RSA:sha512ECDSA:sha512RSA:sha224ECDSA:sha224RSA:sha1ECDSA:sha1RSA"
+        no ssl settings acceptchain
+        ssl settings curves "secp256r1:secp384r1:secp521r1"
+        ssl settings signalgo "sha256ECDSA:sha256RSA:sha384ECDSA:sha384RSA:sha512ECDSA:sha512RSA:sha224ECDSA:sha224RSA:sha1ECDSA:sha1RSA"
+        ssl start
+
+        #DTLS configurations for virtual sites
+        dtls settings protocol "DTLSv1"
+        dtls settings ciphersuite "DES-CBC3-SHA:AES128-SHA:AES256-SHA"
+
+        #Client Security configuration
+        client security off
+        client security default "none"
+        client security postlogin disable
+
+        #ipsec configurations
+        ipsec ikephase1 psk "presharedkey"
+        ipsec ikephase2 pfsgroup "modp1024"
+        ipsec ikephase2 encryption "all"
+        ipsec ikephase2 authentication "hmac_sha1"
+        ipsec tunnel deviceauth "psk"
+        ipsec natt on
+        ipsec lifetime 3000
+        ipsec stop
+
+        #DNS configuration
+        dns useglobal on
+        dns cache on
+        dns cache expire 60 3600
+        dns staticttl 43200
+
+        #DDOS configuration
+        ddos off
+        ddos http slow slowloris 1
+        ddos http slow interval 2
+
+        #VPN configuration
+        vpn off
+        vpn backend keepalive off
+        vpn clientisolate on
+        vpn clientinfocollect off
+        vpn clientidcheck on
+        vpn resource group "vpn-resource"
+        vpn netpool name "netpools"
+        vpn netpool initmode activex "netpools"
+        vpn netpool initmode autoswitch "netpools"
+        vpn netpool keepalive "netpools" 30
+        vpn netpool dns timeout local "netpools" 1000
+        vpn netpool dns timeout virtual "netpools" 1000
+        vpn netpool dns timeout windows "netpools" 5000
+        vpn netpool dns clientproxy on "netpools"
+        vpn netpool webindicate "netpools"
+        vpn netpool trayindicate "netpools"
+        vpn netpool proxyrewrite on "netpools"
+        vpn speedtunnel port 0 0
+        vpn speedtunnel encryption on
+        vpn speedtunnel dispatch 0
+        vpn site2site off
+
+        #aaa configuration
+        aaa on
+        aaa server localdb authmode 0
+        aaa server localdb dynamiccode rebind disable
+        aaa method rank off
+        aaa accounting off
+        no aaa accounting fail allowaccess
+        aaa hardwareid off
+        aaa hardwareid initmode activex
+        no aaa hardwareid initmode autoswitch
+        no aaa group in dn
+        no aaa server localdb usernamecaseinsensitive
+        aaa saml disable
+        aaa oauth enable
+        aaa federation disable
+        aaa federation samlidp disable
+
+        #aaa map group configuration
+        aaa map group "托管策略组_水木博雅资产" "g-TG-SMBYZC"
+        aaa map group "玄信资产_客户组" "g-XuanXinZiChan-Users"
+        aaa map group "星阔投资VPN组" "g-XingKuoTouZi"
+        aaa map group "绰瑞基金VPN组" "g-ChuoRuiJiJin"
+        aaa map group "星鹏联海_客户组" "g-XingPengLianHai-Users"
+        aaa map group "星鹏联海_运维管理组" "g-XingPengLianHai-YW"
+        aaa map group "原秒科技VPN组" "g-YuanMiaoKeji"
+        aaa map group "蒙玺投资_客户组" "g-MengXiTouZi-Users"
+        aaa map group "东莞VPN组_量派投资_客户组" "g-g-LiangPaiTouZi-Users"
+        aaa map group "东莞VPN组_靖奇投资_客户组" "g-g-JingQiTouZi-Users"
+        aaa map group "东莞VPN组_靖奇投资_运维管理组" "g-g-JingQiTouZi-YW"
+        aaa map group "东莞VPN组_裕锦私募_客户组" "g-g-YuJinSiMu-Users"
+        aaa map group "东莞VPN组_海浦私募_客户组" "g-g-HaiPuSiMu-Users"
+        aaa map group "东吴在线_客户组" "g-DongWuZaiXian-Users"
+        aaa map group "量宇私募_运维管理组" "g-LiangYuSiMu-YW"
+        aaa map group "东莞VPN组_裕锦私募_运维管理组" "g-YuJinSiMu-YW"
+        aaa map group "东莞VPN组_辰月私募" "g-ChenYueSiMu"
+        aaa map group "东莞VPN组_灵均投资_运维管理组" "g-LingJunTouZi-YW"
+
+        #portal interface configuration
+        portal language "english"
+        no portal urlbar
+        portal desktop off
+        portal desktop initmode activex
+        no portal desktop initmode autoswitch
+        portal desktop register "off"
+        portal motionpro detect "postlogin"
+        portal motionpro hardwareid 0
+        portal bookmark off
+        no portal navtool
+        portal cookietest
+        no portal changeldappassword
+        no portal changeldbpassword
+        portal favorite off
+
+        #WRM configuration
+        rewrite on
+        no rewrite relative
+        no rewrite urlmask
+        rewrite matchparam substring
+        rewrite custom on
+
+        #server proxy configuration
+
+        #session configuration
+        session timeout idle 3600
+        session timeout unauth 300
+        session timeout lifetime 86400
+        session timeout warning off
+        session timeout warning threshold 300 300
+        session timeout warning extension_lifetime 300
+        session kill legacy "off"
+        session timeout switch "on"
+
+        #role configuration
+        role name "r-ChenYueSiMu" "" 1
+        role qualification "r-ChenYueSiMu" "q-ChenYueSiMu" ""
+        role condition "r-ChenYueSiMu" "q-ChenYueSiMu" "GROUPNAME IS 'g-ChenYueSiMu'"
+        role resource netpool "r-ChenYueSiMu" "netpools"
+        role resource vpnresourcegroup "r-ChenYueSiMu" "vpn-resource"
+        role name "r-YuanMiaoKeji" "" 1
+        role qualification "r-YuanMiaoKeji" "q-YuanMiaoKeji" ""
+        role condition "r-YuanMiaoKeji" "q-YuanMiaoKeji" "GROUPNAME IS 'g-YuanMiaoKeji'"
+        role resource netpool "r-YuanMiaoKeji" "netpools"
+        role resource vpnresourcegroup "r-YuanMiaoKeji" "vpn-resource"
+        role name "r-TG-SMBYZC" "" 1
+        role qualification "r-TG-SMBYZC" "q-TG-SMBYZC" ""
+        role condition "r-TG-SMBYZC" "q-TG-SMBYZC" "GROUPNAME IS 'g-TG-SMBYZC'"
+        role name "r-XuanXinZiChan-Users" "" 1
+        role qualification "r-XuanXinZiChan-Users" "q-XuanXinZiChan-Users" ""
+        role condition "r-XuanXinZiChan-Users" "q-XuanXinZiChan-Users" "GROUPNAME IS 'g-XuanXinZiChan-Users'"
+        role name "r-XingKuoTouZi" "" 1
+        role qualification "r-XingKuoTouZi" "q-XingKuoTouZi" ""
+        role condition "r-XingKuoTouZi" "q-XingKuoTouZi" "GROUPNAME IS 'g-XingKuoTouZi'"
+        role resource netpool "r-XingKuoTouZi" "netpools"
+        role resource vpnresourcegroup "r-XingKuoTouZi" "vpn-resource"
+        role name "r-ChuoRuiJiJin" "" 1
+        role qualification "r-ChuoRuiJiJin" "q-ChuoRuiJiJin" ""
+        role condition "r-ChuoRuiJiJin" "q-ChuoRuiJiJin" "GROUPNAME IS 'g-ChuoRuiJiJin'"
+        role resource netpool "r-ChuoRuiJiJin" "netpools"
+        role resource vpnresourcegroup "r-ChuoRuiJiJin" "vpn-resource"
+        role name "r-XingPengLianHai-Users" "" 1
+        role qualification "r-XingPengLianHai-Users" "q-XingPengLianHai-Users" ""
+        role condition "r-XingPengLianHai-Users" "q-XingPengLianHai-Users" "GROUPNAME IS 'g-XingPengLianHai-Users'"
+        role resource netpool "r-XingPengLianHai-Users" "netpools"
+        role resource vpnresourcegroup "r-XingPengLianHai-Users" "vpn-resource"
+        role name "r-XingPengLianHai-YW" "" 1
+        role qualification "r-XingPengLianHai-YW" "q-XingPengLianHai-YW" ""
+        role condition "r-XingPengLianHai-YW" "q-XingPengLianHai-YW" "GROUPNAME IS 'g-XingPengLianHai-YW'"
+        role resource netpool "r-XingPengLianHai-YW" "netpools"
+        role resource vpnresourcegroup "r-XingPengLianHai-YW" "vpn-resource"
+        role name "r-MengXiTouZi-Users" "" 1
+        role qualification "r-MengXiTouZi-Users" "q-MengXiTouZi-Users" ""
+        role condition "r-MengXiTouZi-Users" "q-MengXiTouZi-Users" "GROUPNAME IS 'g-MengXiTouZi-Users'"
+        role resource netpool "r-MengXiTouZi-Users" "netpools"
+        role resource vpnresourcegroup "r-MengXiTouZi-Users" "vpn-resource"
+        role name "r-g-LiangPaiTouZi-Users" "" 1
+        role qualification "r-g-LiangPaiTouZi-Users" "q-g-LiangPaiTouZi-Users" ""
+        role condition "r-g-LiangPaiTouZi-Users" "q-g-LiangPaiTouZi-Users" "GROUPNAME IS 'g-g-LiangPaiTouZi-Users'"
+        role resource netpool "r-g-LiangPaiTouZi-Users" "netpools"
+        role resource vpnresourcegroup "r-g-LiangPaiTouZi-Users" "vpn-resource"
+        role name "r-g-JingQiTouZi-Users" "" 1
+        role qualification "r-g-JingQiTouZi-Users" "q-g-JingQiTouZi-Users" ""
+        role condition "r-g-JingQiTouZi-Users" "q-g-JingQiTouZi-Users" "GROUPNAME IS 'g-g-JingQiTouZi-Users'"
+        role resource netpool "r-g-JingQiTouZi-Users" "netpools"
+        role resource vpnresourcegroup "r-g-JingQiTouZi-Users" "vpn-resource"
+        role name "r-g-JingQiTouZi-YW" "" 1
+        role qualification "r-g-JingQiTouZi-YW" "q-g-JingQiTouZi-YW" ""
+        role condition "r-g-JingQiTouZi-YW" "q-g-JingQiTouZi-YW" "GROUPNAME IS 'g-g-JingQiTouZi-YW'"
+        role resource netpool "r-g-JingQiTouZi-YW" "netpools"
+        role resource vpnresourcegroup "r-g-JingQiTouZi-YW" "vpn-resource"
+        role name "r-g-YuJinSiMu-Users" "" 1
+        role qualification "r-g-YuJinSiMu-Users" "q-g-YuJinSiMu-Users" ""
+        role condition "r-g-YuJinSiMu-Users" "q-g-YuJinSiMu-Users" "GROUPNAME IS 'g-g-YuJinSiMu-Users'"
+        role resource netpool "r-g-YuJinSiMu-Users" "netpools"
+        role resource vpnresourcegroup "r-g-YuJinSiMu-Users" "vpn-resource"
+        role name "r-g-HaiPuSiMu-Users" "" 1
+        role qualification "r-g-HaiPuSiMu-Users" "q-g-HaiPuSiMu-Users" ""
+        role condition "r-g-HaiPuSiMu-Users" "q-g-HaiPuSiMu-Users" "GROUPNAME IS 'g-g-HaiPuSiMu-Users'"
+        role resource netpool "r-g-HaiPuSiMu-Users" "netpools"
+        role resource vpnresourcegroup "r-g-HaiPuSiMu-Users" "vpn-resource"
+        role name "r-DongWuZaiXian-Users" "" 1
+        role qualification "r-DongWuZaiXian-Users" "q-DongWuZaiXian-Users" ""
+        role condition "r-DongWuZaiXian-Users" "q-DongWuZaiXian-Users" "GROUPNAME IS 'g-DongWuZaiXian-Users'"
+        role resource netpool "r-DongWuZaiXian-Users" "netpools"
+        role resource vpnresourcegroup "r-DongWuZaiXian-Users" "vpn-resource"
+        role name "r-LiangYuSiMu-YW" "" 1
+        role qualification "r-LiangYuSiMu-YW" "q-LiangYuSiMu-YW" ""
+        role condition "r-LiangYuSiMu-YW" "q-LiangYuSiMu-YW" "GROUPNAME IS 'g-LiangYuSiMu-YW'"
+        role resource netpool "r-LiangYuSiMu-YW" "netpools"
+        role resource vpnresourcegroup "r-LiangYuSiMu-YW" "vpn-resource"
+        role name "r-YuJinSiMu-YW" "" 1
+        role qualification "r-YuJinSiMu-YW" "q-YuJinSiMu-YW" ""
+        role condition "r-YuJinSiMu-YW" "q-YuJinSiMu-YW" "GROUPNAME IS 'g-YuJinSiMu-YW'"
+        role resource netpool "r-YuJinSiMu-YW" "netpools"
+        role resource vpnresourcegroup "r-YuJinSiMu-YW" "vpn-resource"
+        role name "r-LingJunTouZi-YW" "" 1
+        role qualification "r-LingJunTouZi-YW" "q-LingJunTouZi-YW" ""
+        role condition "r-LingJunTouZi-YW" "q-LingJunTouZi-YW" "GROUPNAME IS 'g-LingJunTouZi-YW'"
+        role resource netpool "r-LingJunTouZi-YW" "netpools"
+        role resource vpnresourcegroup "r-LingJunTouZi-YW" "vpn-resource"
+
+        #acl configuration
+        acl resourcegroup network "s-XingKuoTouZi" ""
+        acl resourcegroup network "s-ChuoRuiJiJin" ""
+        acl resourcegroup network "s-XingPengLianHai-Users" ""
+        acl resourcegroup network "s-XingPengLianHai-YW" ""
+        acl resourcegroup network "s-YuanMiaoKeji" ""
+        acl resourcegroup network "s-MengXiTouZi-Users" ""
+        acl resourcegroup network "s-g-LiangPaiTouZi-Users" ""
+        acl resourcegroup network "s-g-JingQiTouZi-Users" ""
+        acl resourcegroup network "s-g-JingQiTouZi-YW" ""
+        acl resourcegroup network "s-g-YuJinSiMu-Users" ""
+        acl resourcegroup network "s-g-HaiPuSiMu-Users" ""
+        acl resourcegroup network "s-DongWuZaiXian-Users" ""
+        acl resourcegroup network "s-LiangYuSiMu-YW" ""
+        acl resourcegroup network "s-YuJinSiMu-YW" ""
+        acl resourcegroup network "s-ChenYueSiMu" ""
+        acl resourcegroup network "s-LingJunTouZi-YW" ""
+        acl resource "s-XingKuoTouZi" "icmp://10.35.80.153/32"
+        acl resource "s-XingKuoTouZi" "tcp://10.35.80.153/32:22,80,443,3900,5900"
+        acl resource "s-ChuoRuiJiJin" "icmp://10.35.80.144/32"
+        acl resource "s-ChuoRuiJiJin" "tcp://10.35.80.144/32:3000,3306,5577,5588,5599"
+        acl resource "s-XingPengLianHai-Users" "icmp://10.35.81.202/32"
+        acl resource "s-XingPengLianHai-Users" "tcp://10.35.81.202/32:7070,7071"
+        acl resource "s-XingPengLianHai-YW" "icmp://10.35.80.188/32"
+        acl resource "s-XingPengLianHai-YW" "tcp://10.35.80.188/32:22,80,443,3900,5900"
+        acl resource "s-YuanMiaoKeji" "icmp://10.35.83.48/32"
+        acl resource "s-YuanMiaoKeji" "tcp://10.35.83.48/32:22,80,443,3900,5900"
+        acl resource "s-MengXiTouZi-Users" "icmp://10.35.81.3/32"
+        acl resource "s-MengXiTouZi-Users" "tcp://10.35.81.3/32:10022,10023"
+        acl resource "s-g-LiangPaiTouZi-Users" "icmp://10.42.42.42/32"
+        acl resource "s-g-LiangPaiTouZi-Users" "tcp://10.42.42.42/32:1334"
+        acl resource "s-g-JingQiTouZi-Users" "icmp://10.5.24.2/32"
+        acl resource "s-g-JingQiTouZi-Users" "tcp://10.5.24.2/32:13"
+        acl resource "s-g-JingQiTouZi-YW" "icmp://10.45.24.1/32"
+        acl resource "s-g-JingQiTouZi-YW" "tcp://10.45.24.1/32:133"
+        acl resource "s-g-YuJinSiMu-Users" "icmp://10.53.52.1/32"
+        acl resource "s-g-YuJinSiMu-Users" "tcp://10.53.52.1/32:42"
+        acl resource "s-g-HaiPuSiMu-Users" "icmp://10.53.64.34/32"
+        acl resource "s-g-HaiPuSiMu-Users" "tcp://10.53.64.34/32:5345"
+        acl resource "s-DongWuZaiXian-Users" "icmp://10.35.41.22/32"
+        acl resource "s-DongWuZaiXian-Users" "tcp://10.35.41.22/32:123,234"
+        acl resource "s-LiangYuSiMu-YW" "icmp://10.35.80.198/32"
+        acl resource "s-LiangYuSiMu-YW" "tcp://10.35.80.198/32:22,80,443,3900,5900"
+        acl resource "s-YuJinSiMu-YW" "icmp://10.35.80.137/32"
+        acl resource "s-YuJinSiMu-YW" "tcp://10.35.80.137/32:22,80,443,3900,5900"
+        acl resource "s-ChenYueSiMu" "icmp://10.35.81.217/32"
+        acl resource "s-ChenYueSiMu" "tcp://10.35.81.217/32:3389"
+        acl resource "s-LingJunTouZi-YW" "icmp://10.35.83.193/32"
+        acl resource "s-LingJunTouZi-YW" "tcp://10.35.83.193/32:22,80,443,3900,5900"
+        acl rule "r-ChenYueSiMu" "s-ChenYueSiMu" "PERMIT" 1000 "R"
+        acl rule "r-ChuoRuiJiJin" "s-ChuoRuiJiJin" "PERMIT" 1000 "R"
+        acl rule "r-DongWuZaiXian-Users" "s-DongWuZaiXian-Users" "PERMIT" 1000 "R"
+        acl rule "r-LiangYuSiMu-YW" "s-LiangYuSiMu-YW" "PERMIT" 1000 "R"
+        acl rule "r-LingJunTouZi-YW" "s-LingJunTouZi-YW" "PERMIT" 1000 "R"
+        acl rule "r-MengXiTouZi-Users" "s-MengXiTouZi-Users" "PERMIT" 1000 "R"
+        acl rule "r-XingKuoTouZi" "s-XingKuoTouZi" "PERMIT" 1000 "R"
+        acl rule "r-XingPengLianHai-Users" "s-XingPengLianHai-Users" "PERMIT" 1000 "R"
+        acl rule "r-XingPengLianHai-YW" "s-XingPengLianHai-YW" "PERMIT" 1000 "R"
+        acl rule "r-YuJinSiMu-YW" "s-YuJinSiMu-YW" "PERMIT" 1000 "R"
+        acl rule "r-YuanMiaoKeji" "s-YuanMiaoKeji" "PERMIT" 1000 "R"
+        acl rule "r-g-HaiPuSiMu-Users" "s-g-HaiPuSiMu-Users" "PERMIT" 1000 "R"
+        acl rule "r-g-JingQiTouZi-Users" "s-g-JingQiTouZi-Users" "PERMIT" 1000 "R"
+        acl rule "r-g-JingQiTouZi-YW" "s-g-JingQiTouZi-YW" "PERMIT" 1000 "R"
+        acl rule "r-g-LiangPaiTouZi-Users" "s-g-LiangPaiTouZi-Users" "PERMIT" 1000 "R"
+        acl rule "r-g-YuJinSiMu-Users" "s-g-YuJinSiMu-Users" "PERMIT" 1000 "R"
+        acl dynamic off
+        acl denylog off
+
+        #url policy configuration
+        urlpolicy default internal
+
+        #url property mask configuration
+
+        #filter configuration
+        filter off
+        filter mode "blacklist"
+        filter url whitelist "/"
+        filter url whitelist "/login"
+        filter url whitelist "/logout"
+        filter url whitelist "/welcome"
+        filter url whitelist "/an_login.js"
+        filter url whitelist "/challenge"
+        filter url whitelist "/vpntunnel"
+        filter url whitelist "/accessmode"
+        filter url whitelist "/cookietest"
+
+        #SSO configuration
+        sso off
+        sso application fileshare off
+        sso application desktopdirect off
+        sso application web off
+
+        #fileshare configuration
+        fileshare cifs off
+
+        #http proxy configuration
+        no http nostore
+        http xclientcert dnencoding "UTF-8"
+        http xclientcert rdnsep "," "post"
+        http xforwardedfor on "header" "X-Forwarded-For"
+        no http statefulredirect
+        no http xusername
+        http cookie expire passthrough
+        http cookie httponly off
+        http hostcheck "on"
+        http hostipdeny "off"
+        http postcheck "on"
+        http refercheck on
+        http crossdomain off
+
+        #localdb password quality check settings
+
+        #localdb dynamic password refreshing interval
+        localdb dynamiccode interval 30
+
+        #localdb account lockout at failure login
+
+        #localdb account lockout at idle time
+
+        #localdb hardwareid userlimit configuration
+        localdb hardwareid userlimit 1
+
+        #localdb hardwareid devicelimit configuration
+        localdb hardwareid devicelimit 0
+
+        #localdb hardwareid email configuration
+        localdb hardwareid email ""
+
+        #localdb hardwareid self-register email expire configuration
+        localdb hardwareid emailexpire 86400 60
+
+        #localdb hardwareid configuration
+        localdb hardwareid grouplimit "g-TG-SMBYZC" 255
+        localdb hardwareid off "g-TG-SMBYZC"
+        no localdb hardwareid aggregation "g-TG-SMBYZC" 0
+        no localdb hardwareid autoapprove "g-TG-SMBYZC"
+        localdb hardwareid autocollect "g-TG-SMBYZC"
+        localdb hardwareid policy "g-TG-SMBYZC" "machineid"
+        localdb hardwareid grouplimit "g-XuanXinZiChan-Users" 255
+        localdb hardwareid off "g-XuanXinZiChan-Users"
+        no localdb hardwareid aggregation "g-XuanXinZiChan-Users" 0
+        no localdb hardwareid autoapprove "g-XuanXinZiChan-Users"
+        localdb hardwareid autocollect "g-XuanXinZiChan-Users"
+        localdb hardwareid policy "g-XuanXinZiChan-Users" "machineid"
+        localdb hardwareid grouplimit "g-XingKuoTouZi" 255
+        localdb hardwareid off "g-XingKuoTouZi"
+        no localdb hardwareid aggregation "g-XingKuoTouZi" 0
+        no localdb hardwareid autoapprove "g-XingKuoTouZi"
+        localdb hardwareid autocollect "g-XingKuoTouZi"
+        localdb hardwareid policy "g-XingKuoTouZi" "machineid"
+        localdb hardwareid grouplimit "g-ChuoRuiJiJin" 255
+        localdb hardwareid off "g-ChuoRuiJiJin"
+        no localdb hardwareid aggregation "g-ChuoRuiJiJin" 0
+        no localdb hardwareid autoapprove "g-ChuoRuiJiJin"
+        localdb hardwareid autocollect "g-ChuoRuiJiJin"
+        localdb hardwareid policy "g-ChuoRuiJiJin" "machineid"
+        localdb hardwareid grouplimit "g-XingPengLianHai-Users" 255
+        localdb hardwareid off "g-XingPengLianHai-Users"
+        no localdb hardwareid aggregation "g-XingPengLianHai-Users" 0
+        no localdb hardwareid autoapprove "g-XingPengLianHai-Users"
+        localdb hardwareid autocollect "g-XingPengLianHai-Users"
+        localdb hardwareid policy "g-XingPengLianHai-Users" "machineid"
+        localdb hardwareid grouplimit "g-XingPengLianHai-YW" 255
+        localdb hardwareid off "g-XingPengLianHai-YW"
+        no localdb hardwareid aggregation "g-XingPengLianHai-YW" 0
+        no localdb hardwareid autoapprove "g-XingPengLianHai-YW"
+        localdb hardwareid autocollect "g-XingPengLianHai-YW"
+        localdb hardwareid policy "g-XingPengLianHai-YW" "machineid"
+        localdb hardwareid grouplimit "g-YuanMiaoKeji" 255
+        localdb hardwareid off "g-YuanMiaoKeji"
+        no localdb hardwareid aggregation "g-YuanMiaoKeji" 0
+        no localdb hardwareid autoapprove "g-YuanMiaoKeji"
+        localdb hardwareid autocollect "g-YuanMiaoKeji"
+        localdb hardwareid policy "g-YuanMiaoKeji" "machineid"
+        localdb hardwareid grouplimit "g-MengXiTouZi-Users" 255
+        localdb hardwareid off "g-MengXiTouZi-Users"
+        no localdb hardwareid aggregation "g-MengXiTouZi-Users" 0
+        no localdb hardwareid autoapprove "g-MengXiTouZi-Users"
+        localdb hardwareid autocollect "g-MengXiTouZi-Users"
+        localdb hardwareid policy "g-MengXiTouZi-Users" "machineid"
+        localdb hardwareid grouplimit "g-g-LiangPaiTouZi-Users" 255
+        localdb hardwareid off "g-g-LiangPaiTouZi-Users"
+        no localdb hardwareid aggregation "g-g-LiangPaiTouZi-Users" 0
+        no localdb hardwareid autoapprove "g-g-LiangPaiTouZi-Users"
+        localdb hardwareid autocollect "g-g-LiangPaiTouZi-Users"
+        localdb hardwareid policy "g-g-LiangPaiTouZi-Users" "machineid"
+        localdb hardwareid grouplimit "g-g-JingQiTouZi-Users" 255
+        localdb hardwareid off "g-g-JingQiTouZi-Users"
+        no localdb hardwareid aggregation "g-g-JingQiTouZi-Users" 0
+        no localdb hardwareid autoapprove "g-g-JingQiTouZi-Users"
+        localdb hardwareid autocollect "g-g-JingQiTouZi-Users"
+        localdb hardwareid policy "g-g-JingQiTouZi-Users" "machineid"
+        localdb hardwareid grouplimit "g-g-JingQiTouZi-YW" 255
+        localdb hardwareid off "g-g-JingQiTouZi-YW"
+        no localdb hardwareid aggregation "g-g-JingQiTouZi-YW" 0
+        no localdb hardwareid autoapprove "g-g-JingQiTouZi-YW"
+        localdb hardwareid autocollect "g-g-JingQiTouZi-YW"
+        localdb hardwareid policy "g-g-JingQiTouZi-YW" "machineid"
+        localdb hardwareid grouplimit "g-g-YuJinSiMu-Users" 255
+        localdb hardwareid off "g-g-YuJinSiMu-Users"
+        no localdb hardwareid aggregation "g-g-YuJinSiMu-Users" 0
+        no localdb hardwareid autoapprove "g-g-YuJinSiMu-Users"
+        localdb hardwareid autocollect "g-g-YuJinSiMu-Users"
+        localdb hardwareid policy "g-g-YuJinSiMu-Users" "machineid"
+        localdb hardwareid grouplimit "g-g-HaiPuSiMu-Users" 255
+        localdb hardwareid off "g-g-HaiPuSiMu-Users"
+        no localdb hardwareid aggregation "g-g-HaiPuSiMu-Users" 0
+        no localdb hardwareid autoapprove "g-g-HaiPuSiMu-Users"
+        localdb hardwareid autocollect "g-g-HaiPuSiMu-Users"
+        localdb hardwareid policy "g-g-HaiPuSiMu-Users" "machineid"
+        localdb hardwareid grouplimit "g-DongWuZaiXian-Users" 255
+        localdb hardwareid off "g-DongWuZaiXian-Users"
+        no localdb hardwareid aggregation "g-DongWuZaiXian-Users" 0
+        no localdb hardwareid autoapprove "g-DongWuZaiXian-Users"
+        localdb hardwareid autocollect "g-DongWuZaiXian-Users"
+        localdb hardwareid policy "g-DongWuZaiXian-Users" "machineid"
+        localdb hardwareid grouplimit "g-LiangYuSiMu-YW" 255
+        localdb hardwareid off "g-LiangYuSiMu-YW"
+        no localdb hardwareid aggregation "g-LiangYuSiMu-YW" 0
+        no localdb hardwareid autoapprove "g-LiangYuSiMu-YW"
+        localdb hardwareid autocollect "g-LiangYuSiMu-YW"
+        localdb hardwareid policy "g-LiangYuSiMu-YW" "machineid"
+        localdb hardwareid grouplimit "g-YuJinSiMu-YW" 255
+        localdb hardwareid off "g-YuJinSiMu-YW"
+        no localdb hardwareid aggregation "g-YuJinSiMu-YW" 0
+        no localdb hardwareid autoapprove "g-YuJinSiMu-YW"
+        localdb hardwareid autocollect "g-YuJinSiMu-YW"
+        localdb hardwareid policy "g-YuJinSiMu-YW" "machineid"
+        localdb hardwareid grouplimit "g-ChenYueSiMu" 255
+        localdb hardwareid off "g-ChenYueSiMu"
+        no localdb hardwareid aggregation "g-ChenYueSiMu" 0
+        no localdb hardwareid autoapprove "g-ChenYueSiMu"
+        localdb hardwareid autocollect "g-ChenYueSiMu"
+        localdb hardwareid policy "g-ChenYueSiMu" "machineid"
+        localdb hardwareid grouplimit "g-LingJunTouZi-YW" 255
+        localdb hardwareid off "g-LingJunTouZi-YW"
+        no localdb hardwareid aggregation "g-LingJunTouZi-YW" 0
+        no localdb hardwareid autoapprove "g-LingJunTouZi-YW"
+        localdb hardwareid autocollect "g-LingJunTouZi-YW"
+        localdb hardwareid policy "g-LingJunTouZi-YW" "machineid"
+
+        #localdb hardwareid auto sync configuration
+        localdb hardwareid sync off
+
+        #localdb hardwareid self register configuration
+
+        #localdb auto-backup configuration
+        localdb autobackup 3 "0:00" 0
+
+        #DesktopDirect configuration
+
+        #http compression configuration
+
+        #MotionPro clientsettings
+        motionpro client flag 8
+        #MotionPro clientsettings
+        motionpro client senddeviceid off
+        motionpro client certverify on
+
+        #MotionPro MDM configurations
+        motionpro mdm off
+
+        #MotionPro portal tabpage configurations
+        motionpro portal tabpage "web" "not_display"
+        motionpro portal tabpage "application" "display"
+        motionpro portal tabpage "desktop" "display"
+
+        #MotionPro portal vpnpolicy configurations
+
+        #motionpro role configurations
+
+        #motionpro clientsettings
+
+        #motionpro nativeapp configurations
+
+        #motionpro webapp configurations
+
+        #motionpro external mdm settings
+
+  config:
+    prompt: "(config)#"
+    switch_mode_cmds:
+      - "exit"
+      - "disable"
+    cmds:
+      - cmd: "write memory"
+        output: ""
+      - cmd: "write memory all"
+        output: ""
+      - cmd: "hostname array-ag"
+        output: ""
+common:
+  - cmd: "show version"
+    output: |
+
+      ArrayOS Rel.AG.9.4.0.514 build on Sun Apr 28 18:25:25 2024
+
+              Host name : S-DGB2-E09-VPN-JGJR-AG1100-B
+             System CPU : Intel(R) Xeon(R) CPU
+             System RAM : 1942412 kbytes.
+       System boot time : Wed Sep 25 09:41:28 GMT (+0000) 2024
+           Current time : Thu Dec 05 09:42:02 GMT (+0000) 2024
+         System up time :  71 days, 1 min,
+      Platform Bld Date : Sun Apr 28 18:25:20 CST 2024
+           SSL Hardware : No HW Available
+         Compression HW : No HW Available
+      Network Interface : 4 x Gigabit Ethernet copper
+                  Model : Array vxAG
+          Serial Number : 9CCB9471B8484000000605165045004
+       Maximum Sessions : 100
+       Maximum VPortals : 5
+      Licensed Features : WebWall  Clustering  SSL  SwCompression  VPNClient
+                    HostCheck  CacheCleaner  WebApps  SSF  MobileClient
+                    SWMaintenance
+      License Key : h2/rU4+0-L2LdUu42-xQDjT4FW-h4s=#131-4d67d9ab-a9cf2422-4667eaa3-beef0123-4d#7eba9-8ccf4#dc-ba98765
+      License Date : Expires on Jan 03 2025
+
+      Array Networks Customer Support
+      Telephone         : 1-877-992-7729 (1-877-99-ARRAY)
+      Email             : support@arraynetworks.net
+      Update            : please contact support for instructions
+      Website           : https://www.arraynetworks.net
+
+      Other Root Version
+      Rel.AG.9.3.0.61 build on Mon Apr 21 15:14:45 2014
+
+welcome: |
+  ArrayOS Rel.AG.9.4.0.514 build on Sun Apr 28 18:25:25 2024
+  Copyright 2000-2024 Array Networks Inc. All rights reserved.
+
+  Type "?" for available commands
+
+invalid_cmd_error: |
+  ^

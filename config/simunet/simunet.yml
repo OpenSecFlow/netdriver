@@ -1,0 +1,61 @@
+devices:
+  - vendor: cisco
+    model: nexus
+    version: 9.6.0
+    port: 18020
+  - vendor: array
+    model: ag
+    version: 9.6.0
+    port: 18021
+  - vendor: huawei
+    model: usg
+    version: V500R001C10
+    port: 18022
+  - vendor: hillstone
+    model: sg6000
+    version: 5.5
+    port: 18023
+  - vendor: cisco
+    model: asa
+    version: 9.6.0
+    port: 18024
+  - vendor: h3c
+    model: secpath
+    version: commareV7
+    port: 18025
+  - vendor: h3c
+    model: vsr
+    version: V71064
+    port: 18026
+  - vendor: dptech
+    model: fw1000
+    version: S511C013D001
+    port: 18027
+  - vendor: juniper
+    model: srx
+    version: 12.0
+    port: 18028
+  - vendor: juniper
+    model: ex4200
+    version: 15
+    port: 18029
+  - vendor: maipu
+    model: nss
+    version: 9.7.40.8
+    port: 18030
+  - vendor: qianxin
+    model: nsg
+    version: 6.1.13
+    port: 18031
+  - vendor: venustech
+    model: usg
+    version: v2.6
+    port: 18032
+  - vendor: chaitin
+    model: ctdsg
+    version: v3.0
+    port: 18033
+  - vendor: topsec
+    model: ngfw
+    version: v3
+    port: 18034

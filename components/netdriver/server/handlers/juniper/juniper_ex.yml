@@ -1,0 +1,77 @@
+# Juniper EX
+start_mode: enable
+hostname: admin@juniper_ex
+line_feed: "\r\n"
+modes:
+  enable:
+    prompt: ">"
+    switch_mode_cmds:
+      - "configure"
+      - "exit"
+    cmds: 
+      - cmd: "show version | no-more"
+        output: ""
+      - cmd: "show configuration | display set | no-more "
+        output: ""
+  config:
+    prompt: "#"
+    switch_mode_cmds:
+      - "exit"
+    cmds:
+      - cmd: "commit"
+        output: ""
+      - cmd: "hostname juniper"
+        output: ""
+      - cmd: "set system host-name juniper-ex"
+        output: ""
+common:
+  - cmd: "show version"
+    output: |
+      admin@juniper-srx> show version 
+      Hostname: admin@junipe
+      Model: firefly-perimeter
+      JUNOS Software Release [12.1X47-D20.7]
+
+  - cmd: "show configuration"
+    output: |
+      show configuration | display set | no-more 
+      set version 12.1X47-D20.7
+      set system host-name test
+      set system root-authentication encrypted-password "$1$lKnmN6iU$AmHVrj6P.QZoHaLzRJPTG."
+      set system login user admin uid 2000
+      set system login user admin class super-user
+      set system login user admin authentication encrypted-password "$1$U1qCE/yI$fm/NgodCXEaC2P8/9AUe21"
+      set system services ssh root-login allow
+      set interfaces ge-0/0/0 unit 0 family inet address 172.21.1.110/24
+      set interfaces ge-0/0/1 unit 0 family inet address 12.1.1.1/24
+      set interfaces ge-0/0/3 unit 0 family inet address 113.1.1.1/24
+      set routing-options static route 192.168.0.0/16 next-hop 172.21.1.1
+      set routing-options static route 0.0.0.0/0 next-hop 12.1.1.2
+      set routing-options static route 26.2.32.0/23 next-hop 113.1.1.2
+      set routing-options static route 10.10.10.0/24 next-hop 12.1.1.2
+      set routing-options static route 20.20.20.0/24 next-hop 113.1.1.2
+      set protocols lldp interface all
+      set security policies from-zone untrust to-zone trust policy 10 match source-address Host_26.128.1.153_32
+      set security policies from-zone untrust to-zone trust policy 10 match destination-address Host_26.2.32.52_32
+      set security policies from-zone untrust to-zone trust policy 10 match application any
+      set security policies from-zone untrust to-zone trust policy 10 then permit
+      set security zones security-zone mgmt host-inbound-traffic system-services all
+      set security zones security-zone mgmt host-inbound-traffic protocols all
+      set security zones security-zone mgmt interfaces ge-0/0/0.0
+      set security zones security-zone untrust address-book address Host_26.128.1.153_32 wildcard-address 26.128.1.153/255.255.255.255
+      set security zones security-zone untrust host-inbound-traffic system-services all
+      set security zones security-zone untrust host-inbound-traffic protocols all
+      set security zones security-zone untrust interfaces ge-0/0/1.0
+      set security zones security-zone trust address-book address Host_26.2.32.52_32 wildcard-address 26.2.32.52/255.255.255.255
+      set security zones security-zone trust host-inbound-traffic system-services all
+      set security zones security-zone trust host-inbound-traffic protocols all
+      set security zones security-zone trust interfaces ge-0/0/3.0
+    
+welcome: |
+  admin@juniper-srx> show interfaces | no-more
+
+invalid_cmd_error: |
+  ^
+  unknown command.
+
+

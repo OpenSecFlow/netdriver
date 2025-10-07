@@ -1,0 +1,56 @@
+api:
+  # HTTP request log level
+  # - INFO: only output request method and path;
+  # - DEBUG: output detailed request body; 
+  request_log_level: DEBUG
+logging:
+  # INFO / DEBUG / TRACE
+  level: INFO
+  intercept_loggers:
+    - uvicorn.access
+    - uvicorn.error
+session:
+  # Session pool check interval, pool status will be output in the log
+  check_interval: 30
+  # Read buffer size (unit: bytes), 1MB, default is 8192
+  read_buffer_size: 1048576
+  # profiles for session smart adaptiv read
+  ssh:
+    login_timeout: 20
+    connect_timeout: 30
+    # Send keepalive every 60 seconds
+    keepalive_interval: 60
+    # Send up to 3 times after no response
+    keepalive_count_max: 3
+    # https://asyncssh.readthedocs.io/en/latest/api.html#supported-algorithms
+    # enabled all algorithms by default, add extra algorithms if needed
+    kex_algs: []
+    # https://asyncssh.readthedocs.io/en/latest/api.html#supported-algorithms
+    # enabled all algorithms by default, add extra algorithms if needed
+    encryption_algs: []
+  profiles:
+    # global profile, used when no other profile matche
+    global:
+      read_timeout: 10.0
+      # Close the sessions created before the expiration time. Format: HH:MM
+      expiration_time: "16:00"
+      # If the idle time exceeds the maximum, close the session. Unit: Seconds
+      max_idle_time: 600.0
+    # profile based on vendor/type/version, priority is higher than default
+    vendor:
+      cisco:
+        nexus:
+          base:
+            read_timeout: 60.0
+            expiration_time: "16:00"
+            max_idle_time: 600.0
+    #       9.8:
+    #         read_timeout: 12.0
+    #         expiration_time: "16:00"
+    #         max_idle_time: 600.0
+    # profile based on IP address, priority is higher than vendor/type/version
+    # ip:
+    #   192.168.60.198:
+    #     read_timeout: 15.0
+    #     expiration_time: "16:00"
+    #     max_idle_time: 600.0

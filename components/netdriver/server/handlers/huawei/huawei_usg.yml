@@ -1,0 +1,520 @@
+# Huawei USG Firewall
+start_mode: enable
+hostname: USG
+line_feed: "\r\n"
+vendor_options:
+  huawei.usg.hrp_role: master
+modes:
+  enable:
+    prompt: "{}<{}>"
+    switch_mode_cmds:
+      - "system-view"
+      - "sys"
+      - "quit"
+    cmds:
+      - cmd: "screen-length 0 temporary"
+        output: ""
+      - cmd: "save"
+        output: ""
+      - cmd: "save all"
+        output: ""
+  config:
+    prompt: "{}[{}]"
+    switch_mode_cmds:
+      - "system-view"
+      - "quit"
+    cmds:
+      - cmd: "sysname usg6000v"
+        output: ""
+common:
+  - cmd: "display version"
+    output: |
+      Huawei Versatile Routing Platform Software
+      VRP (R) Software, Version 5.160 (USG6000V2 V500R001C10)
+      Copyright (C) 2014-2015 Huawei Technologies Co., Ltd
+      USG6000V2 uptime is 0 week, 0 day, 7 hours, 10 minutes
+
+
+      IPS Signature Database Version   :
+      IPS Engine Version               : V200R002C10SPC021
+      AV Signature Database Version    :
+      SA Signature Database Version    : 2015072900
+      C&C Domain Name Database Version :
+      Location Database Version        : 2014010414
+
+
+      HRP_M[USG6000V2]quit
+      quit
+      HRP_M<USG6000V2>display version
+      display version
+      Huawei Versatile Routing Platform Software
+      VRP (R) Software, Version 5.160 (USG6000V2 V500R001C10)
+      Copyright (C) 2014-2015 Huawei Technologies Co., Ltd
+      USG6000V2 uptime is 0 week, 0 day, 7 hours, 11 minutes
+
+
+      IPS Signature Database Version   :
+      IPS Engine Version               : V200R002C10SPC021
+      AV Signature Database Version    :
+      SA Signature Database Version    : 2015072900
+      C&C Domain Name Database Version :
+      Location Database Version        : 2014010414
+  - cmd: "display current-configuration"
+    output: |
+      !Software Version V500R001C10
+      #
+      sysname USG6000V2
+      #
+       undo l2tp sendaccm enable
+       l2tp domain suffix-separator @
+      #
+      undo telnet server enable
+      undo telnet ipv6 server enable
+      #
+      clock timezone UTC add 00:00:00
+      #
+       hrp enable
+       hrp interface GigabitEthernet1/0/0 remote 1.1.1.1
+       hrp standby config enable
+      #
+       firewall packet-filter basic-protocol enable
+      #
+       firewall detect ftp
+      #
+       firewall defend action discard
+      #
+       log type traffic enable
+       log type syslog enable
+       log type policy enable
+      #
+       undo dataflow enable
+      #
+       isp name "china mobile"
+       isp name "china mobile" set filename china-mobile.csv
+       isp name "china unicom"
+       isp name "china unicom" set filename china-unicom.csv
+       isp name "china telecom"
+       isp name "china telecom" set filename china-telecom.csv
+       isp name "china educationnet"
+       isp name "china educationnet" set filename china-educationnet.csv
+      #
+       snmp-agent session history-max-number enable
+       snmp-agent session trap threshold 1600000
+       snmp-agent session-rate trap threshold 64000
+      #
+       web-manager security version tlsv1 tlsv1.1
+       web-manager security enable
+      #
+      firewall dataplane to manageplane application-apperceive default-action drop
+      #
+       update schedule ips-sdb daily 05:40
+       update schedule av-sdb daily 05:40
+       update schedule sa-sdb daily 05:40
+       update schedule cnc daily 05:40
+      #
+      vsys enable
+      resource-class r0
+      #
+      #
+      vsys name test 1
+       assign interface GigabitEthernet1/0/1
+       assign interface GigabitEthernet1/0/2
+      #
+      vsys name test2 2
+      #
+      ip vpn-instance default
+       ipv4-family
+      #
+      ip vpn-instance test
+       ipv4-family
+      #
+      ip vpn-instance test2
+       ipv4-family
+      #
+       time-range worktime
+        period-range 08:00:00 to 18:00:00 working-day
+      #
+      aaa
+       authentication-scheme default
+       authentication-scheme admin_local
+       authentication-scheme admin_radius_local
+       authentication-scheme admin_hwtacacs_local
+       authentication-scheme admin_ad_local
+       authentication-scheme admin_ldap_local
+       authentication-scheme admin_radius
+       authentication-scheme admin_hwtacacs
+       authentication-scheme admin_ad
+       authentication-scheme admin_ldap
+       authorization-scheme default
+       accounting-scheme default
+       domain default
+        service-type l2tp ike
+        reference user current-domain
+       manager-user password-modify enable
+       manager-user audit-admin
+        password cipher @%@%&nKIS7B'\.F$\b&^RWu"jfubcT>z0Yd<wQ+|k4Yp(]l=fuej@%@%
+        service-type web terminal
+        level 15
+
+       manager-user api-admin
+        password cipher @%@%*|cV,>$|2;;L;]=&9~=T$9ur!9m.,d*K3AVZE:0)Y|RF9uu$@%@%
+        service-type api
+        level 15
+
+       manager-user admin
+        password cipher @%@%B$f5Ah2-t/8hp_GM2N}A@9MowrL2.Wqz*&;zHrQ~+kNW9Mr@@%@%
+        service-type web terminal ssh
+        level 15
+
+       role system-admin
+        dashboard read-write
+        monitor read-write
+        policy read-write
+        object read-write
+        network read-write
+        system read-write
+       role device-admin
+        dashboard read-only
+        monitor read-only log log-traffic log-threat log-policy-matching report traffic-map threat-map session statistic statistic-acl
+        monitor none diagnose
+        policy read-write
+        object read-write
+        network read-write
+        system read-write high-reliability
+        system none configuration vsys license update-center mail-send feedback
+       role device-admin(monitor)
+        dashboard read-only
+        monitor read-only log log-traffic log-threat log-policy-matching report traffic-map threat-map session statistic statistic-acl
+        monitor none diagnose
+        policy read-only
+        object read-only
+        network read-only
+        system read-only high-reliability
+        system none configuration vsys license update-center mail-send feedback
+       role audit-admin
+        dashboard read-only
+        monitor read-write log-audit
+        monitor read-only log log-traffic log-threat log-syslog log-policy-matching report traffic-map threat-map
+        monitor none session statistic statistic-acl diagnose
+        policy none
+        object none
+        network none
+        system none
+       bind manager-user audit-admin role audit-admin
+      #
+      interface Vlanif1
+      #
+      interface GigabitEthernet0/0/0
+       undo shutdown
+       ip address 172.21.1.138 255.255.255.0
+       service-manage http permit
+       service-manage https permit
+       service-manage ping permit
+       service-manage ssh permit
+       service-manage snmp permit
+       service-manage telnet permit
+       service-manage netconf permit
+      #
+      interface GigabitEthernet1/0/0
+       undo shutdown
+       ip address 1.1.1.2 255.255.255.0
+      #
+      interface GigabitEthernet1/0/1
+       undo shutdown
+       ip binding vpn-instance test
+       ip address 10.1.1.1 255.255.255.0
+      #
+      interface GigabitEthernet1/0/2
+       undo shutdown
+       ip binding vpn-instance test
+       ip address 20.1.1.1 255.255.255.0
+      #
+      interface GigabitEthernet1/0/3
+       undo shutdown
+      #
+      interface GigabitEthernet1/0/4
+       undo shutdown
+      #
+      interface Virtual-if0
+      #
+      interface Virtual-if1
+      #
+      interface Virtual-if2
+      #
+      interface NULL0
+      #
+      firewall zone local
+       set priority 100
+      #
+      firewall zone trust
+       set priority 85
+       add interface GigabitEthernet0/0/0
+      #
+      firewall zone untrust
+       set priority 5
+      #
+      firewall zone dmz
+       set priority 50
+       add interface GigabitEthernet1/0/0
+      #
+      l2tp-group default-lns
+      #
+      ip route-static 0.0.0.0 0.0.0.0 172.21.1.1
+      #
+      undo ssh server compatible-ssh1x enable
+      stelnet server enable
+      ssh user admin
+      ssh user admin authentication-type all
+      ssh user admin service-type all
+      #
+      user-interface con 0
+       authentication-mode aaa
+      user-interface vty 0
+       authentication-mode aaa
+       screen-length 0
+       protocol inbound ssh
+      user-interface vty 1 4
+       authentication-mode aaa
+       protocol inbound ssh
+      user-interface vty 16 20
+      #
+      sa
+      #
+      location
+      #
+       multi-interface
+        mode proportion-of-weight
+      #
+      right-manager server-group
+      #
+      api
+      #
+      security-policy
+       rule name 1
+        source-zone local
+        source-zone trust
+        source-zone dmz
+        destination-zone local
+        destination-zone trust
+        destination-zone dmz
+        action permit
+      #
+      traffic-policy
+      #
+      policy-based-route
+      #
+      nat-policy
+      #
+      pcp-policy
+      #
+      dns-transparent-policy
+      #
+      return
+      #
+      switch vsys test
+      #
+       firewall defend action discard
+      #
+       time-range worktime
+        period-range 08:00:00 to 18:00:00 working-day
+      #
+      aaa
+       authentication-scheme default
+       authentication-scheme admin_local
+       authentication-scheme admin_radius_local
+       authentication-scheme admin_hwtacacs_local
+       authentication-scheme admin_ad_local
+       authentication-scheme admin_ldap_local
+       authentication-scheme admin_radius
+       authentication-scheme admin_hwtacacs
+       authentication-scheme admin_ad
+       authentication-scheme admin_ldap
+       authorization-scheme default
+       accounting-scheme default
+       domain default
+        service-type
+        reference user current-domain
+       role system-admin
+        dashboard read-write
+        monitor read-write
+        policy read-write
+        object read-write
+        network read-write
+        system read-write
+       role device-admin
+        dashboard read-only
+        monitor read-only log log-traffic log-threat log-policy-matching report traffic-map threat-map session
+        monitor none diagnose
+        policy read-write
+        object read-write
+        network read-write
+        system read-write high-reliability
+        system none configuration mail-send
+       role device-admin(monitor)
+        dashboard read-only
+        monitor read-only log log-traffic log-threat log-policy-matching report traffic-map threat-map session
+        monitor none diagnose
+        policy read-only
+        object read-only
+        network read-only
+        system read-only high-reliability
+        system none configuration mail-send
+       role audit-admin
+        dashboard read-only
+        monitor read-write log-audit
+        monitor read-only log log-traffic log-threat log-syslog log-policy-matching report traffic-map threat-map
+        monitor none session diagnose
+        policy none
+        object none
+        network none
+        system none
+      #
+      interface GigabitEthernet1/0/1
+       undo shutdown
+       ip binding vpn-instance test
+       ip address 10.1.1.1 255.255.255.0
+      #
+      interface GigabitEthernet1/0/2
+       undo shutdown
+       ip binding vpn-instance test
+       ip address 20.1.1.1 255.255.255.0
+      #
+      interface Virtual-if1
+      #
+      sa
+      #
+      firewall zone local
+       set priority 100
+      #
+      firewall zone trust
+       set priority 85
+       add interface GigabitEthernet1/0/1
+      #
+      firewall zone untrust
+       set priority 5
+       add interface GigabitEthernet1/0/2
+      #
+      firewall zone dmz
+       set priority 50
+      #
+      location
+      #
+      security-policy
+      #
+      traffic-policy
+      #
+      policy-based-route
+      #
+      nat-policy
+      #
+      pcp-policy
+      #
+      return
+      #
+      switch vsys test2
+      #
+       firewall defend action discard
+      #
+       time-range worktime
+        period-range 08:00:00 to 18:00:00 working-day
+      #
+      aaa
+       authentication-scheme default
+       authentication-scheme admin_local
+       authentication-scheme admin_radius_local
+       authentication-scheme admin_hwtacacs_local
+       authentication-scheme admin_ad_local
+       authentication-scheme admin_ldap_local
+       authentication-scheme admin_radius
+       authentication-scheme admin_hwtacacs
+       authentication-scheme admin_ad
+       authentication-scheme admin_ldap
+       authorization-scheme default
+       accounting-scheme default
+       domain default
+        service-type
+        reference user current-domain
+       role system-admin
+        dashboard read-write
+        monitor read-write
+        policy read-write
+        object read-write
+        network read-write
+        system read-write
+       role device-admin
+        dashboard read-only
+        monitor read-only log log-traffic log-threat log-policy-matching report traffic-map threat-map session
+        monitor none diagnose
+        policy read-write
+        object read-write
+        network read-write
+        system read-write high-reliability
+        system none configuration mail-send
+       role device-admin(monitor)
+        dashboard read-only
+        monitor read-only log log-traffic log-threat log-policy-matching report traffic-map threat-map session
+        monitor none diagnose
+        policy read-only
+        object read-only
+        network read-only
+        system read-only high-reliability
+        system none configuration mail-send
+       role audit-admin
+        dashboard read-only
+        monitor read-write log-audit
+        monitor read-only log log-traffic log-threat log-syslog log-policy-matching report traffic-map threat-map
+        monitor none session diagnose
+        policy none
+        object none
+        network none
+        system none
+      #
+      interface Virtual-if2
+      #
+      sa
+      #
+      firewall zone local
+       set priority 100
+      #
+      firewall zone trust
+       set priority 85
+      #
+      firewall zone untrust
+       set priority 5
+      #
+      firewall zone dmz
+       set priority 50
+      #
+      location
+      #
+      security-policy
+      #
+      traffic-policy
+      #
+      policy-based-route
+      #
+      nat-policy
+      #
+      pcp-policy
+      #
+      return
+
+welcome: |
+  PTY allocation request failed on channel 0
+
+  *************************************************************************
+  *         Copyright (C) 2014-2015 Huawei Technologies Co., Ltd.         *
+  *                           All rights reserved.                        *
+  *               Without the owner's prior written consent,              *
+  *        no decompiling or reverse-engineering shall be allowed.        *
+  *************************************************************************
+
+
+  Info: The max number of VTY users is 10, and the number
+        of current VTY users on line is 1.
+        The current login time is 2024-12-20 15:31:01+00:00.
+
+invalid_cmd_error: |
+  invalid_cmd
+                ^
+  Error: Unrecognized command found at '^' position.
