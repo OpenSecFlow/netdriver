@@ -6,8 +6,19 @@
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
 [![Tests](https://img.shields.io/badge/tests-passing-success.svg)]()
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)]()
-[![Issues](https://img.shields.io/github/issues/yourusername/netdriver)](https://github.com/yourusername/netdriver/issues)
-[![Last Commit](https://img.shields.io/github/last-commit/yourusername/netdriver)](https://github.com/yourusername/netdriver/commits/main)
+[![Last Commit](https://img.shields.io/github/last-commit/PanMarkCake/netdriver)](https://github.com/PanMarkCake/netdriver/commits/main)
+[![Release](https://img.shields.io/badge/release-v0.1.0-blue.svg)](https://github.com/PanMarkCake/REPO/releases/tag/v0.1.0)
+![Release Date](https://img.shields.io/badge/release--date-August_2025-blue.svg)
+
+
+# Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Themes](#themes)
 
 ## Overview
 
@@ -220,9 +231,12 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 For questions, issues, or feature requests, please open an issue on the project repository.
 
-## License
+# License
 
 This project is licensed under the [Apache License 2.0](LICENSE).
+
+## Themes
+asdasdas
 
 ## Authors
 
