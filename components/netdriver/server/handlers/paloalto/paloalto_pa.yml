@@ -1,0 +1,1317 @@
+# Paloalto PA
+start_mode: enable
+hostname: admin@paloalto
+line_feed: "\r\n"
+modes:
+  enable:
+    prompt: "> "
+    switch_mode_cmds:
+      - "configure"
+      - "exit"
+    cmds: 
+      - cmd: "show config running"
+        output: |
+
+          config {
+            mgt-config {
+              users {
+                admin {
+                  phash fnRL/G5lXVMug;
+                  permissions {
+                    role-based {
+                      superuser yes;
+                    }
+                  }
+                }
+                demo {
+                  permissions {
+                    role-based {
+                      superuser yes;
+                    }
+                  }
+                  phash $1$bikucxjr$NqXP8UytraSqD7R02eUoc.;
+                }
+                inet {
+                  permissions {
+                    role-based {
+                      superuser yes;
+                    }
+                  }
+                  phash $1$ecurlypk$fvASid9JDqitm7yaUcD1S0;
+                }
+                inet01 {
+                  permissions {
+                    role-based {
+                      superuser yes;
+                    }
+                  }
+                  phash $1$agptexqo$pI9TuZ.upYeqguidGtneW0;
+                }
+                inet02 {
+                  permissions {
+                    role-based {
+                      superuser yes;
+                    }
+                  }
+                  phash $1$gptwerna$vbhTKMNDWwV2FSPsKrtmc.;
+                }
+              }
+            }
+            shared {
+              application;
+              application-group;
+              service;
+              service-group;
+              botnet {
+                configuration {
+                  http {
+                    dynamic-dns {
+                      enabled yes;
+                      threshold 5;
+                    }
+                    malware-sites {
+                      enabled yes;
+                      threshold 5;
+                    }
+                    recent-domains {
+                      enabled yes;
+                      threshold 5;
+                    }
+                    ip-domains {
+                      enabled yes;
+                      threshold 10;
+                    }
+                    executables-from-unknown-sites {
+                      enabled yes;
+                      threshold 5;
+                    }
+                  }
+                  other-applications {
+                    irc yes;
+                  }
+                  unknown-applications {
+                    unknown-tcp {
+                      destinations-per-hour 10;
+                      sessions-per-hour 10;
+                      session-length {
+                        maximum-bytes 100;
+                        minimum-bytes 50;
+                      }
+                    }
+                    unknown-udp {
+                      destinations-per-hour 10;
+                      sessions-per-hour 10;
+                      session-length {
+                        maximum-bytes 100;
+                        minimum-bytes 50;
+                      }
+                    }
+                  }
+                }
+                report {
+                  topn 100;
+                  scheduled yes;
+                }
+              }
+              local-user-database {
+                user;
+              }
+              log-settings {
+                syslog {
+                  inet_log {
+                    server {
+                      inet_log_collector {
+                        transport UDP;
+                        port 8514;
+                        format BSD;
+                        server 192.168.30.98;
+                        facility LOG_USER;
+                      }
+                    }
+                  }
+                  inet_3017_name {
+                    server {
+                      inet_3017 {
+                        transport UDP;
+                        port 8514;
+                        format BSD;
+                        server 192.168.30.17;
+                        facility LOG_USER;
+                      }
+                    }
+                  }
+                  vector_192_168_30_8 {
+                    server {
+                      vector {
+                        transport UDP;
+                        port 511;
+                        format BSD;
+                        server 192.168.30.8;
+                        facility LOG_USER;
+                      }
+                    }
+                  }
+                }
+                config {
+                  match-list {
+                    vector308 {
+                      send-syslog vector_192_168_30_8;
+                      filter "All Logs";
+                    }
+                  }
+                }
+                profiles;
+                system {
+                  match-list {
+                    vector308 {
+                      send-syslog vector_192_168_30_8;
+                      filter "All Logs";
+                    }
+                  }
+                }
+                userid {
+                  match-list {
+                    vector308 {
+                      send-syslog vector_192_168_30_8;
+                      filter "All Logs";
+                    }
+                  }
+                }
+                hipmatch {
+                  match-list {
+                    vector308 {
+                      send-syslog vector_192_168_30_8;
+                      filter "All Logs";
+                    }
+                  }
+                }
+                snmptrap {
+                  test {
+                    version {
+                      v2c {
+                        server {
+                          test {
+                            manager 0.0.0.0/0;
+                            community public;
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            devices {
+              localhost.localdomain {
+                network {
+                  interface {
+                    ethernet {
+                      ethernet1/1 {
+                        layer3 {
+                          ipv6 {
+                            neighbor-discovery {
+                              router-advertisement {
+                                enable no;
+                              }
+                            }
+                            address {
+                              fd12:3456:789a:1::1/64 {
+                                advertise {
+                                  enable no;
+                                  valid-lifetime 2592000;
+                                  preferred-lifetime 604800;
+                                  onlink-flag yes;
+                                  auto-config-flag yes;
+                                }
+                                enable-on-interface yes;
+                              }
+                            }
+                            enabled yes;
+                          }
+                          ndp-proxy {
+                            enabled no;
+                          }
+                          ip {
+                            10.1.1.1/24;
+                          }
+                          lldp {
+                            enable no;
+                          }
+                        }
+                      }
+                      ethernet1/2 {
+                        layer3 {
+                          ipv6 {
+                            neighbor-discovery {
+                              router-advertisement {
+                                enable no;
+                              }
+                            }
+                            address {
+                              fd12:3456:789a:2::1/64 {
+                                advertise {
+                                  enable no;
+                                  valid-lifetime 2592000;
+                                  preferred-lifetime 604800;
+                                  onlink-flag yes;
+                                  auto-config-flag yes;
+                                }
+                                enable-on-interface yes;
+                              }
+                            }
+                            enabled yes;
+                          }
+                          ndp-proxy {
+                            enabled no;
+                          }
+                          ip {
+                            10.1.2.1/24;
+                          }
+                          lldp {
+                            enable no;
+                          }
+                        }
+                      }
+                      ethernet1/3 {
+                        layer3 {
+                          ipv6 {
+                            neighbor-discovery {
+                              router-advertisement {
+                                enable no;
+                              }
+                            }
+                            enabled no;
+                            interface-id EUI-64;
+                          }
+                          ndp-proxy {
+                            enabled no;
+                          }
+                          lldp {
+                            enable no;
+                          }
+                          ip {
+                            192.168.70.254/32;
+                          }
+                        }
+                        comment internet;
+                      }
+                      ethernet1/4 {
+                        layer3 {
+                          ipv6 {
+                            neighbor-discovery {
+                              router-advertisement {
+                                enable no;
+                              }
+                            }
+                            enabled yes;
+                          }
+                          ndp-proxy {
+                            enabled no;
+                          }
+                          lldp {
+                            enable no;
+                          }
+                        }
+                      }
+                    }
+                  }
+                  profiles {
+                    monitor-profile {
+                      default {
+                        interval 3;
+                        threshold 5;
+                        action wait-recover;
+                      }
+                    }
+                  }
+                  ike {
+                    crypto-profiles {
+                      ike-crypto-profiles {
+                        default {
+                          encryption [ aes-128-cbc 3des];
+                          hash sha1;
+                          dh-group group2;
+                          lifetime {
+                            hours 8;
+                          }
+                        }
+                        Suite-B-GCM-128 {
+                          encryption aes-128-cbc;
+                          hash sha256;
+                          dh-group group19;
+                          lifetime {
+                            hours 8;
+                          }
+                        }
+                        Suite-B-GCM-256 {
+                          encryption aes-256-cbc;
+                          hash sha384;
+                          dh-group group20;
+                          lifetime {
+                            hours 8;
+                          }
+                        }
+                      }
+                      ipsec-crypto-profiles {
+                        default {
+                          esp {
+                            encryption [ aes-128-cbc 3des];
+                            authentication sha1;
+                          }
+                          dh-group group2;
+                          lifetime {
+                            hours 1;
+                          }
+                        }
+                        Suite-B-GCM-128 {
+                          esp {
+                            encryption aes-128-gcm;
+                            authentication none;
+                          }
+                          dh-group group19;
+                          lifetime {
+                            hours 1;
+                          }
+                        }
+                        Suite-B-GCM-256 {
+                          esp {
+                            encryption aes-256-gcm;
+                            authentication none;
+                          }
+                          dh-group group20;
+                          lifetime {
+                            hours 1;
+                          }
+                        }
+                      }
+                      global-protect-app-crypto-profiles {
+                        default {
+                          encryption aes-128-cbc;
+                          authentication sha1;
+                        }
+                      }
+                    }
+                  }
+                  qos {
+                    profile {
+                      default {
+                        class {
+                          class1 {
+                            priority real-time;
+                          }
+                          class2 {
+                            priority high;
+                          }
+                          class3 {
+                            priority high;
+                          }
+                          class4 {
+                            priority medium;
+                          }
+                          class5 {
+                            priority medium;
+                          }
+                          class6 {
+                            priority low;
+                          }
+                          class7 {
+                            priority low;
+                          }
+                          class8 {
+                            priority low;
+                          }
+                        }
+                      }
+                    }
+                  }
+                  virtual-router {
+                    default {
+                      protocol {
+                        bgp {
+                          enable no;
+                          dampening-profile {
+                            default {
+                              cutoff 1.25;
+                              reuse 0.5;
+                              max-hold-time 900;
+                              decay-half-life-reachable 300;
+                              decay-half-life-unreachable 900;
+                              enable yes;
+                            }
+                          }
+                          routing-options {
+                            graceful-restart {
+                              enable yes;
+                            }
+                          }
+                        }
+                        rip {
+                          enable no;
+                        }
+                        ospf {
+                          enable no;
+                        }
+                        ospfv3 {
+                          enable no;
+                        }
+                      }
+                      interface [ ethernet1/1 ethernet1/2 ethernet1/3];
+                      ecmp {
+                        algorithm {
+                          ip-modulo;
+                        }
+                      }
+                      routing-table {
+                        ip {
+                          static-route {
+                            default {
+                              path-monitor {
+                                enable no;
+                                failure-condition any;
+                                hold-time 2;
+                              }
+                              nexthop {
+                                ip-address 192.168.70.1;
+                              }
+                              bfd {
+                                profile None;
+                              }
+                              interface ethernet1/3;
+                              metric 10;
+                              destination 0.0.0.0/0;
+                              route-table {
+                                unicast;
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+                deviceconfig {
+                  system {
+                    type {
+                      static;
+                    }
+                    update-server updates.paloaltonetworks.com;
+                    update-schedule {
+                      threats {
+                        recurring {
+                          weekly {
+                            day-of-week wednesday;
+                            at 01:02;
+                            action download-only;
+                          }
+                        }
+                      }
+                    }
+                    timezone Hongkong;
+                    service {
+                      disable-telnet yes;
+                      disable-http yes;
+                      disable-https no;
+                      disable-snmp no;
+                    }
+                    hostname pa-60.99;
+                    ip-address 192.168.60.99;
+                    default-gateway 192.168.60.1;
+                    panorama-server 192.168.60.100;
+                    snmp-setting {
+                      access-setting {
+                        version {
+                          v2c {
+                            snmp-community-string public;
+                          }
+                        }
+                      }
+                    }
+                    netmask 255.255.255.0;
+                  }
+                  setting {
+                    config {
+                      rematch yes;
+                    }
+                    management {
+                      hostname-type-in-syslog FQDN;
+                    }
+                    auto-mac-detect yes;
+                  }
+                }
+                vsys {
+                  vsys1 {
+                    application;
+                    application-group;
+                    zone {
+                      biz2 {
+                        network {
+                          layer3 ethernet1/2;
+                        }
+                      }
+                      biz1 {
+                        network {
+                          layer3 ethernet1/1;
+                        }
+                      }
+                      internet {
+                        network {
+                          layer3 ethernet1/3;
+                          log-setting inet_log_forward_profile;
+                        }
+                      }
+                    }
+                    service {
+                      tcp_22 {
+                        protocol {
+                          tcp {
+                            port 22;
+                            override {
+                              no;
+                            }
+                          }
+                        }
+                      }
+                      tcp-53 {
+                        protocol {
+                          tcp {
+                            port 53;
+                            override {
+                              no;
+                            }
+                          }
+                        }
+                      }
+                      udp-53 {
+                        protocol {
+                          udp {
+                            port 53;
+                            override {
+                              no;
+                            }
+                          }
+                        }
+                      }
+                      repeated_object_service {
+                        protocol {
+                          tcp {
+                            port 3332;
+                          }
+                        }
+                      }
+                      repeated_object_service02 {
+                        protocol {
+                          tcp {
+                            port 3332;
+                          }
+                        }
+                      }
+                      TCP-8983 {
+                        protocol {
+                          tcp {
+                            port 8983;
+                          }
+                        }
+                      }
+                      TCP-8957 {
+                        protocol {
+                          tcp {
+                            port 8957;
+                          }
+                        }
+                      }
+                      TCP-5642 {
+                        protocol {
+                          tcp {
+                            port 5642;
+                          }
+                        }
+                      }
+                      TCP-5222 {
+                        protocol {
+                          tcp {
+                            port 5222;
+                          }
+                        }
+                      }
+                      TCP-6452 {
+                        protocol {
+                          tcp {
+                            port 6452;
+                          }
+                        }
+                      }
+                      TCP-5566 {
+                        protocol {
+                          tcp {
+                            port 5566;
+                          }
+                        }
+                      }
+                      TCP-7845 {
+                        protocol {
+                          tcp {
+                            port 7845;
+                          }
+                        }
+                      }
+                      TCP-80 {
+                        protocol {
+                          tcp {
+                            port 80;
+                          }
+                        }
+                      }
+                    }
+                    service-group {
+                      client1_svc_grp {
+                        members tcp_22;
+                      }
+                      client2_svc_grp {
+                        members tcp_22;
+                      }
+                      dns {
+                        members [ tcp-53 udp-53];
+                      }
+                      202508151127_1654 {
+                        members [ TCP-5222 TCP-6452];
+                      }
+                    }
+                    schedule {
+                      Schedule_d1e8d7566b5a378d {
+                        schedule-type {
+                          non-recurring 2023/10/19@15:20-2023/10/21@15:20;
+                        }
+                      }
+                      Schedule_2310191520_2310211520 {
+                        schedule-type {
+                          non-recurring 2023/10/19@15:20-2023/10/21@15:20;
+                        }
+                      }
+                      Schedule_2312121753_2312122300 {
+                        schedule-type {
+                          non-recurring 2023/12/12@17:53-2023/12/12@23:00;
+                        }
+                      }
+                      End_202402162359 {
+                        schedule-type {
+                          non-recurring 2024/01/01@00:00-2024/02/16@23:59;
+                        }
+                      }
+                      Schedule_2404011509_2404021509 {
+                        schedule-type {
+                          non-recurring 2024/04/01@15:09-2024/04/02@15:09;
+                        }
+                      }
+                      Schedule_2404011400_2404012300 {
+                        schedule-type {
+                          non-recurring 2024/04/01@14:00-2024/04/01@23:00;
+                        }
+                      }
+                      Schedule_2404011400_2404172300 {
+                        schedule-type {
+                          non-recurring 2024/04/01@14:00-2024/04/17@23:00;
+                        }
+                      }
+                      Schedule_W_123_070000_150000 {
+                        schedule-type {
+                          recurring {
+                            weekly {
+                              monday 07:00-15:00;
+                            }
+                          }
+                        }
+                      }
+                      Schedule_0b86eb4af7d63f86 {
+                        schedule-type {
+                          non-recurring 2024/06/24@14:10-2024/06/27@14:10;
+                        }
+                      }
+                      Schedule_8cc750f5ed6d3b9d {
+                        schedule-type {
+                          non-recurring 2024/06/24@14:10-2024/06/27@14:10;
+                        }
+                      }
+                      all_daily {
+                        schedule-type {
+                          recurring {
+                            daily 00:30-02:15;
+                          }
+                        }
+                      }
+                      daily_multi_items {
+                        schedule-type {
+                          recurring {
+                            daily [ 00:00-01:00 01:45-02:45];
+                          }
+                        }
+                      }
+                      weekly_multi_items {
+                        schedule-type {
+                          recurring {
+                            weekly {
+                              monday 00:00-03:00;
+                              tuesday 01:00-03:00;
+                            }
+                          }
+                        }
+                      }
+                      absolute_multi_items {
+                        schedule-type {
+                          non-recurring [ 2024/06/06@00:00-2024/06/30@02:30 2024/06/27@00:00-2024/06/30@23:45];
+                        }
+                      }
+                      Schedule_2410081117_2410161117 {
+                        schedule-type {
+                          non-recurring 2024/10/08@11:17-2024/10/16@11:17;
+                        }
+                      }
+                      expired_object {
+                        schedule-type {
+                          non-recurring 2025/08/01@01:00-2025/08/13@03:45;
+                        }
+                      }
+                    }
+                    rulebase {
+                      security {
+                        rules {
+                          to-internet {
+                            to internet;
+                            from [ biz1 biz2];
+                            source [ net_10.1.1.0_24 net_10.1.2.0_24];
+                            destination any;
+                            source-user any;
+                            category any;
+                            application any;
+                            service application-default;
+                            hip-profiles any;
+                            action allow;
+                            log-setting inet_log_forward_profile;
+                          }
+                          expired_policy {
+                            action allow;
+                            disabled no;
+                            from any;
+                            to internet;
+                            source WS-192.168.70.254_32;
+                            destination 202508151033_97fb;
+                            service tcp_22;
+                            application any;
+                            source-user any;
+                            category any;
+                            hip-profiles any;
+                            schedule expired_object;
+                          }
+                          Hidden_Policy_higt {
+                            action allow;
+                            disabled no;
+                            from any;
+                            to internet;
+                            source WS-192.168.70.254_32;
+                            destination Net-192.168.50.0_24;
+                            service TCP-8957;
+                            application any;
+                            source-user any;
+                            category any;
+                            hip-profiles any;
+                          }
+                          Hidden_Policy_low {
+                            action allow;
+                            disabled no;
+                            from any;
+                            to internet;
+                            source WS-192.168.70.254_32;
+                            destination WS-192.168.50.66_32;
+                            service TCP-8957;
+                            application any;
+                            source-user any;
+                            category any;
+                            hip-profiles any;
+                          }
+                          conflict_policy_allow {
+                            action allow;
+                            disabled no;
+                            from any;
+                            to internet;
+                            source WS-192.168.70.254_32;
+                            destination WS-192.168.40.12_32;
+                            service TCP-5642;
+                            application any;
+                            source-user any;
+                            category any;
+                            hip-profiles any;
+                          }
+                          conflict_policy_deny {
+                            action deny;
+                            disabled no;
+                            from any;
+                            to internet;
+                            source WS-192.168.70.254_32;
+                            destination WS-192.168.40.12_32;
+                            service TCP-5642;
+                            application any;
+                            source-user any;
+                            category any;
+                            hip-profiles any;
+                          }
+                          mergeable_Policy_01 {
+                            action allow;
+                            disabled no;
+                            from any;
+                            to internet;
+                            source WS-192.168.70.254_32;
+                            destination 202508151127_e0f9;
+                            service 202508151127_1654;
+                            application any;
+                            source-user any;
+                            category any;
+                            hip-profiles any;
+                          }
+                          mergeable_Policy_02 {
+                            action allow;
+                            disabled no;
+                            from any;
+                            to internet;
+                            source WS-192.168.70.254_32;
+                            destination WS-192.168.30.95_32;
+                            service 202508151127_1654;
+                            application any;
+                            source-user any;
+                            category any;
+                            hip-profiles any;
+                          }
+                          redundant_policy_01 {
+                            action allow;
+                            disabled no;
+                            from any;
+                            to internet;
+                            source gw-192.168.70.254_32;
+                            destination WS-192.168.110.56_32;
+                            service TCP-5566;
+                            application any;
+                            source-user any;
+                            category any;
+                            hip-profiles any;
+                          }
+                          redundant_policy_02 {
+                            action allow;
+                            disabled no;
+                            from any;
+                            to internet;
+                            source WS-192.168.70.254_32;
+                            destination Net-192.168.110.0_24;
+                            service TCP-5566;
+                            application any;
+                            source-user any;
+                            category any;
+                            hip-profiles any;
+                          }
+                          redundant01 {
+                            action allow;
+                            disabled no;
+                            from any;
+                            to internet;
+                            source WS-192.168.70.254_32;
+                            destination 202508151155_ea41;
+                            service TCP-7845;
+                            application any;
+                            source-user any;
+                            category any;
+                            hip-profiles any;
+                          }
+                          redundant02 {
+                            action deny;
+                            disabled no;
+                            from any;
+                            to internet;
+                            source gw-192.168.70.254_32;
+                            destination [ WS-192.168.120.66_32 ws-192.168.128.98];
+                            service TCP-7845;
+                            application any;
+                            source-user any;
+                            category any;
+                            hip-profiles any;
+                          }
+                          2025_08_15_dce03 {
+                            action allow;
+                            disabled no;
+                            from biz1;
+                            to biz2;
+                            source WS-10.1.1.6_32;
+                            destination WS-10.1.2.6_32;
+                            service TCP-80;
+                            application any;
+                          }
+                        }
+                      }
+                      nat {
+                        rules {
+                          to_internet {
+                            source-translation {
+                              dynamic-ip-and-port {
+                                interface-address {
+                                  ip 192.168.70.254/32;
+                                  interface ethernet1/3;
+                                }
+                              }
+                            }
+                            to internet;
+                            from [ biz1 biz2];
+                            source [ net_10.1.1.0_24 net_10.1.2.0_24];
+                            destination any;
+                            service any;
+                            to-interface ethernet1/3;
+                            disabled no;
+                          }
+                          to1 {
+                            destination-translation {
+                              translated-address host_10.1.1.5;
+                            }
+                            to internet;
+                            from any;
+                            source any;
+                            destination nat_192.168.70.105;
+                            service client1_svc_grp;
+                            to-interface any;
+                          }
+                          to2 {
+                            destination-translation {
+                              translated-address host_10.1.2.5;
+                            }
+                            to internet;
+                            from any;
+                            source any;
+                            destination nat_192.168.70.106;
+                            service client2_svc_grp;
+                            to-interface any;
+                          }
+                        }
+                      }
+                    }
+                    import {
+                      network {
+                        interface [ ethernet1/1 ethernet1/2 ethernet1/3 ethernet1/4];
+                      }
+                    }
+                    address {
+                      net_10.1.1.0_24 {
+                        ip-netmask 10.1.1.0/24;
+                      }
+                      net_10.1.2.0_24 {
+                        ip-netmask 10.1.2.0/24;
+                      }
+                      host_10.1.1.5 {
+                        ip-netmask 10.1.1.5;
+                      }
+                      nat_192.168.70.105 {
+                        ip-netmask 192.168.70.105;
+                      }
+                      host_10.1.2.5 {
+                        ip-netmask 10.1.2.5;
+                      }
+                      nat_192.168.70.106 {
+                        ip-netmask 192.168.70.106;
+                      }
+                      WS-192.168.60.2_32 {
+                        ip-netmask 192.168.60.2/32;
+                      }
+                      WS-192.168.60.1_32 {
+                        ip-netmask 192.168.60.1/32;
+                      }
+                      WS-192.168.70.254_32 {
+                        ip-netmask 192.168.70.254/32;
+                      }
+                      WS-192.168.60.66_32 {
+                        ip-netmask 192.168.60.66/32;
+                      }
+                      gw-192.168.70.254_32 {
+                        ip-netmask 192.168.70.254/32;
+                      }
+                      no_reference_object {
+                        ip-netmask 192.168.60.80/32;
+                      }
+                      no_reference_object02 {
+                        ip-netmask 192.168.60.82/32;
+                      }
+                      repeated_object_address01 {
+                        ip-netmask 192.168.60.4/32;
+                      }
+                      repeated_object_address02 {
+                        ip-netmask 192.168.60.4/32;
+                      }
+                      WS-192.168.60.253_32 {
+                        ip-netmask 192.168.60.253/32;
+                      }
+                      WS-192.168.60.158_32 {
+                        ip-netmask 192.168.60.158/32;
+                      }
+                      Net-192.168.50.0_24 {
+                        ip-netmask 192.168.50.0/24;
+                      }
+                      WS-192.168.50.66_32 {
+                        ip-netmask 192.168.50.66/32;
+                      }
+                      WS-192.168.40.12_32 {
+                        ip-netmask 192.168.40.12/32;
+                      }
+                      WS-192.168.30.55_32 {
+                        ip-netmask 192.168.30.55/32;
+                      }
+                      WS-192.168.30.65_32 {
+                        ip-netmask 192.168.30.65/32;
+                      }
+                      WS-192.168.30.95_32 {
+                        ip-netmask 192.168.30.95/32;
+                      }
+                      WS-192.168.110.56_32 {
+                        ip-netmask 192.168.110.56/32;
+                      }
+                      Net-192.168.110.0_24 {
+                        ip-netmask 192.168.110.0/24;
+                      }
+                      WS-192.168.120.66_32 {
+                        ip-netmask 192.168.120.66/32;
+                      }
+                      WS-192.168.120.65_32 {
+                        ip-netmask 192.168.120.65/32;
+                      }
+                      ws-192.168.128.98 {
+                        ip-netmask 192.168.128.98;
+                      }
+                      demo {
+                        ip-netmask 1.1.1.1/32;
+                      }
+                      WS-10.1.2.6_32 {
+                        ip-netmask 10.1.2.6/32;
+                      }
+                      WS-10.1.1.6_32 {
+                        ip-netmask 10.1.1.6/32;
+                      }
+                      1.1.1.1 {
+                        ip-netmask 1.1.1.1/32;
+                      }
+                      2.2.2.2 {
+                        ip-netmask 2.2.2.2/32;
+                      }
+                      2.2.2.3 {
+                        ip-netmask 2.2.2.3/32;
+                      }
+                      2.2.2.5 {
+                        ip-netmask 2.2.2.5/32;
+                      }
+                      2.2.2.6 {
+                        ip-netmask 2.2.2.6/32;
+                      }
+                      2.2.2.10 {
+                        ip-netmask 2.2.2.10/32;
+                      }
+                      2.2.2.20 {
+                        ip-netmask 2.2.2.20/32;
+                      }
+                      2.2.2.21 {
+                        ip-netmask 2.2.2.23/32;
+                      }
+                      2.2.2.22 {
+                        ip-netmask 2.2.2.22/32;
+                      }
+                      2.2.2.23 {
+                        ip-netmask 2.2.2.23/32;
+                      }
+                      2.2.2.24 {
+                        ip-netmask 2.2.2.24/32;
+                      }
+                      2.2.2.25 {
+                        ip-netmask 2.2.2.25/32;
+                      }
+                      2.2.2.26 {
+                        ip-netmask 2.2.2.26/32;
+                      }
+                      2.2.2.27 {
+                        ip-netmask 2.2.2.27/32;
+                      }
+                      2.2.2.28 {
+                        ip-netmask 2.2.2.28/32;
+                      }
+                      2.2.2.29 {
+                        ip-netmask 2.2.2.29/32;
+                      }
+                    }
+                    profiles {
+                      custom-url-category {
+                        ayang-test {
+                          list [ www.example.com www.baidu.com];
+                          description test;
+                        }
+                        uc_aaa_32f4f {
+                          list [ www.aaa.com www.baidu.com];
+                        }
+                        uc_lalc_a1a26 {
+                          list [ www.lalc.com www.11.com www.mmm.com];
+                        }
+                        uc_appstore_479ca {
+                          list *.appstore.com;
+                        }
+                        uc_klaklakl_0b7c9 {
+                          list www.klaklakl.com;
+                        }
+                        tes {
+                          list [ *.baidu.com *.test.com *.ttt.com *.test.compile];
+                        }
+                        uc_demoad_a943b {
+                          list *.demoad.com;
+                        }
+                        hillstore002 {
+                          description hillstore002;
+                          list [ www.dda.scm aaa.aaa.ddd www.baidu.com];
+                        }
+                        alld {
+                          description alld;
+                          list [ www.llal.com aaa.coma.cj];
+                        }
+                        awen_test {
+                          list [ www.test1.com *.369.com *.test2.com www.aaa.com];
+                        }
+                        PA1 {
+                          description PA1;
+                          list [ www.aaa.com www.kkk.con www.bai.com];
+                        }
+                        paurl {
+                          list [ www.paurl.aa www.kka.com];
+                        }
+                        paurl002 {
+                          list [ *.aaa.com www0.aaa.com];
+                        }
+                        paurl03 {
+                          list www.lal.com;
+                        }
+                        uc_lalla_8f0e7 {
+                          list www.lalla.com;
+                        }
+                      }
+                    }
+                    log-settings {
+                      profiles {
+                        inet_log_forward_profile {
+                          match-list {
+                            inet_log_forward {
+                              send-syslog inet_log;
+                              log-type traffic;
+                              filter "All Logs";
+                              send-to-panorama no;
+                            }
+                          }
+                        }
+                        vector_308_forward {
+                          match-list {
+                            vector_308_traffic {
+                              send-syslog vector_192_168_30_8;
+                              log-type traffic;
+                              filter "All Logs";
+                              send-to-panorama no;
+                            }
+                          }
+                        }
+                        inet_log_30_17 {
+                          match-list {
+                            30_17_traffic {
+                              send-syslog inet_3017_name;
+                              log-type traffic;
+                              filter "All Logs";
+                              send-to-panorama no;
+                            }
+                          }
+                        }
+                      }
+                    }
+                    address-group {
+                      202508151033_97fb {
+                        static [ WS-192.168.60.1_32 WS-192.168.60.2_32 WS-192.168.60.66_32];
+                      }
+                      no_reference_group {
+                        static no_reference_object02;
+                      }
+                      repeated_object_address_grp {
+                        static repeated_object_address01;
+                      }
+                      repeated_object_address_grp02 {
+                        static repeated_object_address01;
+                      }
+                      202508151101_de9b {
+                        static [ WS-192.168.60.158_32 WS-192.168.60.253_32];
+                      }
+                      202508151127_e0f9 {
+                        static [ WS-192.168.30.55_32 WS-192.168.30.65_32];
+                      }
+                      202508151155_ea41 {
+                        static [ WS-192.168.120.65_32 WS-192.168.120.66_32];
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+      - cmd: "show system info"
+        output: |
+   
+          hostname: pa-60.99
+          ip-address: 192.168.60.99
+          public-ip-address: unknown
+          netmask: 255.255.255.0
+          default-gateway: 192.168.60.1
+          ip-assignment: static
+          ipv6-address: unknown
+          ipv6-link-local-address: fe80::52d8:5eff:fe00:600/64
+          ipv6-default-gateway:
+          mac-address: 50:d8:5e:00:06:00
+          time: Thu Oct  9 18:53:15 2025
+          uptime: 14 days, 15:04:21
+          family: vm
+          model: PA-VM
+          serial: unknown
+          vm-mac-base: BA:DB:EE:FB:AD:00
+          vm-mac-count: 255
+          vm-uuid: 6A28E9C6-1288-4A90-89E1-FC1766012B98
+          vm-cpuid: KVM:63060000FDFB8B07
+          vm-license: none
+          vm-mode: KVM
+          cloud-mode: non-cloud
+          sw-version: 8.1.0
+          global-protect-client-package-version: 0.0.0
+          app-version: 769-4439
+          app-release-date:
+          av-version: 0
+          av-release-date:
+          threat-version: 0
+          threat-release-date:
+          wf-private-version: 0
+          wf-private-release-date: unknown
+          url-db: paloaltonetworks
+          wildfire-version: 0
+          wildfire-release-date:
+          url-filtering-version: 0000.00.00.000
+          global-protect-datafile-version: unknown
+          global-protect-datafile-release-date: unknown
+          global-protect-clientless-vpn-version: 0
+          global-protect-clientless-vpn-release-date:
+          logdb-version: 8.1.8
+          platform-family: vm
+          vpn-disable-mode: off
+          multi-vsys: off
+          operational-mode: normal
+
+  config:
+    prompt: "# "
+    switch_mode_cmds:
+      - "exit"
+    cmds:
+      - cmd: "commit"
+        output: ""
+      - cmd: "set deviceconfig system hostname paloalto"
+        output: ""
+common: []
+    
+welcome: |
+  Last login: Thu Oct  9 18:24:18 2025 from 192.168.1.254
+
+invalid_cmd_error: |
+  Unknown command:

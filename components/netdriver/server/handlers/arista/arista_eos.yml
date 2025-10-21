@@ -1,0 +1,284 @@
+# Arista EOS
+start_mode: enable
+hostname: arista
+line_feed: "\r\n"
+modes:
+  login:
+    prompt: ">"
+    switch_mode_cmds:
+      - "enable"
+      - "exit"
+    cmds: 
+      - cmd: "enable"
+        output: ""
+  enable:
+    prompt: "#"
+    switch_mode_cmds:
+      - "configure terminal"
+      - "exit"
+      - "disable"
+    cmds: 
+      - cmd: "terminal length 0"
+        output: "Pagination disabled."
+  config:
+    prompt: "(config)#"
+    switch_mode_cmds:
+      - "exit"
+      - "end"
+      - "disable"
+    cmds:
+    - cmd: "hostname arista-eos"
+      output: ""
+common:
+  - cmd: "show version"
+    output: |
+      Arista vEOS-lab
+      Hardware version:
+      Serial number: E1461D7D6A139E3EE7FB9AEB1B09B4E2
+      Hardware MAC address: 50cc.508c.aa4f
+      System MAC address: 50cc.508c.aa4f
+
+      Software image version: 4.31.2F
+      Architecture: i686
+      Internal build version: 4.31.2F-35442146.4312F
+      Internal build ID: 9d8310d2-cc5a-4c85-b6ef-08ce13f0255f
+      Image format version: 1.0
+      Image optimization: None
+
+      Uptime: 2 weeks, 6 days, 2 hours and 35 minutes
+      Total memory: 1979896 kB
+      Free memory: 751408 kB
+
+
+  - cmd: "show ip route"
+    output: |
+      
+      VRF: default
+      Source Codes:
+            C - connected, S - static, K - kernel,
+            O - OSPF, IA - OSPF inter area, E1 - OSPF external type 1,
+            E2 - OSPF external type 2, N1 - OSPF NSSA external type 1,
+            N2 - OSPF NSSA external type2, B - Other BGP Routes,
+            B I - iBGP, B E - eBGP, R - RIP, I L1 - IS-IS level 1,
+            I L2 - IS-IS level 2, O3 - OSPFv3, A B - BGP Aggregate,
+            A O - OSPF Summary, NG - Nexthop Group Static Route,
+            V - VXLAN Control Service, M - Martian,
+            DH - DHCP client installed default route,
+            DP - Dynamic Policy Route, L - VRF Leaked,
+            G  - gRIBI, RC - Route Cache Route,
+            CL - CBF Leaked Route
+
+      Gateway of last resort is not reachable
+
+      C        88.88.88.1/32
+                directly connected, Loopback10
+      C        100.100.100.0/30
+                directly connected, Vlan4094
+
+
+
+  - cmd: "show running-config"
+    output: |
+      ! Command: show running-config
+      ! device: asw2 (vEOS-lab, EOS-4.31.2F)
+      !
+      ! boot system flash:/vEOS-lab.swi
+      !
+      aaa root secret sha512 $6$k728qwO8pdTHFs7Y$SEPUcmK7GIfYR6D1wvvgOj4HpRStQGj8sl81w/ZUkk9H5di7AH6HH.9nqjwzWQ2tyXgBA.RauQv5DkrD0CSgc0
+      !
+      username admin privilege 15 role network-admin secret sha512 $6$0RzqWAAPtO4GZ6MY$Tz1QYgiyJJU69EJFpbEhGERpjKfxDKmMGheuZp5jLvnlVG4ro2gT3TMQaa1uHTutGeP/fCFyNyFCj9u.oKc6T/
+      username cvpadmin secret sha512 $6$2SGOaAUcCRi.VsoS$XPNeMli1vVdfgWfHZRIAf6pWK.WBvgp1QWw9QhykaWYrrEkkcO/xx0wGIuth55ork86r2r80FyKx91zdWtEDL/
+      !
+      daemon TerminAttr
+        exec /usr/bin/TerminAttr -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata -cvaddr=172.21.5.135:9910 -cvauth=token,/tmp/token -cvvrf=mgmt -taillogs
+        no shutdown
+      !
+      transceiver qsfp default-mode 4x10G
+      !
+      service routing protocols model multi-agent
+      !
+      link tracking group monitor-uplink
+      !
+      hostname asw2
+      !
+      sflow sample 100
+      sflow polling-interval 5
+      sflow vrf mgmt destination 127.0.0.1
+      sflow vrf mgmt source-interface Management1
+      sflow run
+      !
+      spanning-tree mode mstp
+      !
+      system l1
+        unsupported speed action error
+        unsupported error-correction action error
+      !
+      vlan 10-12,20,30,100,250,713,1133,4094
+      !
+      vlan 200
+        private-vlan isolated primary vlan 100
+      !
+      vlan 1117
+        name 26.23.161.0/24
+      !
+      vrf instance mgmt
+      !
+      vrf instance vip1
+      !
+      management api http-commands
+        protocol http
+        no shutdown
+        !
+        vrf mgmt
+            no shutdown
+      !
+      aaa authentication dot1x default group radius
+      aaa authorization exec default local local
+      aaa accounting dot1x default start-stop group radius
+      !
+      cvx
+      !
+      interface Port-Channel1
+        switchport mode trunk
+        switchport trunk group mlag-peer
+      !
+      interface Port-Channel2
+        switchport mode trunk
+        mlag 2
+      !
+      interface Ethernet1
+        switchport mode trunk
+        switchport vlan translation out 200 100
+        channel-group 1 mode active
+      !
+      interface Ethernet2
+        channel-group 2 mode active
+      !
+      interface Ethernet3
+        switchport access vlan 400
+        spanning-tree bpduguard enable
+      !
+      interface Ethernet4
+        no switchport
+        ip address 202.1.1.1/29
+      !
+      interface Ethernet5
+      !
+      interface Ethernet6
+      !
+      interface Ethernet7
+        switchport access vlan 12
+      !
+      interface Ethernet8
+        switchport access vlan 12
+      !
+      interface Ethernet22
+      !
+      interface Ethernet62
+      !
+      interface Loopback10
+        ip address 88.88.88.1/32
+      !
+      interface Management1
+        vrf mgmt
+        ip address 172.21.1.167/24
+      !
+      interface Vlan12
+        ip address 12.1.1.2/30
+      !
+      interface Vlan20
+        ip address 20.1.1.2/30
+      !
+      interface Vlan713
+        ip address 172.31.180.200/24
+      !
+      interface Vlan1133
+        ip address 10.10.133.202/24
+        ip igmp
+        ip virtual-router address 10.10.133.200
+      !
+      interface Vlan4094
+        no autostate
+        ip address 100.100.100.2/30
+      !
+      ip virtual-router mac-address 00:1c:73:00:09:95
+      !
+      ip access-list PA_to_Ubiquant
+        1 permit icmp any any
+        2 permit tcp 172.31.182.0/24 172.31.181.0/24 eq 48533
+        3 permit tcp 172.31.182.0/24 172.31.181.0/24 eq 58625
+        4 permit tcp 172.31.182.0/24 172.31.181.0/24 eq 59173
+        5 permit udp 172.31.182.0/24 range 60020 60030 172.31.181.0/24
+        6 permit tcp 172.31.182.0/24 172.31.181.0/24 range 17980 17981
+        10 permit tcp 172.31.180.0/24 172.31.182.0/24 established
+        15 permit tcp 172.31.180.0/24 172.31.182.0/24 eq 30014
+        16 permit tcp 172.31.181.0/24 172.31.182.0/24 eq 30014
+        20 permit tcp 172.31.181.0/24 172.31.182.0/24 established
+        30 permit udp 172.31.180.0/24 172.31.182.0/24 range 60050 60059
+        40 permit udp 172.31.181.0/24 172.31.182.0/24 range 60050 60059
+        50 permit tcp 172.31.180.0/24 172.31.182.0/24 range 60050 60059
+        60 permit tcp 172.31.181.0/24 172.31.182.0/24 range 60050 60059
+        70 permit udp 172.31.180.0/24 172.31.182.0/24 eq ntp
+        80 permit udp 172.31.180.0/24 172.31.182.0/24 range ptp-event ptp-general
+        90 permit udp 172.31.181.0/24 172.31.182.0/24 eq ntp
+        100 permit udp 172.31.181.0/24 172.31.182.0/24 range ptp-event ptp-general
+        110 permit ip 172.31.180.0/24 172.31.181.0/24
+        120 permit ip 172.31.181.0/24 172.31.180.0/24
+        130 permit tcp 172.31.180.0/24 172.31.182.0/24 range 60030 60060
+        140 permit tcp 172.31.181.0/24 172.31.182.0/24 range 60030 60060
+        150 permit udp 172.31.180.0/24 eq asf-rmcp 172.31.182.0/24
+        160 permit tcp 172.31.180.0/24 172.31.182.0/24 range 10020 10030
+        161 permit tcp 172.31.180.0/24 172.31.182.0/24 range 17980 17981
+        162 permit tcp 172.31.180.0/24 172.31.182.0/24 eq 48533
+        163 permit tcp 172.31.180.0/24 172.31.182.0/24 eq 58625
+        164 permit tcp 172.31.180.0/24 172.31.182.0/24 eq 59173
+        165 permit udp 172.31.180.0/24 range 60020 60030 172.31.182.0/24
+        166 permit tcp 172.31.180.0/23 eq 19100 172.31.182.0/24
+        167 permit tcp 172.31.180.0/23 172.31.182.0/24 eq www
+        168 permit tcp 172.31.180.0/23 172.31.182.0/24 eq nfs
+        170 permit tcp 172.31.180.0/23 172.31.182.0/24 eq 9910
+        180 permit tcp 10.160.0.0/16 172.31.182.0/24 range 60030 60070
+        190 permit tcp 172.31.180.0/23 172.31.182.0/24 range 60030 60070
+        200 permit tcp host 10.1.1.1 host 20.1.1.1 eq ssh
+      !
+      ip access-list test
+        10 permit tcp 172.31.180.0/23 172.31.182.0/24 eq nfs
+      !
+      ip routing
+      ip routing vrf mgmt
+      no ip routing vrf vip1
+      !
+      mlag configuration
+        domain-id mlag
+        local-interface Vlan4094
+        peer-address 100.100.100.1
+        peer-address heartbeat 172.21.1.180 vrf mgmt
+        peer-link Port-Channel1
+        dual-primary detection delay 5 action errdisable all-interfaces
+        dual-primary recovery delay mlag 60 non-mlag 0
+      !
+      ip route 0.0.0.0/0 20.1.1.1
+      ip route 0.0.0.0/0 120.133.133.5
+      ip route 10.1.1.0/24 202.1.1.1
+      ip route 10.1.1.0/24 202.1.1.2
+      ip route 20.1.1.0/24 12.1.1.1
+      ip route 183.1.1.0/24 202.1.1.1
+      ip route 192.168.0.0/16 172.21.1.1
+      ip route vrf mgmt 0.0.0.0/0 172.21.1.1
+      !
+      ntp local-interface Management1
+      ntp server vrf mgmt 1.82.219.234 iburst local-interface Management1
+      ntp server vrf mgmt 113.141.164.38 prefer
+      !
+      router ospf 10
+        router-id 1.1.1.1
+        network 10.10.10.10/32 area 0.0.0.0
+        max-lsa 12000
+      !
+      dot1x system-auth-control
+      !
+      end
+
+welcome: "Last login: Thu Oct  9 06:27:05 2025 from 192.168.1.254"
+invalid_cmd_error: |
+  % Invalid input

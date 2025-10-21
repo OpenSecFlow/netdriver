@@ -2,12 +2,16 @@
 # -*- coding: utf-8 -*-
 from asyncssh import SSHServerProcess
 
+from netdriver.server.handlers.arista.arista_eos import AristaEOSHandler
 from netdriver.server.handlers.array.array_ag import ArrayAGHandler
 from netdriver.server.handlers.chaitin.chaitin_ctdsg import ChaiTinCTDSGHandler
+from netdriver.server.handlers.check_point.check_point_gaia import CheckPointGaiaHandler
 from netdriver.server.handlers.cisco.cisco_asa import CiscoASAHandler
 from netdriver.server.handlers.cisco.cisco_nexus import CiscoNexusHandler
 from netdriver.server.handlers.command_handler import CommandHandler
 from netdriver.server.handlers.dptech.dptech_fw1000 import DptechFW1000Handler
+from netdriver.server.handlers.fortinet.fortinet_fortigate import FortinetFortigateHandler
+from netdriver.server.handlers.huawei.huawei_ce import HuaweiCEHandler
 from netdriver.server.handlers.huawei.huawei_usg import HuaweiUSGHandler
 from netdriver.server.handlers.hillstone.hillstone_sg6000 import HillstoneSG6000Handler
 from netdriver.server.handlers.h3c.h3c_secpath import H3CSecPathHandler
@@ -15,6 +19,7 @@ from netdriver.server.handlers.h3c.h3c_vsr import H3CVsrHandler
 from netdriver.server.handlers.juniper.juniper_srx import JuniperSRXHandler
 from netdriver.server.handlers.juniper.juniper_ex import JuniperEXHandler
 from netdriver.server.handlers.maipu.maipu_nss import MaiPuNSSHandler
+from netdriver.server.handlers.paloalto.paloalto_pa import PaloaltoPAHandler
 from netdriver.server.handlers.qianxin.qianxin_nsg import QiAnXinNSGHandler
 from netdriver.server.handlers.topsec.topsec_ngfw import TopSecNGFWHandler
 from netdriver.server.handlers.venustech.venustech_usg import VenustechUSGHandler
@@ -56,5 +61,15 @@ class CommandHandlerFactory:
             return ChaiTinCTDSGHandler(process, conf_path)
         elif TopSecNGFWHandler.is_selectable(vendor, model, version):
             return TopSecNGFWHandler(process, conf_path)
+        elif AristaEOSHandler.is_selectable(vendor, model, version):
+            return AristaEOSHandler(process, conf_path)
+        elif CheckPointGaiaHandler.is_selectable(vendor, model, version):
+            return CheckPointGaiaHandler(process, conf_path)
+        elif FortinetFortigateHandler.is_selectable(vendor, model, version):
+            return FortinetFortigateHandler(process, conf_path)
+        elif PaloaltoPAHandler.is_selectable(vendor, model, version):
+            return PaloaltoPAHandler(process, conf_path)
+        elif HuaweiCEHandler.is_selectable(vendor, model, version):
+            return HuaweiCEHandler(process, conf_path)
         else:
             raise ValueError(f"Unsupported device: {vendor}:{model}:{version}")

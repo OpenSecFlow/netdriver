@@ -1,0 +1,240 @@
+# Huawei CE Firewall
+start_mode: enable
+hostname: CE
+line_feed: "\r\n"
+modes:
+  enable:
+    prompt: "<{}>"
+    switch_mode_cmds:
+      - "system-view"
+      - "sys"
+      - "quit"
+    cmds:
+      - cmd: "screen-length 0 temporary"
+        output: "Info: The configuration takes effect on the current user terminal interface only."
+      - cmd: "save"
+        output: ""
+      - cmd: "save all"
+        output: ""
+  config:
+    prompt: "[~{}]"
+    switch_mode_cmds:
+      - "return"
+      - "quit"
+    cmds:
+      - cmd: "sysname huawei_ce"
+        output: ""
+common:
+  - cmd: "display version"
+    output: |
+      Huawei Versatile Routing Platform Software
+      VRP (R) software, Version 8.180 (CE6800 V200R005C10SPC607B607)
+      Copyright (C) 2012-2018 Huawei Technologies Co., Ltd.
+      HUAWEI CE6800 uptime is 21 days, 16 hours, 25 minutes
+      SVRP Platform Version 1.0
+  - cmd: "display current-configuration"
+    output: |
+      !Software Version V200R005C10SPC607B607
+      !Last configuration was updated at 2025-09-17 18:46:25+00:00 by SYSTEM automatically
+      !Last configuration was saved at 2025-07-25 10:09:15+00:00
+      #
+      sysname huawei_ce
+      #
+      device board 1 board-type CE-MPUB
+      #
+      vlan batch 100 to 103
+      #
+      aaa
+      local-user huawei password irreversible-cipher $1c$02i))D$M_!$dy]B'AJlY;V[rTPOv*]CV!SfQA'[)QtquM"Nr`#!$
+      local-user huawei service-type ssh
+      local-user huawei level 3
+      #
+      authentication-scheme default
+      #
+      authorization-scheme default
+      #
+      accounting-scheme default
+      #
+      domain default
+      #
+      domain default_admin
+      #
+      interface MEth0/0/0
+      undo shutdown
+      ip address 192.168.60.122 255.255.255.0
+      #
+      interface GE1/0/0
+      undo shutdown
+      #
+      interface GE1/0/1
+      description "ssss:"
+      undo shutdown
+      #
+      interface GE1/0/2
+      undo shutdown
+      #
+      interface GE1/0/3
+      undo shutdown
+      #
+      interface GE1/0/4
+      undo shutdown
+      #
+      interface GE1/0/5
+      undo shutdown
+      #
+      interface GE1/0/6
+      undo shutdown
+      #
+      interface GE1/0/7
+      undo shutdown
+      #
+      interface GE1/0/8
+      undo shutdown
+      #
+      interface GE1/0/9
+      undo shutdown
+      #
+      interface GE1/0/10
+      undo shutdown
+      #
+      interface GE1/0/11
+      undo shutdown
+      #
+      interface GE1/0/12
+      undo shutdown
+      #
+      interface GE1/0/13
+      undo shutdown
+      #
+      interface GE1/0/14
+      undo shutdown
+      #
+      interface GE1/0/15
+      undo shutdown
+      #
+      interface GE1/0/16
+      undo shutdown
+      #
+      interface GE1/0/17
+      undo shutdown
+      #
+      interface GE1/0/18
+      undo shutdown
+      #
+      interface GE1/0/19
+      undo shutdown
+      #
+      interface GE1/0/20
+      shutdown
+      #
+      interface GE1/0/21
+      shutdown
+      #
+      interface GE1/0/22
+      shutdown
+      #
+      interface GE1/0/23
+      shutdown
+      #
+      interface GE1/0/24
+      shutdown
+      #
+      interface GE1/0/25
+      shutdown
+      #
+      interface GE1/0/26
+      shutdown
+      #
+      interface GE1/0/27
+      shutdown
+      #
+      interface GE1/0/28
+      shutdown
+      #
+      interface GE1/0/29
+      shutdown
+      #
+      interface GE1/0/30
+      shutdown
+      #
+      interface GE1/0/31
+      shutdown
+      #
+      interface GE1/0/32
+      shutdown
+      #
+      interface GE1/0/33
+      shutdown
+      #
+      interface GE1/0/34
+      shutdown
+      #
+      interface GE1/0/35
+      shutdown
+      #
+      interface GE1/0/36
+      shutdown
+      #
+      interface GE1/0/37
+      shutdown
+      #
+      interface GE1/0/38
+      shutdown
+      #
+      interface GE1/0/39
+      shutdown
+      #
+      interface GE1/0/40
+      shutdown
+      #
+      interface GE1/0/41
+      shutdown
+      #
+      interface GE1/0/42
+      shutdown
+      #
+      interface GE1/0/43
+      shutdown
+      #
+      interface GE1/0/44
+      shutdown
+      #
+      interface GE1/0/45
+      shutdown
+      #
+      interface GE1/0/46
+      shutdown
+      #
+      interface GE1/0/47
+      shutdown
+      #
+      interface NULL0
+      #
+      ip route-static 0.0.0.0 0.0.0.0 192.168.60.1
+      #
+      stelnet server enable
+      ssh authorization-type default aaa
+      #
+      ssh server cipher aes256_gcm aes128_gcm aes256_ctr aes192_ctr aes128_ctr aes256_cbc aes128_cbc 3des_cbc
+      #
+      ssh server dh-exchange min-len 1024
+      #
+      ssh client cipher aes256_gcm aes128_gcm aes256_ctr aes192_ctr aes128_ctr aes256_cbc aes128_cbc 3des_cbc
+      #
+      user-interface con 0
+      #
+      user-interface vty 0 4
+      authentication-mode aaa
+      protocol inbound ssh
+      #
+      vm-manager
+      #
+      return
+
+welcome: |
+  Info: The max number of VTY users is 5, the number of current VTY users online is 1, and total number of terminal users online is 1.
+        The current login time is 2025-10-09 11:13:41.
+        The last login time is 2025-10-09 11:04:47 from 192.168.1.254 through SSH.
+
+invalid_cmd_error: |
+  Error: Unrecognized command found at '^' position.

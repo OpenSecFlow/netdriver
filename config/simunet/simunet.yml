@@ -59,3 +59,23 @@ devices:
     model: ngfw
     version: v3
     port: 18034
+  - vendor: paloalto
+    model: pa
+    version: 8.1
+    port: 18036
+  - vendor: fortinet
+    model: fortigate
+    version: 7.2
+    port: 18037
+  - vendor: huawei
+    model: ce
+    version: 8.18
+    port: 18038
+  - vendor: arista
+    model: eos
+    version: 4.31.2F
+    port: 18039
+  - vendor: check point
+    model: gaia
+    version: R80.40
+    port: 18040
