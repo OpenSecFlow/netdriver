@@ -1,0 +1,183 @@
+name: Publish Packages to PyPI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-agent:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # For PyPI trusted publishing
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        
+    - name: Install dependencies
+      run: poetry install --only=main --extras "agent" --no-interaction --no-ansi
+      
+    - name: Install toml parser
+      run: pip install toml
+      
+    - name: Build agent package
+      run: |
+        # Backup original pyproject.toml
+        cp pyproject.toml pyproject.toml.backup
+        # Change package name to agent-netdriver
+        sed -i 's/^name = .*/name = "agent-netdriver"/' pyproject.toml
+        # Extract agent extras dependencies and make them required
+        python3 -c "
+        import re
+        import toml
+        
+        # Read pyproject.toml
+        with open('pyproject.toml', 'r') as f:
+            content = f.read()
+        
+        # Parse TOML to get actual versions
+        config = toml.loads(content)
+        dependencies = config.get('tool', {}).get('poetry', {}).get('dependencies', {})
+        
+        # Find agent extras
+        agent_match = re.search(r'agent = \[(.*?)\]', content, re.DOTALL)
+        if agent_match:
+            agent_deps = agent_match.group(1)
+            # Extract dependency names
+            dep_names = re.findall(r'\"([^\"]+)\"', agent_deps)
+            print(f'Found agent dependencies: {dep_names}')
+            
+            for dep in dep_names:
+                # Get actual version from dependencies
+                if dep in dependencies and isinstance(dependencies[dep], dict):
+                    version = dependencies[dep].get('version', '^1.0.0')
+                    print(f'Converting {dep} to required dependency with version {version}')
+                    
+                    # Replace the optional dependency with required dependency
+                    # Pattern: dep = { version = \"version\", optional = true }
+                    pattern = f'{dep} = {{ version = \"[^\"]+\", optional = true }}'
+                    replacement = f'{dep} = \"{version}\"'
+                    content = re.sub(pattern, replacement, content)
+                    
+                    # Also remove from extras since it's now a core dependency
+                    content = re.sub(f',?\\s*\"{dep}\"', '', content)
+                    content = re.sub(f'\"{dep}\",?\\s*', '', content)
+                else:
+                    print(f'Warning: {dep} not found in dependencies')
+        
+        with open('pyproject.toml', 'w') as f:
+            f.write(content)
+        
+        print('pyproject.toml updated successfully')
+        "
+        # Build package
+        poetry build -f wheel -f sdist
+        # Restore original pyproject.toml
+        mv pyproject.toml.backup pyproject.toml
+        # Organize build artifacts
+        mkdir -p dist/agent
+        mv dist/*.whl dist/agent/
+        mv dist/*.tar.gz dist/agent/
+        
+    - name: Publish agent to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        packages-dir: dist/agent/
+
+  build-simunet:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # For PyPI trusted publishing
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        
+    - name: Install dependencies
+      run: poetry install --only=main --extras "simunet" --no-interaction --no-ansi
+      
+    - name: Install toml parser
+      run: pip install toml
+      
+    - name: Build simunet package
+      run: |
+        # Backup original pyproject.toml
+        cp pyproject.toml pyproject.toml.backup
+        # Change package name to simunet-netdriver
+        sed -i 's/^name = .*/name = "simunet-netdriver"/' pyproject.toml
+        # Extract simunet extras dependencies and make them required
+        python3 -c "
+        import re
+        import toml
+        
+        # Read pyproject.toml
+        with open('pyproject.toml', 'r') as f:
+            content = f.read()
+        
+        # Parse TOML to get actual versions
+        config = toml.loads(content)
+        dependencies = config.get('tool', {}).get('poetry', {}).get('dependencies', {})
+        
+        # Find simunet extras
+        simunet_match = re.search(r'simunet = \[(.*?)\]', content, re.DOTALL)
+        if simunet_match:
+            simunet_deps = simunet_match.group(1)
+            # Extract dependency names
+            dep_names = re.findall(r'\"([^\"]+)\"', simunet_deps)
+            for dep in dep_names:
+                # Replace optional = true with required dependency
+                pattern = f'{dep} = {{ version = \"[^\"]+\", optional = true }}'
+                # Get actual version from dependencies
+                if dep in dependencies and isinstance(dependencies[dep], dict):
+                    version = dependencies[dep].get('version', '^1.0.0')
+                    replacement = f'{dep} = \"{version}\"'
+                else:
+                    replacement = f'{dep} = \"^1.0.0\"'  # Fallback version
+                content = re.sub(pattern, replacement, content)
+        
+        with open('pyproject.toml', 'w') as f:
+            f.write(content)
+        "
+        # Debug: Show modified pyproject.toml content
+        echo "Modified pyproject.toml content for simunet:"
+        cat pyproject.toml | grep -A 10 -B 5 "tabulate\|httpx\|pycryptodome" || echo "No agent dependencies found in simunet"
+        
+        # Build package
+        poetry build -f wheel -f sdist
+        # Restore original pyproject.toml
+        mv pyproject.toml.backup pyproject.toml
+        # Organize build artifacts
+        mkdir -p dist/simunet
+        mv dist/*.whl dist/simunet/
+        mv dist/*.tar.gz dist/simunet/
+        
+    - name: Publish simunet to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        packages-dir: dist/simunet/

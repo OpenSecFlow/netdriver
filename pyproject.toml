@@ -41,26 +41,30 @@ pyyaml = "^6.0.2"
 asyncssh = "^2.17.0"
 dependency-injector = "^4.42.0"
 loguru = "^0.7.2"
-asgi-correlation-id = "^4.3.4"
-tabulate = "^0.9.0"
-pytest = "^8.3.3"
-httpx = "^0.27.2"
-pytest-asyncio = "^0.24.0"
-pycryptodome = "^3.21.0"
 aiofiles = "^24.1.0"
 six = "^1.16.0"
+asgi-correlation-id = "^4.3.4"
+pytest = "^8.3.3"
+pytest-asyncio = "^0.24.0"
 
+# The specific dependencies of the Agent
+tabulate = { version = "^0.9.0", optional = true }
+httpx = { version = "^0.27.2", optional = true }
+pycryptodome = { version = "^3.21.0", optional = true }
+
+[tool.poetry.extras]
+agent = ["tabulate", "httpx", "pycryptodome"]
+simunet = []
+test = []
 
 [tool.poetry.scripts]
 agent = "netdriver.agent.main:start"
 simunet = "netdriver.simunet.main:start"
 
-
 [tool.pytest.ini_options]
 markers = ['unit', 'integration']
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "package"
-
 
 [build-system]
 requires = ["poetry-core"]
