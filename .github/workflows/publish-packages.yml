@@ -71,8 +71,8 @@ jobs:
                     content = re.sub(pattern, replacement, content)
                     
                     # Also remove from extras since it's now a core dependency
-                    content = re.sub(f',?\\s*\"{dep}\"', '', content)
-                    content = re.sub(f'\"{dep}\",?\\s*', '', content)
+                    content = re.sub(f',?\\\\s*\"{dep}\"', '', content)
+                    content = re.sub(f'\"{dep}\",?\\\\s*', '', content)
                 else:
                     print(f'Warning: {dep} not found in dependencies')
         
@@ -82,7 +82,7 @@ jobs:
         print('pyproject.toml updated successfully')
         "
         # Update poetry.lock after modifying pyproject.toml
-        poetry lock --no-update
+        poetry lock
         # Install dependencies with the modified configuration
         poetry install --only=main --no-interaction --no-ansi
         # Build package
@@ -170,7 +170,7 @@ jobs:
         cat pyproject.toml | grep -A 10 -B 5 "tabulate\|httpx\|pycryptodome" || echo "No agent dependencies found in simunet"
         
         # Update poetry.lock after modifying pyproject.toml
-        poetry lock --no-update
+        poetry lock
         # Install dependencies with the modified configuration
         poetry install --only=main --no-interaction --no-ansi
         # Build package
