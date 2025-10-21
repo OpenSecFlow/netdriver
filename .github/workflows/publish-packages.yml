@@ -92,8 +92,13 @@ jobs:
         mv poetry.lock.backup poetry.lock
         # Organize build artifacts
         mkdir -p dist/agent
-        mv dist/*.whl dist/agent/
-        mv dist/*.tar.gz dist/agent/
+        # Move files only if they exist
+        if ls dist/*.whl 1> /dev/null 2>&1; then
+          mv dist/*.whl dist/agent/
+        fi
+        if ls dist/*.tar.gz 1> /dev/null 2>&1; then
+          mv dist/*.tar.gz dist/agent/
+        fi
         
     - name: Publish agent to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
@@ -180,8 +185,13 @@ jobs:
         mv poetry.lock.backup poetry.lock
         # Organize build artifacts
         mkdir -p dist/simunet
-        mv dist/*.whl dist/simunet/
-        mv dist/*.tar.gz dist/simunet/
+        # Move files only if they exist
+        if ls dist/*.whl 1> /dev/null 2>&1; then
+          mv dist/*.whl dist/simunet/
+        fi
+        if ls dist/*.tar.gz 1> /dev/null 2>&1; then
+          mv dist/*.tar.gz dist/simunet/
+        fi
         
     - name: Publish simunet to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
