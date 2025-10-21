@@ -27,16 +27,14 @@ jobs:
         virtualenvs-create: true
         virtualenvs-in-project: true
         
-    - name: Install dependencies
-      run: poetry install --only=main --extras "agent" --no-interaction --no-ansi
-      
     - name: Install toml parser
       run: pip install toml
       
     - name: Build agent package
       run: |
-        # Backup original pyproject.toml
+        # Backup original pyproject.toml and poetry.lock
         cp pyproject.toml pyproject.toml.backup
+        cp poetry.lock poetry.lock.backup
         # Change package name to agent-netdriver
         sed -i 's/^name = .*/name = "agent-netdriver"/' pyproject.toml
         # Extract agent extras dependencies and make them required
@@ -83,10 +81,15 @@ jobs:
         
         print('pyproject.toml updated successfully')
         "
+        # Update poetry.lock after modifying pyproject.toml
+        poetry lock --no-update
+        # Install dependencies with the modified configuration
+        poetry install --only=main --no-interaction --no-ansi
         # Build package
         poetry build -f wheel -f sdist
-        # Restore original pyproject.toml
+        # Restore original files
         mv pyproject.toml.backup pyproject.toml
+        mv poetry.lock.backup poetry.lock
         # Organize build artifacts
         mkdir -p dist/agent
         mv dist/*.whl dist/agent/
@@ -119,16 +122,14 @@ jobs:
         virtualenvs-create: true
         virtualenvs-in-project: true
         
-    - name: Install dependencies
-      run: poetry install --only=main --extras "simunet" --no-interaction --no-ansi
-      
     - name: Install toml parser
       run: pip install toml
       
     - name: Build simunet package
       run: |
-        # Backup original pyproject.toml
+        # Backup original pyproject.toml and poetry.lock
         cp pyproject.toml pyproject.toml.backup
+        cp poetry.lock poetry.lock.backup
         # Change package name to simunet-netdriver
         sed -i 's/^name = .*/name = "simunet-netdriver"/' pyproject.toml
         # Extract simunet extras dependencies and make them required
@@ -168,10 +169,15 @@ jobs:
         echo "Modified pyproject.toml content for simunet:"
         cat pyproject.toml | grep -A 10 -B 5 "tabulate\|httpx\|pycryptodome" || echo "No agent dependencies found in simunet"
         
+        # Update poetry.lock after modifying pyproject.toml
+        poetry lock --no-update
+        # Install dependencies with the modified configuration
+        poetry install --only=main --no-interaction --no-ansi
         # Build package
         poetry build -f wheel -f sdist
-        # Restore original pyproject.toml
+        # Restore original files
         mv pyproject.toml.backup pyproject.toml
+        mv poetry.lock.backup poetry.lock
         # Organize build artifacts
         mkdir -p dist/simunet
         mv dist/*.whl dist/simunet/
