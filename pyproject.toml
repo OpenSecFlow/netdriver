@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "netdriver"
-version = "0.1.1"
+version = "0.1.3"
 description = "The driver for network devices, which interact with network device using CLI."
 authors = ["vincent@byntra.se", "bobby@byntra.se", "sam@byntra.se", "mark@byntra.se"]
 readme = "README.md"
