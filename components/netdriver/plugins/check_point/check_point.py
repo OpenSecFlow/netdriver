@@ -37,7 +37,7 @@ class CheckPointBase(Base):
         }
 
     def get_more_pattern(self) -> tuple[re.Pattern, str]:
-        return (CheckPointBase.PatternHelper.get_more_pattern, self._CMD_MORE)
+        return (CheckPointBase.PatternHelper.get_more_pattern(), self._CMD_MORE)
 
     class PatternHelper:
         """ Inner class for patterns """

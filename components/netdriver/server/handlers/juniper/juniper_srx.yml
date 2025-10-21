@@ -6,35 +6,27 @@ modes:
   enable:
     prompt: ">"
     switch_mode_cmds:
-      - "configure"
+      - "configure private"
       - "exit"
-    cmds: 
-      - cmd: "show version | no-more"
-        output: ""
-      - cmd: "show configuration | display set | no-more "
-        output: ""
+    cmds: []
   config:
     prompt: "#"
     switch_mode_cmds:
       - "exit"
     cmds:
       - cmd: "commit"
-        output: ""
-      - cmd: "hostname juniper"
-        output: ""
+        output: "commit complete"
       - cmd: "set system host-name juniper-srx"
         output: ""
 common:
-  - cmd: "show version"
+  - cmd: "show version | no-more"
     output: |
-      admin@juniper-srx> show version 
       Hostname: admin@junipe
       Model: firefly-perimeter
       JUNOS Software Release [12.1X47-D20.7]
 
-  - cmd: "show configuration"
+  - cmd: "show configuration | display set | no-more"
     output: |
-      show configuration | display set | no-more 
       set version 12.1X47-D20.7
       set system host-name test
       set system root-authentication encrypted-password "$1$lKnmN6iU$AmHVrj6P.QZoHaLzRJPTG."
@@ -68,7 +60,7 @@ common:
       set security zones security-zone trust interfaces ge-0/0/3.0
     
 welcome: |
-  admin@juniper-srx> show interfaces | no-more
+  --- JUNOS 12.1X47-D20.7 built 2015-03-03 21:53:50 UTC
 
 invalid_cmd_error: |
   ^

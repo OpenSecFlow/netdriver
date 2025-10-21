@@ -44,7 +44,7 @@ class JuniperEXHandler(CommandHandler):
                 if command == "exit":
                     # logout
                     raise ClientExit
-                elif command == "configure":
+                elif command == "configure private":
                     # switch to config mode
                     self._mode = Mode.CONFIG
                     return True

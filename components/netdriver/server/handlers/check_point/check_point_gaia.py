@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.10.6
 # -*- coding: utf-8 -*-
+
 from pathlib import Path
 from asyncssh import SSHServerProcess
 from netdriver.client.mode import Mode
@@ -8,14 +9,14 @@ from netdriver.server.handlers.command_handler import CommandHandler
 from netdriver.server.models import DeviceBaseInfo
 
 
-class JuniperSRXHandler(CommandHandler):
-    """ Juniper SRX Command Handler """
+class CheckPointGaiaHandler(CommandHandler):
+    """ CheckPoint gaia Command Handler """
 
     info = DeviceBaseInfo(
-        vendor="juniper",
-        model="srx",
+        vendor="check point",
+        model="gaia",
         version="*",
-        description="Juniper SRX Command Handler"
+        description="CheckPoint gaia Command Handler"
     )
 
     @classmethod
@@ -28,13 +29,13 @@ class JuniperSRXHandler(CommandHandler):
         # current file path
         if conf_path is None:
             cwd_path = Path(__file__).parent
-            conf_path = f"{cwd_path}/juniper_srx.yml"
+            conf_path = f"{cwd_path}/check_point_gaia.yml"
         self.conf_path = conf_path
         super().__init__(process)
 
     async def switch_vsys(self, command: str) -> bool:
         return False
-    
+
     async def switch_mode(self, command: str) -> bool:
         if command not in self.config.modes[self._mode].switch_mode_cmds:
             return False
@@ -44,15 +45,6 @@ class JuniperSRXHandler(CommandHandler):
                 if command == "exit":
                     # logout
                     raise ClientExit
-                elif command == "configure private":
-                    # switch to config mode
-                    self._mode = Mode.CONFIG
-                    return True
-            case Mode.CONFIG:
-                if command == "exit":
-                    # exit config mode
-                    self._mode = Mode.ENABLE
-                    return True
             case _:
                 return False
         return False

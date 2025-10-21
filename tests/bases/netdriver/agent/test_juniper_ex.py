@@ -63,7 +63,7 @@ async def test_pull_config(test_client: TestClient, juniper_ex_dev: dict):
             {
                 "type": "raw",
                 "mode": "enable",
-                "command": "show configuration | display set | no-more ",
+                "command": "show configuration | display set | no-more",
                 "template": ""
             }
         ],

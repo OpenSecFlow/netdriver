@@ -170,7 +170,7 @@ def h3c_secpath_dev(request: pytest.FixtureRequest) -> Generator[dict, None, Non
             "enable_password": "",
         }
     else:
-        port = 18024
+        port = 18025
         dev = MockSSHDevice.create_device(vendor="h3c", model="secpath", version="7.1", port=port)
         runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
@@ -199,7 +199,7 @@ def juniper_ex_dev(request: pytest.FixtureRequest) -> Generator[dict, None, None
             "enable_password": "",
         }
     else:
-        port = 18025
+        port = 18029
         dev = MockSSHDevice.create_device(vendor="juniper", model="ex4200", version="junos 15", port=port)
         runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
@@ -228,7 +228,7 @@ def paloalto_pa_dev(request: pytest.FixtureRequest) -> Generator[dict, None, Non
             "enable_password": "",
         }
     else:
-        port = 18026
+        port = 18036
         dev = MockSSHDevice.create_device(vendor="paloalto", model="pa", version="8.1", port=port)
         runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
@@ -257,7 +257,7 @@ def fortinet_fortigate_dev(request: pytest.FixtureRequest) -> Generator[dict, No
             "enable_password": "",
         }
     else:
-        port = 18027
+        port = 18037
         dev = MockSSHDevice.create_device(vendor="fortinet", model="fortigate", version="7.2", port=port)
         runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
@@ -345,7 +345,7 @@ def huawei_ce_dev(request: pytest.FixtureRequest) -> Generator[dict, None, None]
             "enable_password": "",
         }
     else:
-        port = 18029
+        port = 18038
         dev = MockSSHDevice.create_device(vendor="huawei", model="ce6800", version="8.18", port=port)
         runner = AsyncRunner(dev.start)
         thread = threading.Thread(target=runner)
@@ -374,7 +374,7 @@ def arista_eos_dev(request: pytest.FixtureRequest) -> Generator[dict, None, None
             "enable_password": "12345",
         }
     else:
-        port = 18030
+        port = 18039
         dev = MockSSHDevice.create_device(vendor="arista", model="eos-lab", version="4.31.2F", port=port)
         runner = AsyncRunner(dev.start)
         thread = threading.Thread(target=runner)
@@ -403,8 +403,8 @@ def check_point_security_gateway_dev(request: pytest.FixtureRequest) -> Generato
             "enable_password": "",
         }
     else:
-        port = 18031
-        dev = MockSSHDevice.create_device(vendor="check point", model="Gaia", version="R80.40", port=port)
+        port = 18040
+        dev = MockSSHDevice.create_device(vendor="check point", model="gaia", version="R80.40", port=port)
         runner = AsyncRunner(dev.start)
         thread = threading.Thread(target=runner)
         thread.daemon = True
@@ -433,7 +433,7 @@ def h3c_vsr_dev(request: pytest.FixtureRequest) -> Generator[dict, None, None]:
             "enable_password": "",
         }
     else:
-        port = 18032
+        port = 18026
         dev = MockSSHDevice.create_device(vendor="h3c", model="vsr", version="7.1", port=port)
         runner = AsyncRunner(dev.start)
         thread = threading.Thread(target=runner)
@@ -462,7 +462,7 @@ def dptech_fw_dev(request: pytest.FixtureRequest) -> Generator[dict, None, None]
             "enable_password": "",
         }
     else:
-        port = 18033
+        port = 18027
         dev = MockSSHDevice.create_device(vendor="dptech", model="fw1000", version="S511C013D001", port=port)
         runner = AsyncRunner(dev.start)
         thread = threading.Thread(target=runner)
@@ -491,7 +491,7 @@ def maipu_nss_dev(request: pytest.FixtureRequest) -> Generator[dict, None, None]
             "enable_password": "",
         }
     else:
-        port = 18034
+        port = 18030
         dev = MockSSHDevice.create_device(vendor="maipu", model="nss", version="9.7.40.8", port=port)
         runner = AsyncRunner(dev.start)
         thread = threading.Thread(target=runner)
@@ -520,7 +520,7 @@ def qianxin_nsg_dev(request: pytest.FixtureRequest) -> Generator[dict, None, Non
             "enable_password": "",
         }
     else:
-        port = 18035
+        port = 18031
         dev = MockSSHDevice.create_device(vendor="qianxin", model="nsg", version="6.1.13", port=port)
         runner = AsyncRunner(dev.start)
         thread = threading.Thread(target=runner)
@@ -549,7 +549,7 @@ def venustech_usg_dev(request: pytest.FixtureRequest) -> Generator[dict, None, N
             "enable_password": "",
         }
     else:
-        port = 18036
+        port = 18032
         dev = MockSSHDevice.create_device(vendor="venustech", model="usg", version="v2.6", port=port)
         runner = AsyncRunner(dev.start)
         thread = threading.Thread(target=runner)
@@ -578,7 +578,7 @@ def chaitin_ctdsg_dev(request: pytest.FixtureRequest) -> Generator[dict, None, N
             "enable_password": "",
         }
     else:
-        port = 18037
+        port = 18033
         dev = MockSSHDevice.create_device(vendor="chaitin", model="ctdsg", version="v3.0", port=port)
         runner = AsyncRunner(dev.start)
         thread = threading.Thread(target=runner)
@@ -607,7 +607,7 @@ def topsec_ngfw_dev(request: pytest.FixtureRequest) -> Generator[dict, None, Non
             "enable_password": "",
         }
     else:
-        port = 18038
+        port = 18034
         dev = MockSSHDevice.create_device(vendor="topsec", model="ngfw", version="v3", port=port)
         runner = AsyncRunner(dev.start)
         thread = threading.Thread(target=runner)
