@@ -22,7 +22,7 @@ class HuaweiCEHandler(CommandHandler):
     @classmethod
     def is_selectable(cls, vendor: str, model: str, version: str) -> bool:
         # only check vendor and model, check version in the future
-        if cls.info.vendor == vendor and cls.info.model == model:
+        if cls.info.vendor == vendor and model.startswith(cls.info.model):
             return True
 
     def __init__(self, process: SSHServerProcess, conf_path: str = None):

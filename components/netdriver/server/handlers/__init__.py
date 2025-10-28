@@ -71,5 +71,7 @@ class CommandHandlerFactory:
             return PaloaltoPAHandler(process, conf_path)
         elif HuaweiCEHandler.is_selectable(vendor, model, version):
             return HuaweiCEHandler(process, conf_path)
+        elif AristaEOSHandler.is_selectable(vendor, model, version):
+            return AristaEOSHandler(process, conf_path)
         else:
             raise ValueError(f"Unsupported device: {vendor}:{model}:{version}")

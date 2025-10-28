@@ -405,7 +405,7 @@ def arista_eos_dev(request: pytest.FixtureRequest) -> Generator[dict, None, None
         }
     else:
         port = 18039
-        dev = MockSSHDevice.create_device(vendor="arista", model="eos-lab", version="4.31.2F", port=port)
+        dev = MockSSHDevice.create_device(vendor="arista", model="eos", version="4.31.2F", port=port)
         runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
         thread.daemon = True
