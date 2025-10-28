@@ -9,9 +9,39 @@ from fastapi.testclient import TestClient
 
 from netdriver.agent.main import app
 from netdriver.server.device import MockSSHDevice
+from netdriver.log import logman
 
 
 _ARG_MOCK_DEV = "--mock-dev"
+
+# Configure simunet log for test environment
+# This needs to be called after agent.main import to add simunet log handler
+# Also need to update agent handler to exclude server logs
+from netdriver.log import logman as logman_module
+
+# Remove the default agent handler and re-add with exclude filter
+if logman_module._logger_initialized:
+    # Get current config from agent container
+    from netdriver.agent.containers import container as agent_container
+
+    # Remove existing handlers
+    logman.logger.remove()
+    logman_module._logger_initialized = False
+
+    # Re-add agent handler with exclude filter
+    logman.configure_logman(
+        level=agent_container.config.logging.level(),
+        intercept_loggers=agent_container.config.logging.intercept_loggers(),
+        log_file=agent_container.config.logging.log_file(),
+        exclude_filter="netdriver.server"
+    )
+
+    # Add simunet handler
+    logman.configure_logman(
+        level="INFO",
+        log_file="logs/simunet.log",
+        module_filter="netdriver.server"
+    )
 
 
 @pytest.fixture(scope="module")
@@ -27,7 +57,7 @@ class AsyncRunner:
         self.dev = dev
         self.loop = None
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self):
         self.loop = asyncio.new_event_loop()
         self.loop.create_task(self.dev.start())
         self.loop.run_forever()
@@ -318,7 +348,7 @@ def juniper_srx_dev(request: pytest.FixtureRequest) -> Generator[dict, None, Non
     else:
         port = 18028
         dev = MockSSHDevice.create_device(vendor="juniper", model="srx", version="junos 12.0", port=port)
-        runner = AsyncRunner(dev.start)
+        runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
         thread.daemon = True
         thread.start()
@@ -347,7 +377,7 @@ def huawei_ce_dev(request: pytest.FixtureRequest) -> Generator[dict, None, None]
     else:
         port = 18038
         dev = MockSSHDevice.create_device(vendor="huawei", model="ce6800", version="8.18", port=port)
-        runner = AsyncRunner(dev.start)
+        runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
         thread.daemon = True
         thread.start()
@@ -376,7 +406,7 @@ def arista_eos_dev(request: pytest.FixtureRequest) -> Generator[dict, None, None
     else:
         port = 18039
         dev = MockSSHDevice.create_device(vendor="arista", model="eos-lab", version="4.31.2F", port=port)
-        runner = AsyncRunner(dev.start)
+        runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
         thread.daemon = True
         thread.start()
@@ -405,7 +435,7 @@ def check_point_security_gateway_dev(request: pytest.FixtureRequest) -> Generato
     else:
         port = 18040
         dev = MockSSHDevice.create_device(vendor="check point", model="gaia", version="R80.40", port=port)
-        runner = AsyncRunner(dev.start)
+        runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
         thread.daemon = True
         thread.start()
@@ -435,7 +465,7 @@ def h3c_vsr_dev(request: pytest.FixtureRequest) -> Generator[dict, None, None]:
     else:
         port = 18026
         dev = MockSSHDevice.create_device(vendor="h3c", model="vsr", version="7.1", port=port)
-        runner = AsyncRunner(dev.start)
+        runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
         thread.daemon = True
         thread.start()
@@ -464,7 +494,7 @@ def dptech_fw_dev(request: pytest.FixtureRequest) -> Generator[dict, None, None]
     else:
         port = 18027
         dev = MockSSHDevice.create_device(vendor="dptech", model="fw1000", version="S511C013D001", port=port)
-        runner = AsyncRunner(dev.start)
+        runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
         thread.daemon = True
         thread.start()
@@ -493,7 +523,7 @@ def maipu_nss_dev(request: pytest.FixtureRequest) -> Generator[dict, None, None]
     else:
         port = 18030
         dev = MockSSHDevice.create_device(vendor="maipu", model="nss", version="9.7.40.8", port=port)
-        runner = AsyncRunner(dev.start)
+        runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
         thread.daemon = True
         thread.start()
@@ -522,7 +552,7 @@ def qianxin_nsg_dev(request: pytest.FixtureRequest) -> Generator[dict, None, Non
     else:
         port = 18031
         dev = MockSSHDevice.create_device(vendor="qianxin", model="nsg", version="6.1.13", port=port)
-        runner = AsyncRunner(dev.start)
+        runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
         thread.daemon = True
         thread.start()
@@ -551,7 +581,7 @@ def venustech_usg_dev(request: pytest.FixtureRequest) -> Generator[dict, None, N
     else:
         port = 18032
         dev = MockSSHDevice.create_device(vendor="venustech", model="usg", version="v2.6", port=port)
-        runner = AsyncRunner(dev.start)
+        runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
         thread.daemon = True
         thread.start()
@@ -580,7 +610,7 @@ def chaitin_ctdsg_dev(request: pytest.FixtureRequest) -> Generator[dict, None, N
     else:
         port = 18033
         dev = MockSSHDevice.create_device(vendor="chaitin", model="ctdsg", version="v3.0", port=port)
-        runner = AsyncRunner(dev.start)
+        runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
         thread.daemon = True
         thread.start()
@@ -609,7 +639,7 @@ def topsec_ngfw_dev(request: pytest.FixtureRequest) -> Generator[dict, None, Non
     else:
         port = 18034
         dev = MockSSHDevice.create_device(vendor="topsec", model="ngfw", version="v3", port=port)
-        runner = AsyncRunner(dev.start)
+        runner = AsyncRunner(dev)
         thread = threading.Thread(target=runner)
         thread.daemon = True
         thread.start()

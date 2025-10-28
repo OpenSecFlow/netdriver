@@ -11,6 +11,9 @@ from netdriver.server.device import MockSSHDevice
 from netdriver.simunet.containers import container
 
 
+logman.configure_logman(level=container.config.logging.level(),
+                        intercept_loggers=container.config.logging.intercept_loggers(),
+                        log_file=container.config.logging.log_file())
 log = logman.logger
 app = FastAPI()
 

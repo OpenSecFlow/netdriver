@@ -6,6 +6,8 @@ api:
 logging:
   # INFO / DEBUG / TRACE
   level: INFO
+  # Log file path for agent
+  log_file: logs/agent.log
   intercept_loggers:
     - uvicorn.access
     - uvicorn.error

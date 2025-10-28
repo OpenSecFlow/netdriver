@@ -11,10 +11,18 @@ from netdriver.server.handlers import CommandHandler, CommandHandlerFactory
 from netdriver.server.user_repo import UserRepo
 
 
+# Module-level logger with patched name for correct filtering
+def _patch_record(record):
+    """Patch the record to ensure it's identified as netdriver.server"""
+    record["name"] = __name__  # __name__ will be "netdriver.server.device"
+
+log = logman.logger.patch(_patch_record)
+
+
 class MockSSHDevice(asyncssh.SSHServer):
     """ Create mock SSH-device """
     _server: asyncssh.SSHAcceptor
-    _logger = logman.logger
+    _logger = log
     _handlers = List[CommandHandler]
 
     vendor: str
