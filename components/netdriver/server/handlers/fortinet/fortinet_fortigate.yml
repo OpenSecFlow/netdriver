@@ -1,0 +1,1421 @@
+# Fortinet fortigate
+start_mode: enable
+hostname: fortinet
+line_feed: "\r\n"
+modes:
+  enable:
+    prompt: " # "
+    switch_mode_cmds:
+      - "exit"
+    cmds: 
+      - cmd: "config system console"
+        output: ""
+      - cmd: "set output standard"
+        output: ""
+      - cmd: "end"
+        output: ""
+common:
+  - cmd: "show full-configuration"
+    output: |
+        #config-version=FGVMK6-7.2.4-FW-build1396-230131:opmode=1:vdom=0:user=admin
+        #conf_file_ver=503739534395303
+        #buildno=1396
+        #global_vdom=1
+        config system global
+            set admin-concurrent enable
+            set admin-console-timeout 0
+            set admin-forticloud-sso-login disable
+            set admin-host ''
+            set admin-https-pki-required disable
+            unset admin-https-ssl-banned-ciphers
+            set admin-https-ssl-ciphersuites TLS-AES-128-GCM-SHA256 TLS-AES-256-GCM-SHA384 TLS-CHACHA20-POLY1305-SHA256
+            set admin-https-ssl-versions tlsv1-2
+            set admin-lockout-duration 60
+            set admin-lockout-threshold 3
+            set admin-login-max 100
+            set admin-port 80
+            set admin-restrict-local disable
+            set admin-scp disable
+            set admin-server-cert "Fortinet_GUI_Server"
+            set admin-sport 443
+            set admin-ssh-grace-time 120
+            set admin-ssh-password enable
+            set admin-ssh-port 22
+            set admin-ssh-v1 disable
+            set admin-telnet enable
+            set admin-telnet-port 23
+            set admintimeout 5
+            set alias "FortiGate-VM64-KVM"
+            set allow-traffic-redirect enable
+            set anti-replay strict
+            set arp-max-entry 131072
+            set auth-cert "self-sign"
+            set auth-http-port 1000
+            set auth-https-port 1003
+            set auth-ike-saml-port 1001
+            set auth-keepalive disable
+            set auth-session-limit block-new
+            set auto-auth-extension-device enable
+            set autorun-log-fsck disable
+            set av-affinity "0"
+            set av-failopen pass
+            set av-failopen-session disable
+            set batch-cmdb enable
+            set block-session-timer 30
+            set br-fdb-max-entry 8192
+            set cert-chain-max 8
+            set cfg-save automatic
+            set check-protocol-header loose
+            set check-reset-range disable
+            set cli-audit-log disable
+            set cloud-communication enable
+            set clt-cert-req disable
+            set cmdbsvr-affinity "1"
+            set cpu-use-threshold 90
+            set csr-ca-attribute enable
+            set daily-restart disable
+            set default-service-source-port 1-65535
+            set device-idle-timeout 300
+            set dh-params 2048
+            set dnsproxy-worker-count 1
+            set early-tcp-npu-session disable
+            set extender-controller-reserved-network 10.252.0.1 255.255.0.0
+            set fds-statistics enable
+            unset fgd-alert-subscription
+            set fortiextender disable
+            set fortiextender-data-port 25246
+            set fortiextender-discovery-lockdown disable
+            set fortiextender-provision-on-authorization disable
+            set fortiextender-vlan-mode disable
+            set fortiservice-port 8013
+            set fortitoken-cloud enable
+            set gui-allow-default-hostname disable
+            set gui-app-detection-sdwan disable
+            set gui-cdn-usage enable
+            set gui-certificates enable
+            set gui-custom-language disable
+            set gui-date-format yyyy/MM/dd
+            set gui-date-time-source system
+            set gui-device-latitude ''
+            set gui-device-longitude ''
+            set gui-display-hostname disable
+            set gui-firmware-upgrade-warning enable
+            set gui-forticare-registration-setup-warning enable
+            set gui-fortigate-cloud-sandbox disable
+            set gui-ipv6 disable
+            set gui-local-out disable
+            set gui-replacement-message-groups disable
+            set gui-rest-api-cache enable
+            set gui-theme jade
+            set gui-wireless-opensecurity disable
+            set gui-workflow-management disable
+            set ha-affinity "1"
+            set honor-df enable
+            set hostname "FortiGate-VM64-KVM"
+            set igmp-state-limit 3200
+            set interface-subnet-usage enable
+            set internet-service-database standard
+            set ip-fragment-mem-thresholds 32
+            set ip-src-port-range 1024-25000
+            set ips-affinity "0"
+            set ipsec-ha-seqjump-rate 10
+            set ipsec-qat-offload enable
+            set ipsec-round-robin disable
+            set ipsec-soft-dec-async disable
+            set ipv6-accept-dad 1
+            set ipv6-allow-anycast-probe disable
+            set ipv6-allow-local-in-slient-drop enable
+            set ipv6-allow-multicast-probe disable
+            set ipv6-allow-traffic-redirect enable
+            set language english
+            set ldapconntimeout 500
+            set lldp-reception disable
+            set lldp-transmission disable
+            set log-single-cpu-high disable
+            set log-ssl-connection disable
+            set log-uuid-address disable
+            set login-timestamp disable
+            set management-ip ''
+            set management-port-use-admin-sport enable
+            set management-vdom "root"
+            set max-route-cache-size 0
+            set memory-use-threshold-extreme 95
+            set memory-use-threshold-green 82
+            set memory-use-threshold-red 88
+            set miglog-affinity "0"
+            set miglogd-children 0
+            set multi-factor-authentication optional
+            set ndp-max-entry 0
+            set per-user-bal disable
+            set pmtu-discovery disable
+            set policy-auth-concurrent 0
+            set post-login-banner disable
+            set pre-login-banner disable
+            set proxy-auth-lifetime disable
+            set proxy-auth-timeout 10
+            set proxy-cert-use-mgmt-vdom disable
+            set proxy-keep-alive-mode session
+            set proxy-resource-mode disable
+            set radius-port 1812
+            set reboot-upon-config-restore enable
+            set refresh 0
+            set remoteauthtimeout 5
+            set reset-sessionless-tcp disable
+            set revision-backup-on-logout disable
+            set revision-image-auto-backup disable
+            set scanunit-count 0
+            set security-rating-result-submission enable
+            set security-rating-run-on-schedule enable
+            set send-pmtu-icmp enable
+            set sflowd-max-children-num 0
+            set snat-route-change disable
+            set special-file-23-support disable
+            set speedtest-server disable
+            set ssd-trim-freq weekly
+            set ssd-trim-hour 1
+            set ssd-trim-min 60
+            set ssd-trim-weekday sunday
+            set ssh-enc-algo chacha20-poly1305@openssh.com aes128-ctr aes192-ctr aes256-ctr arcfour256 arcfour128 aes128-cbc 3des-cbc blowfish-cbc cast128-cbc aes192-cbc aes256-cbc arcfour rijndael-cbc@lysator.liu.se aes128-gcm@openssh.com aes256-gcm@openssh.com
+            set ssh-kex-algo diffie-hellman-group14-sha1 diffie-hellman-group-exchange-sha1 diffie-hellman-group-exchange-sha256 curve25519-sha256@libssh.org ecdh-sha2-nistp256 ecdh-sha2-nistp384 ecdh-sha2-nistp521
+            set ssh-mac-algo hmac-md5 hmac-md5-etm@openssh.com hmac-md5-96 hmac-md5-96-etm@openssh.com hmac-sha1 hmac-sha1-etm@openssh.com hmac-sha2-256 hmac-sha2-256-etm@openssh.com hmac-sha2-512 hmac-sha2-512-etm@openssh.com hmac-ripemd160 hmac-ripemd160@openssh.com hmac-ripemd160-etm@openssh.com umac-64@openssh.com umac-128@openssh.com umac-64-etm@openssh.com umac-128-etm@openssh.com
+            set ssl-min-proto-version SSLv3
+            set ssl-static-key-ciphers enable
+            set sslvpn-ems-sn-check disable
+            set strict-dirty-session-check enable
+            set switch-controller disable
+            set switch-controller-reserved-network 10.255.0.1 255.255.0.0
+            set sys-perf-log-interval 5
+            set syslog-affinity "0"
+            set tcp-halfclose-timer 120
+            set tcp-halfopen-timer 10
+            set tcp-option enable
+            set tcp-rst-timer 5
+            set tcp-timewait-timer 1
+            set timezone 04
+            set traffic-priority tos
+            set traffic-priority-level medium
+            set two-factor-email-expiry 60
+            set two-factor-fac-expiry 60
+            set two-factor-ftk-expiry 60
+            set two-factor-ftm-expiry 72
+            set two-factor-sms-expiry 60
+            set udp-idle-timer 180
+            set url-filter-affinity "0"
+            set url-filter-count 1
+            set user-device-store-max-devices 10314
+            set user-device-store-max-unified-mem 51572940
+            set user-device-store-max-users 10314
+            set vip-arp-range restricted
+            set wad-affinity "0"
+            set wad-memory-change-granularity 10
+            set wad-restart-mode none
+            set wad-source-affinity enable
+            set wifi-ca-certificate "Fortinet_CA"
+            set wifi-certificate "Fortinet_Factory"
+            set wimax-4g-usb disable
+            set wireless-controller enable
+            set wireless-controller-port 5246
+            set fds-statistics-period 60
+        end
+        config system accprofile
+            edit "prof_admin"
+                set comments ''
+                set secfabgrp read-write
+                set ftviewgrp read-write
+                set authgrp read-write
+                set sysgrp read-write
+                set netgrp read-write
+                set loggrp read-write
+                set fwgrp read-write
+                set vpngrp read-write
+                set utmgrp read-write
+                set wanoptgrp read-write
+                set wifi read-write
+                set admintimeout-override disable
+                set system-diagnostics enable
+                set system-execute-ssh enable
+                set system-execute-telnet enable
+            next
+        end
+        config system vdom-link
+        end
+        config wireless-controller inter-controller
+            set inter-controller-mode disable
+            set l3-roaming disable
+            set inter-controller-key ENC ZmlsZfA3RSg0oXrm0bKiSZ/wC5VBM2y2L+OJN8B3d4jze2BgNflSXcBG1gNS5F4iZu9Zmc5PP99tOzrCwdJ4+vyy3LxgJxXX+xG0r0ehX0+fEGAnkVdFwGgWapT8L7suUdUUGyiteX8HQXjabKJ8262LubysSyoPznUbhkSBug2PAWNzdi+2BGIFV7/N1PHeWJ1lgQ==
+            set inter-controller-pri primary
+            set fast-failover-max 10
+            set fast-failover-wait 10
+        end
+        config wireless-controller global
+            set name ''
+            set location ''
+            set acd-process-count 0
+            set image-download enable
+            set max-retransmit 3
+            set control-message-offload ebp-frame aeroscout-tag ap-list sta-list sta-cap-list stats aeroscout-mu sta-health spectral-analysis
+            set data-ethernet-II enable
+            set link-aggregation disable
+            set mesh-eth-type 8755
+            set fiapp-eth-type 5252
+            set discovery-mc-addr 224.0.1.140
+            set max-clients 0
+            set rogue-scan-mac-adjacency 7
+            set ipsec-base-ip 169.254.0.1
+            set wtp-share disable
+            set tunnel-mode compatible
+            set nac-interval 120
+            set ap-log-server disable
+        end
+        config system switch-interface
+        end
+        config system interface
+            edit "port1"
+                set vdom "root"
+                set vrf 0
+                set fortilink disable
+                set mode static
+                set dhcp-relay-interface-select-method auto
+                set dhcp-relay-service disable
+                set ip 192.168.60.88 255.255.255.0
+                set allowaccess ping https ssh http fgfm
+                set fail-detect disable
+                set pptp-client disable
+                set arpforward enable
+                set broadcast-forward disable
+                set bfd global
+                set l2forward disable
+                set icmp-send-redirect enable
+                set icmp-accept-redirect enable
+                set reachable-time 30000
+                set vlanforward disable
+                set stpforward disable
+                set ips-sniffer-mode disable
+                set ident-accept disable
+                set ipmac disable
+                set subst disable
+                set substitute-dst-mac 00:00:00:00:00:00
+                set status up
+                set netbios-forward disable
+                set wins-ip 0.0.0.0
+                set type physical
+                set dedicated-to none
+                set ring-rx 0
+                set ring-tx 0
+                set netflow-sampler disable
+                set sflow-sampler disable
+                set src-check enable
+                set sample-rate 2000
+                set polling-interval 20
+                set sample-direction both
+                set explicit-web-proxy disable
+                set explicit-ftp-proxy disable
+                set proxy-captive-portal disable
+                set tcp-mss 0
+                set inbandwidth 0
+                set outbandwidth 0
+                set egress-shaping-profile ''
+                set ingress-shaping-profile ''
+                set disconnect-threshold 0
+                set spillover-threshold 0
+                set ingress-spillover-threshold 0
+                set weight 0
+                set external disable
+                set description ''
+                set alias ''
+                set security-mode none
+                set ike-saml-server ''
+                set device-identification disable
+                set lldp-reception vdom
+                set lldp-transmission vdom
+                set estimated-upstream-bandwidth 0
+                set estimated-downstream-bandwidth 0
+                set measured-upstream-bandwidth 0
+                set measured-downstream-bandwidth 0
+                set bandwidth-measure-time 0
+                set monitor-bandwidth disable
+                set vrrp-virtual-mac disable
+                set role undefined
+                set snmp-index 1
+                set secondary-IP disable
+                set preserve-session-route disable
+                set auto-auth-extension-device disable
+                set ap-discover enable
+                set ip-managed-by-fortiipam disable
+                set switch-controller-mgmt-vlan 4094
+                set switch-controller-igmp-snooping-proxy disable
+                set switch-controller-igmp-snooping-fast-leave disable
+                set swc-first-create 0
+                set eap-supplicant disable
+                config ipv6
+                    set ip6-mode static
+                    set nd-mode basic
+                    set ip6-address ::/0
+                    unset ip6-allowaccess
+                    set icmp6-send-redirect enable
+                    set ra-send-mtu enable
+                    set ip6-reachable-time 0
+                    set ip6-retrans-time 0
+                    set ip6-hop-limit 0
+                    set dhcp6-prefix-delegation disable
+                    set dhcp6-information-request disable
+                    set vrrp-virtual-mac6 disable
+                    set vrip6_link_local ::
+                    set ip6-send-adv disable
+                    set autoconf disable
+                    set dhcp6-relay-service disable
+                end
+                set priority 1
+                set dhcp-relay-request-all-server disable
+                set dhcp-client-identifier ''
+                set dhcp-renew-time 0
+                set idle-timeout 0
+                set disc-retry-timeout 1
+                set padt-retry-timeout 1
+                set dns-server-override enable
+                set dns-server-protocol cleartext
+                set speed auto
+                set mtu-override disable
+                set wccp disable
+                set drop-overlapped-fragment disable
+                set drop-fragment disable
+            next
+            edit "port2"
+                set vdom "root"
+                set vrf 0
+                set fortilink disable
+                set mode static
+                set dhcp-relay-interface-select-method auto
+                set dhcp-relay-service disable
+                set ip 0.0.0.0 0.0.0.0
+                unset allowaccess
+                set fail-detect disable
+                set pptp-client disable
+                set arpforward enable
+                set broadcast-forward disable
+                set bfd global
+                set l2forward disable
+                set icmp-send-redirect enable
+                set icmp-accept-redirect enable
+                set reachable-time 30000
+                set vlanforward disable
+                set stpforward disable
+                set ips-sniffer-mode disable
+                set ident-accept disable
+                set ipmac disable
+                set subst disable
+                set substitute-dst-mac 00:00:00:00:00:00
+                set status up
+                set netbios-forward disable
+                set wins-ip 0.0.0.0
+                set type physical
+                set dedicated-to none
+                set ring-rx 0
+                set ring-tx 0
+                set netflow-sampler disable
+                set sflow-sampler disable
+                set src-check enable
+                set sample-rate 2000
+                set polling-interval 20
+                set sample-direction both
+                set explicit-web-proxy disable
+                set explicit-ftp-proxy disable
+                set proxy-captive-portal disable
+                set tcp-mss 0
+                set inbandwidth 0
+                set outbandwidth 0
+                set egress-shaping-profile ''
+                set ingress-shaping-profile ''
+                set disconnect-threshold 0
+                set spillover-threshold 0
+                set ingress-spillover-threshold 0
+                set weight 0
+                set external disable
+                set description ''
+                set alias ''
+                set security-mode none
+                set ike-saml-server ''
+                set device-identification disable
+                set lldp-reception vdom
+                set lldp-transmission vdom
+                set estimated-upstream-bandwidth 0
+                set estimated-downstream-bandwidth 0
+                set measured-upstream-bandwidth 0
+                set measured-downstream-bandwidth 0
+                set bandwidth-measure-time 0
+                set monitor-bandwidth disable
+                set vrrp-virtual-mac disable
+                set role undefined
+                set snmp-index 2
+                set secondary-IP disable
+                set preserve-session-route disable
+                set auto-auth-extension-device disable
+                set ap-discover enable
+                set ip-managed-by-fortiipam disable
+                set switch-controller-mgmt-vlan 4094
+                set switch-controller-igmp-snooping-proxy disable
+                set switch-controller-igmp-snooping-fast-leave disable
+                set swc-first-create 0
+                set eap-supplicant disable
+                config ipv6
+                    set ip6-mode static
+                    set nd-mode basic
+                    set ip6-address ::/0
+                    unset ip6-allowaccess
+                    set icmp6-send-redirect enable
+                    set ra-send-mtu enable
+                    set ip6-reachable-time 0
+                    set ip6-retrans-time 0
+                    set ip6-hop-limit 0
+                    set dhcp6-prefix-delegation disable
+                    set dhcp6-information-request disable
+                    set vrrp-virtual-mac6 disable
+                    set vrip6_link_local ::
+                    set ip6-send-adv disable
+                    set autoconf disable
+                    set dhcp6-relay-service disable
+                end
+                set priority 1
+                set dhcp-relay-request-all-server disable
+                set dhcp-client-identifier ''
+                set dhcp-renew-time 0
+                set idle-timeout 0
+                set disc-retry-timeout 1
+                set padt-retry-timeout 1
+                set dns-server-override enable
+                set dns-server-protocol cleartext
+                set speed auto
+                set mtu-override disable
+                set wccp disable
+                set drop-overlapped-fragment disable
+                set drop-fragment disable
+            next
+            edit "port3"
+                set vdom "root"
+                set vrf 0
+                set fortilink disable
+                set mode static
+                set dhcp-relay-interface-select-method auto
+                set dhcp-relay-service disable
+                set ip 0.0.0.0 0.0.0.0
+                unset allowaccess
+                set fail-detect disable
+                set pptp-client disable
+                set arpforward enable
+                set broadcast-forward disable
+                set bfd global
+                set l2forward disable
+                set icmp-send-redirect enable
+                set icmp-accept-redirect enable
+                set reachable-time 30000
+                set vlanforward disable
+                set stpforward disable
+                set ips-sniffer-mode disable
+                set ident-accept disable
+                set ipmac disable
+                set subst disable
+                set substitute-dst-mac 00:00:00:00:00:00
+                set status up
+                set netbios-forward disable
+                set wins-ip 0.0.0.0
+                set type physical
+                set dedicated-to none
+                set ring-rx 0
+                set ring-tx 0
+                set netflow-sampler disable
+                set sflow-sampler disable
+                set src-check enable
+                set sample-rate 2000
+                set polling-interval 20
+                set sample-direction both
+                set explicit-web-proxy disable
+                set explicit-ftp-proxy disable
+                set proxy-captive-portal disable
+                set tcp-mss 0
+                set inbandwidth 0
+                set outbandwidth 0
+                set egress-shaping-profile ''
+                set ingress-shaping-profile ''
+                set disconnect-threshold 0
+                set spillover-threshold 0
+                set ingress-spillover-threshold 0
+                set weight 0
+                set external disable
+                set description ''
+                set alias ''
+                set security-mode none
+                set ike-saml-server ''
+                set device-identification disable
+                set lldp-reception vdom
+                set lldp-transmission vdom
+                set estimated-upstream-bandwidth 0
+                set estimated-downstream-bandwidth 0
+                set measured-upstream-bandwidth 0
+                set measured-downstream-bandwidth 0
+                set bandwidth-measure-time 0
+                set monitor-bandwidth disable
+                set vrrp-virtual-mac disable
+                set role undefined
+                set snmp-index 3
+                set secondary-IP disable
+                set preserve-session-route disable
+                set auto-auth-extension-device disable
+                set ap-discover enable
+                set ip-managed-by-fortiipam disable
+                set switch-controller-mgmt-vlan 4094
+                set switch-controller-igmp-snooping-proxy disable
+                set switch-controller-igmp-snooping-fast-leave disable
+                set swc-first-create 0
+                set eap-supplicant disable
+                config ipv6
+                    set ip6-mode static
+                    set nd-mode basic
+                    set ip6-address ::/0
+                    unset ip6-allowaccess
+                    set icmp6-send-redirect enable
+                    set ra-send-mtu enable
+                    set ip6-reachable-time 0
+                    set ip6-retrans-time 0
+                    set ip6-hop-limit 0
+                    set dhcp6-prefix-delegation disable
+                    set dhcp6-information-request disable
+                    set vrrp-virtual-mac6 disable
+                    set vrip6_link_local ::
+                    set ip6-send-adv disable
+                    set autoconf disable
+                    set dhcp6-relay-service disable
+                end
+                set priority 1
+                set dhcp-relay-request-all-server disable
+                set dhcp-client-identifier ''
+                set dhcp-renew-time 0
+                set idle-timeout 0
+                set disc-retry-timeout 1
+                set padt-retry-timeout 1
+                set dns-server-override enable
+                set dns-server-protocol cleartext
+                set speed auto
+                set mtu-override disable
+                set wccp disable
+                set drop-overlapped-fragment disable
+                set drop-fragment disable
+            next
+            edit "port4"
+                set vdom "root"
+                set vrf 0
+                set fortilink disable
+                set mode static
+                set dhcp-relay-interface-select-method auto
+                set dhcp-relay-service disable
+                set ip 0.0.0.0 0.0.0.0
+                unset allowaccess
+                set fail-detect disable
+                set pptp-client disable
+                set arpforward enable
+                set broadcast-forward disable
+                set bfd global
+                set l2forward disable
+                set icmp-send-redirect enable
+                set icmp-accept-redirect enable
+                set reachable-time 30000
+                set vlanforward disable
+                set stpforward disable
+                set ips-sniffer-mode disable
+                set ident-accept disable
+                set ipmac disable
+                set subst disable
+                set substitute-dst-mac 00:00:00:00:00:00
+                set status up
+                set netbios-forward disable
+                set wins-ip 0.0.0.0
+                set type physical
+                set dedicated-to none
+                set ring-rx 0
+                set ring-tx 0
+                set netflow-sampler disable
+                set sflow-sampler disable
+                set src-check enable
+                set sample-rate 2000
+                set polling-interval 20
+                set sample-direction both
+                set explicit-web-proxy disable
+                set explicit-ftp-proxy disable
+                set proxy-captive-portal disable
+                set tcp-mss 0
+                set inbandwidth 0
+                set outbandwidth 0
+                set egress-shaping-profile ''
+                set ingress-shaping-profile ''
+                set disconnect-threshold 0
+                set spillover-threshold 0
+                set ingress-spillover-threshold 0
+                set weight 0
+                set external disable
+                set description ''
+                set alias ''
+                set security-mode none
+                set ike-saml-server ''
+                set device-identification disable
+                set lldp-reception vdom
+                set lldp-transmission vdom
+                set estimated-upstream-bandwidth 0
+                set estimated-downstream-bandwidth 0
+                set measured-upstream-bandwidth 0
+                set measured-downstream-bandwidth 0
+                set bandwidth-measure-time 0
+                set monitor-bandwidth disable
+                set vrrp-virtual-mac disable
+                set role undefined
+                set snmp-index 4
+                set secondary-IP disable
+                set preserve-session-route disable
+                set auto-auth-extension-device disable
+                set ap-discover enable
+                set ip-managed-by-fortiipam disable
+                set switch-controller-mgmt-vlan 4094
+                set switch-controller-igmp-snooping-proxy disable
+                set switch-controller-igmp-snooping-fast-leave disable
+                set swc-first-create 0
+                set eap-supplicant disable
+                config ipv6
+                    set ip6-mode static
+                    set nd-mode basic
+                    set ip6-address ::/0
+                    unset ip6-allowaccess
+                    set icmp6-send-redirect enable
+                    set ra-send-mtu enable
+                    set ip6-reachable-time 0
+                    set ip6-retrans-time 0
+                    set ip6-hop-limit 0
+                    set dhcp6-prefix-delegation disable
+                    set dhcp6-information-request disable
+                    set vrrp-virtual-mac6 disable
+                    set vrip6_link_local ::
+                    set ip6-send-adv disable
+                    set autoconf disable
+                    set dhcp6-relay-service disable
+                end
+                set priority 1
+                set dhcp-relay-request-all-server disable
+                set dhcp-client-identifier ''
+                set dhcp-renew-time 0
+                set idle-timeout 0
+                set disc-retry-timeout 1
+                set padt-retry-timeout 1
+                set dns-server-override enable
+                set dns-server-protocol cleartext
+                set speed auto
+                set mtu-override disable
+                set wccp disable
+                set drop-overlapped-fragment disable
+                set drop-fragment disable
+            next
+            edit "naf.root"
+                set vdom "root"
+                set vrf 0
+                set distance 5
+                set priority 1
+                set dhcp-relay-interface-select-method auto
+                set dhcp-relay-service disable
+                set ip 0.0.0.0 0.0.0.0
+                set arpforward enable
+                set broadcast-forward disable
+                set bfd global
+                set icmp-send-redirect enable
+                set icmp-accept-redirect enable
+                set reachable-time 30000
+                set ips-sniffer-mode disable
+                set ident-accept disable
+                set ipmac disable
+                set status up
+                set netbios-forward disable
+                set wins-ip 0.0.0.0
+                set type tunnel
+                set dedicated-to none
+                set netflow-sampler disable
+                set sflow-sampler disable
+                set src-check disable
+                set sample-rate 2000
+                set polling-interval 20
+                set sample-direction both
+                set explicit-web-proxy disable
+                set explicit-ftp-proxy disable
+                set proxy-captive-portal disable
+                set tcp-mss 0
+                set inbandwidth 0
+                set outbandwidth 0
+                set egress-shaping-profile ''
+                set ingress-shaping-profile ''
+                set spillover-threshold 0
+                set ingress-spillover-threshold 0
+                set weight 0
+                set external disable
+                set description ''
+                set alias ''
+                set security-mode none
+                set ike-saml-server ''
+                set estimated-upstream-bandwidth 0
+                set estimated-downstream-bandwidth 0
+                set measured-upstream-bandwidth 0
+                set measured-downstream-bandwidth 0
+                set bandwidth-measure-time 0
+                set monitor-bandwidth disable
+                set role undefined
+                set snmp-index 5
+                set preserve-session-route disable
+                set auto-auth-extension-device disable
+                set ap-discover enable
+                set ip-managed-by-fortiipam disable
+                set switch-controller-igmp-snooping-proxy disable
+                set switch-controller-igmp-snooping-fast-leave disable
+                set eap-supplicant disable
+                config ipv6
+                    set nd-mode basic
+                    set ip6-address ::/0
+                    set icmp6-send-redirect enable
+                    set ra-send-mtu enable
+                    set ip6-reachable-time 0
+                    set ip6-retrans-time 0
+                    set ip6-hop-limit 0
+                    set ip6-prefix-mode dhcp6
+                    set dhcp6-prefix-delegation disable
+                    set dhcp6-information-request disable
+                end
+                set dhcp-relay-request-all-server disable
+                set dns-server-override enable
+                set dns-server-protocol cleartext
+                set wccp disable
+            next
+            edit "l2t.root"
+                set vdom "root"
+                set vrf 0
+                set distance 5
+                set priority 1
+                set dhcp-relay-interface-select-method auto
+                set dhcp-relay-service disable
+                set ip 0.0.0.0 0.0.0.0
+                unset allowaccess
+                set arpforward enable
+                set broadcast-forward disable
+                set bfd global
+                set icmp-send-redirect enable
+                set icmp-accept-redirect enable
+                set reachable-time 30000
+                set ips-sniffer-mode disable
+                set ident-accept disable
+                set ipmac disable
+                set status up
+                set netbios-forward disable
+                set wins-ip 0.0.0.0
+                set type tunnel
+                set dedicated-to none
+                set netflow-sampler disable
+                set sflow-sampler disable
+                set src-check enable
+                set sample-rate 2000
+                set polling-interval 20
+                set sample-direction both
+                set explicit-web-proxy disable
+                set explicit-ftp-proxy disable
+                set proxy-captive-portal disable
+                set tcp-mss 0
+                set inbandwidth 0
+                set outbandwidth 0
+                set egress-shaping-profile ''
+                set ingress-shaping-profile ''
+                set spillover-threshold 0
+                set ingress-spillover-threshold 0
+                set weight 0
+                set external disable
+                set description ''
+                set alias ''
+                set security-mode none
+                set ike-saml-server ''
+                set estimated-upstream-bandwidth 0
+                set estimated-downstream-bandwidth 0
+                set measured-upstream-bandwidth 0
+                set measured-downstream-bandwidth 0
+                set bandwidth-measure-time 0
+                set monitor-bandwidth disable
+                set role undefined
+                set snmp-index 6
+                set preserve-session-route disable
+                set auto-auth-extension-device disable
+                set ap-discover enable
+                set ip-managed-by-fortiipam disable
+                set switch-controller-igmp-snooping-proxy disable
+                set switch-controller-igmp-snooping-fast-leave disable
+                set eap-supplicant disable
+                config ipv6
+                    set ip6-mode static
+                    set nd-mode basic
+                    set ip6-address ::/0
+                    unset ip6-allowaccess
+                    set icmp6-send-redirect enable
+                    set ra-send-mtu enable
+                    set ip6-reachable-time 0
+                    set ip6-retrans-time 0
+                    set ip6-hop-limit 0
+                    set dhcp6-prefix-delegation disable
+                    set dhcp6-information-request disable
+                    set ip6-send-adv disable
+                    set autoconf disable
+                    set dhcp6-relay-service disable
+                end
+                set dhcp-relay-request-all-server disable
+                set dns-server-override enable
+                set dns-server-protocol cleartext
+                set wccp disable
+            next
+            edit "ssl.root"
+                set vdom "root"
+                set vrf 0
+                set distance 5
+                set priority 1
+                set dhcp-relay-interface-select-method auto
+                set dhcp-relay-service disable
+                set ip 0.0.0.0 0.0.0.0
+                unset allowaccess
+                set arpforward enable
+                set broadcast-forward disable
+                set bfd global
+                set icmp-send-redirect enable
+                set icmp-accept-redirect enable
+                set reachable-time 30000
+                set ips-sniffer-mode disable
+                set ident-accept disable
+                set ipmac disable
+                set status up
+                set netbios-forward disable
+                set wins-ip 0.0.0.0
+                set type tunnel
+                set dedicated-to none
+                set netflow-sampler disable
+                set sflow-sampler disable
+                set src-check enable
+                set sample-rate 2000
+                set polling-interval 20
+                set sample-direction both
+                set explicit-web-proxy disable
+                set explicit-ftp-proxy disable
+                set proxy-captive-portal disable
+                set tcp-mss 0
+                set inbandwidth 0
+                set outbandwidth 0
+                set egress-shaping-profile ''
+                set ingress-shaping-profile ''
+                set spillover-threshold 0
+                set ingress-spillover-threshold 0
+                set weight 0
+                set external disable
+                set description ''
+                set alias "SSL VPN interface"
+                set security-mode none
+                set ike-saml-server ''
+                set estimated-upstream-bandwidth 0
+                set estimated-downstream-bandwidth 0
+                set measured-upstream-bandwidth 0
+                set measured-downstream-bandwidth 0
+                set bandwidth-measure-time 0
+                set monitor-bandwidth disable
+                set role undefined
+                set snmp-index 7
+                set preserve-session-route disable
+                set auto-auth-extension-device disable
+                set ap-discover enable
+                set ip-managed-by-fortiipam disable
+                set switch-controller-igmp-snooping-proxy disable
+                set switch-controller-igmp-snooping-fast-leave disable
+                set eap-supplicant disable
+                config ipv6
+                    set ip6-mode static
+                    set nd-mode basic
+                    set ip6-address ::/0
+                    unset ip6-allowaccess
+                    set icmp6-send-redirect enable
+                    set ra-send-mtu enable
+                    set ip6-reachable-time 0
+                    set ip6-retrans-time 0
+                    set ip6-hop-limit 0
+                    set dhcp6-prefix-delegation disable
+                    set dhcp6-information-request disable
+                    set ip6-send-adv disable
+                    set autoconf disable
+                    set dhcp6-relay-service disable
+                end
+                set dhcp-relay-request-all-server disable
+                set dns-server-override enable
+                set dns-server-protocol cleartext
+                set wccp disable
+            next
+            edit "fortilink"
+                set vdom "root"
+                set vrf 0
+                set fortilink enable
+                set switch-controller-source-ip outbound
+                set mode static
+                set dhcp-relay-interface-select-method auto
+                set dhcp-relay-service disable
+                set ip 10.255.1.1 255.255.255.0
+                set allowaccess ping fabric
+                set fail-detect disable
+                set pptp-client disable
+                set arpforward enable
+                set broadcast-forward disable
+                set bfd global
+                set l2forward disable
+                set icmp-send-redirect enable
+                set icmp-accept-redirect enable
+                set reachable-time 30000
+                set vlanforward disable
+                set stpforward disable
+                set ips-sniffer-mode disable
+                set ident-accept disable
+                set ipmac disable
+                set status up
+                set netbios-forward disable
+                set wins-ip 0.0.0.0
+                set type aggregate
+                set dedicated-to none
+                set netflow-sampler disable
+                set sflow-sampler disable
+                set src-check enable
+                set sample-rate 2000
+                set polling-interval 20
+                set sample-direction both
+                set explicit-web-proxy disable
+                set explicit-ftp-proxy disable
+                set proxy-captive-portal disable
+                set tcp-mss 0
+                set inbandwidth 0
+                set outbandwidth 0
+                set egress-shaping-profile ''
+                set ingress-shaping-profile ''
+                set spillover-threshold 0
+                set ingress-spillover-threshold 0
+                set weight 0
+                set external disable
+                set description ''
+                set alias ''
+                set ike-saml-server ''
+                set device-identification disable
+                set lldp-reception enable
+                set lldp-transmission enable
+                set lldp-network-policy ''
+                set estimated-upstream-bandwidth 0
+                set estimated-downstream-bandwidth 0
+                set measured-upstream-bandwidth 0
+                set measured-downstream-bandwidth 0
+                set bandwidth-measure-time 0
+                set monitor-bandwidth disable
+                set vrrp-virtual-mac disable
+                set role undefined
+                set snmp-index 8
+                set secondary-IP disable
+                set preserve-session-route disable
+                set auto-auth-extension-device disable
+                set ap-discover enable
+                set fortilink-neighbor-detect fortilink
+                set ip-managed-by-fortiipam disable
+                set fortilink-split-interface enable
+                set switch-controller-netflow-collect disable
+                set switch-controller-mgmt-vlan 4094
+                set switch-controller-igmp-snooping-proxy disable
+                set switch-controller-igmp-snooping-fast-leave disable
+                set switch-controller-nac ''
+                set switch-controller-dynamic ''
+                set switch-controller-iot-scanning disable
+                set swc-first-create 0
+                set eap-supplicant disable
+                config ipv6
+                    set ip6-mode static
+                    set nd-mode basic
+                    set ip6-address ::/0
+                    unset ip6-allowaccess
+                    set icmp6-send-redirect enable
+                    set ra-send-mtu enable
+                    set ip6-reachable-time 0
+                    set ip6-retrans-time 0
+                    set ip6-hop-limit 0
+                    set dhcp6-prefix-delegation disable
+                    set dhcp6-information-request disable
+                    set vrrp-virtual-mac6 disable
+                    set vrip6_link_local ::
+                    set ip6-send-adv disable
+                    set autoconf disable
+                    set dhcp6-relay-service disable
+                end
+                set priority 1
+                set dhcp-relay-request-all-server disable
+                set dhcp-client-identifier ''
+                set dhcp-renew-time 0
+                set idle-timeout 0
+                set disc-retry-timeout 1
+                set padt-retry-timeout 1
+                set dns-server-override enable
+                set dns-server-protocol cleartext
+                set mtu-override disable
+                set wccp disable
+                set drop-overlapped-fragment disable
+                set drop-fragment disable
+                set lacp-mode active
+                set lacp-ha-secondary enable
+                set system-id-type auto
+                set lacp-speed slow
+                set min-links 1
+                set min-links-down operational
+                set algorithm L4
+                set link-up-delay 50
+                set aggregate-type physical
+            next
+        end
+        config system password-policy
+            set status disable
+        end
+        config system password-policy-guest-admin
+            set status disable
+        end
+        config system sms-server
+        end
+        config system custom-language
+            edit "en"
+                set filename "en"
+                set comments ''
+            next
+            edit "fr"
+                set filename "fr"
+                set comments ''
+            next
+            edit "sp"
+                set filename "sp"
+                set comments ''
+            next
+            edit "pg"
+                set filename "pg"
+                set comments ''
+            next
+            edit "x-sjis"
+                set filename "x-sjis"
+                set comments ''
+            next
+            edit "big5"
+                set filename "big5"
+                set comments ''
+            next
+            edit "GB2312"
+                set filename "GB2312"
+                set comments ''
+            next
+            edit "euc-kr"
+                set filename "euc-kr"
+                set comments ''
+            next
+        end
+        config system admin
+            edit "admin"
+                set remote-auth disable
+                set peer-auth disable
+                set trusthost1 0.0.0.0 0.0.0.0
+                set trusthost2 0.0.0.0 0.0.0.0
+                set trusthost3 0.0.0.0 0.0.0.0
+                set trusthost4 0.0.0.0 0.0.0.0
+                set trusthost5 0.0.0.0 0.0.0.0
+                set trusthost6 0.0.0.0 0.0.0.0
+                set trusthost7 0.0.0.0 0.0.0.0
+                set trusthost8 0.0.0.0 0.0.0.0
+                set trusthost9 0.0.0.0 0.0.0.0
+                set trusthost10 0.0.0.0 0.0.0.0
+                set ip6-trusthost1 ::/0
+                set ip6-trusthost2 ::/0
+                set ip6-trusthost3 ::/0
+                set ip6-trusthost4 ::/0
+                set ip6-trusthost5 ::/0
+                set ip6-trusthost6 ::/0
+                set ip6-trusthost7 ::/0
+                set ip6-trusthost8 ::/0
+                set ip6-trusthost9 ::/0
+                set ip6-trusthost10 ::/0
+                set accprofile "super_admin"
+                set comments ''
+                set vdom "root"
+                unset ssh-public-key1
+                unset ssh-public-key2
+                unset ssh-public-key3
+                set ssh-certificate ''
+                set schedule ''
+                set two-factor disable
+                set email-to ''
+                set sms-server fortiguard
+                set sms-phone ''
+                set guest-auth disable
+                set password ENC SH2lIEOlLCGrKNVu4McUOjjvYkjdJWRvP/39JwsVEjZAtRWW2AFdhxIDqpizGc=
+                set allow-remove-admin-session enable
+            next
+        end
+        config system api-user
+        end
+        config system sso-admin
+        end
+        config system sso-forticloud-admin
+        end
+        config system sso-fortigate-cloud-admin
+        end
+        config system fsso-polling
+            set status enable
+            set listening-port 8000
+            set authentication disable
+        end
+        config system ha
+            set group-id 0
+            set group-name ''
+            set mode standalone
+            set sync-packet-balance disable
+            set password ENC CLJrJyPg9XbnCwUR/77NNgbQ5DQmU7z+nLeCSlEVtIH6Dy9CZNX2ZcvaqkRDzkASkBRedEhita0NoDpXf5+nnim4OQ3J10yjzwA15/C/jSDWLBGIuuHitDK9T5e34r33l6HNAghnyTSVRnWvHfJTfhvBy6KgpC8Tz7ks69a9fbxCT1o0h/qrMSFIUWPPkELPYK1Qrw==
+            unset hbdev
+            set route-ttl 10
+            set route-wait 0
+            set route-hold 10
+            set multicast-ttl 600
+            set sync-config enable
+            set encryption disable
+            set authentication disable
+            set hb-interval 2
+            set hb-interval-in-milliseconds 100ms
+            set hb-lost-threshold 20
+            set hello-holddown 20
+            set gratuitous-arps enable
+            set arps 5
+            set arps-interval 8
+            set session-pickup disable
+            set link-failed-signal disable
+            set uninterruptible-upgrade enable
+            set uninterruptible-primary-wait 30
+            set ha-eth-type "8890"
+            set hc-eth-type "8891"
+            set l2ep-eth-type "8893"
+            set ha-uptime-diff-margin 300
+            set standalone-config-sync disable
+            set override disable
+            set priority 128
+            unset monitor
+            unset pingserver-monitor-interface
+            set ssd-failover disable
+            set failover-hold-time 0
+        end
+        config system ha-monitor
+            set monitor-vlan disable
+        end
+        config system storage
+        end
+        config system auto-scale
+            set status disable
+            set hb-interval 10
+        end
+        config system dns
+            set primary 96.45.45.45
+            set secondary 96.45.46.46
+            set protocol cleartext
+            set ssl-certificate "Fortinet_Factory"
+            set ip6-primary ::
+            set ip6-secondary ::
+            set timeout 5
+            set retry 2
+            set dns-cache-limit 5000
+            set dns-cache-ttl 1800
+            set cache-notfound-responses disable
+            set source-ip 0.0.0.0
+            set interface-select-method auto
+            set server-select-method least-rtt
+            set alt-primary 0.0.0.0
+            set alt-secondary 0.0.0.0
+            set log disable
+            set fqdn-cache-ttl 0
+            set fqdn-min-refresh 60
+        end
+        config system ddns
+        end
+        config system sflow
+            set collector-ip 0.0.0.0
+            set collector-port 6343
+            set source-ip 0.0.0.0
+            set interface-select-method auto
+        end
+        config system netflow
+            set collector-ip ''
+            set collector-port 2055
+            set source-ip ''
+            set active-flow-timeout 1800
+            set inactive-flow-timeout 15
+            set template-tx-timeout 1800
+            set template-tx-counter 20
+            set interface-select-method auto
+        end
+        config system replacemsg-image
+            edit "logo_fnet"
+                set image-type gif
+                set image-base64 ''
+            next
+            edit "logo_fguard_wf"
+                set image-type gif
+                set image-base64 ''
+            next
+            edit "logo_v3_fguard_app"
+                set image-type png
+                set image-base64 ''
+            next
+        end
+        config system replacemsg mail "partial"
+            set buffer "Fragmented emails are blocked."
+            set header 8bit
+            set format text
+        end
+        config system replacemsg http "url-block"
+            set buffer "<!DOCTYPE html>
+        <html lang=\"en\">
+            <head>
+                <meta charset=\"UTF-8\">
+                <meta http-equiv=\"X-UA-Compatible\" content=\"IE=8; IE=EDGE\">
+                <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+                <style type=\"text/css\">
+                    body {
+                        height: 100%;
+                        font-family: Helvetica, Arial, sans-serif;
+                        color: #6a6a6a;
+                        margin: 0;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    input[type=date], input[type=email], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], select, textarea {
+                        color: #262626;
+                        vertical-align: baseline;
+                        margin: .2em;
+                        border-style: solid;
+                        border-width: 1px;
+                        border-color: #a9a9a9;
+                        background-color: #fff;
+                        box-sizing: border-box;
+                        padding: 2px .5em;
+                        appearance: none;
+                        border-radius: 0;
+                    }
+                    input:focus {
+                        border-color: #646464;
+                        box-shadow: 0 0 1px 0 #a2a2a2;
+                        outline: 0;
+                    }
+                    button {
+                        padding: .5em 1em;
+                        border: 1px solid;
+                        border-radius: 3px;
+                        min-width: 6em;
+                        font-weight: 400;
+                        font-size: .8em;
+                        cursor: pointer;
+                    }
+                    button.primary {
+                        color: #fff;
+                        background-color: rgb(47, 113, 178);
+                        border-color: rgb(34, 103, 173);
+                    }
+                    .message-container {
+                        height: 500px;
+                        width: 600px;
+                        padding: 0;
+                        margin: 10px;
+                    }
+                    .logo {
+                        background: url(%%IMAGE:logo_v3_fguard_app%%) no-repeat left center;
+                        height: 267px;
+                        object-fit: contain;
+                    }
+                    table {
+                        background-color: #fff;
+                        border-spacing: 0;
+                        margin: 1em;
+                    }
+                    table > tbody > tr > td:first-of-type:not([colspan]) {
+                        white-space: nowrap;
+                        color: rgba(0,0,0,.5);
+                    }
+                    table > tbody > tr > td:first-of-type {
+                        vertical-align: top;
+                    }
+                    table > tbody > tr > td {
+                        padding: .3em .3em;
+                    }
+                    .field {
+                        display: table-row;
+                    }
+                    .field > :first-child {
+                        display: table-cell;
+                        width: 20%;
+                    }
+                    .field.single > :first-child {
+                        display: inline;
+                    }
+                    .field > :not(:first-child) {
+                        width: auto;
+                        max-width: 100%;
+                        display: inline-flex;
+                        align-items: baseline;
+                        virtical-align: top;
+                        box-sizing: border-box;
+                        margin: .3em;
+                    }
+                .field > :not(:first-child) > input {
+                    width: 230px;
+                }
+                .form-footer {
+                    display: inline-flex;
+                    justify-content: flex-start;
+                }
+                .form-footer > * {
+                    margin: 1em;
+                }
+                .text-scrollable {
+                    overflow: auto;
+                    height: 150px;
+                    border: 1px solid rgb(200, 200, 200);
+                    padding: 5px;
+                    font-size: 1em;
+                }
+                .text-centered {
+                    text-align: center;
+                }
+                .text-container {
+                    margin: 1em 1.5em;
+                }
+                .flex-container {
+                    display: flex;
+                }
+                .flex-container.column {
+                    flex-direction: column;
+                }
+            </style>
+            <title>The URL you requested has been blocked</title>
+        </head>
+        <body><div class=\"message-container\">
+        <div class=\"logo\"></div>
+        <h1>FortiGuard Intrusion Prevention - Access Blocked</h1>
+        <h3>Web Page Blocked</h3>
+        <p>The page you have requested has been blocked because the URL is banned.</p>
+        <table><tbody>
+            <tr>
+                <td>URL</td>
+                <td>%%PROTOCOL%%://%%URL%%</td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td>%%IPS_DESC%%</td>
+            </tr>
+            <tr>
+                <td>URL Source</td>
+                <td>%%URL_SOURCE%%</td>
+            </tr>
+        </tbody></table>
+        <p>%%OVERRIDE%%</p>
+
+welcome: ""
+invalid_cmd_error: |
+  Unknown action 0

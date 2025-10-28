@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.10.6
 # -*- coding: utf-8 -*-
+# Author: Bobby Sheng <Bobby@sky-cloud.net>
 from pathlib import Path
 from asyncssh import SSHServerProcess
 from netdriver.client.mode import Mode
@@ -8,14 +9,14 @@ from netdriver.server.handlers.command_handler import CommandHandler
 from netdriver.server.models import DeviceBaseInfo
 
 
-class JuniperSRXHandler(CommandHandler):
-    """ Juniper SRX Command Handler """
+class PaloaltoPAHandler(CommandHandler):
+    """ Paloalto PA Command Handler """
 
     info = DeviceBaseInfo(
-        vendor="juniper",
-        model="srx",
+        vendor="paloalto",
+        model="pa",
         version="*",
-        description="Juniper SRX Command Handler"
+        description="Paloalto PA Command Handler"
     )
 
     @classmethod
@@ -28,7 +29,7 @@ class JuniperSRXHandler(CommandHandler):
         # current file path
         if conf_path is None:
             cwd_path = Path(__file__).parent
-            conf_path = f"{cwd_path}/juniper_srx.yml"
+            conf_path = f"{cwd_path}/paloalto_pa.yml"
         self.conf_path = conf_path
         super().__init__(process)
 
@@ -44,7 +45,7 @@ class JuniperSRXHandler(CommandHandler):
                 if command == "exit":
                     # logout
                     raise ClientExit
-                elif command == "configure private":
+                elif command == "configure":
                     # switch to config mode
                     self._mode = Mode.CONFIG
                     return True

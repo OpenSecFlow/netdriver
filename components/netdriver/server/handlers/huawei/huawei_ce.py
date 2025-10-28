@@ -1,5 +1,6 @@
-#!/usr/bin/env python3.10.6
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 from pathlib import Path
 from asyncssh import SSHServerProcess
 from netdriver.client.mode import Mode
@@ -8,14 +9,14 @@ from netdriver.server.handlers.command_handler import CommandHandler
 from netdriver.server.models import DeviceBaseInfo
 
 
-class JuniperSRXHandler(CommandHandler):
-    """ Juniper SRX Command Handler """
+class HuaweiCEHandler(CommandHandler):
+    """ Huawei CE Command Handler """
 
     info = DeviceBaseInfo(
-        vendor="juniper",
-        model="srx",
+        vendor="huawei",
+        model="ce",
         version="*",
-        description="Juniper SRX Command Handler"
+        description="Huawei CE Command Handler"
     )
 
     @classmethod
@@ -28,28 +29,34 @@ class JuniperSRXHandler(CommandHandler):
         # current file path
         if conf_path is None:
             cwd_path = Path(__file__).parent
-            conf_path = f"{cwd_path}/juniper_srx.yml"
+            conf_path = f"{cwd_path}/huawei_ce.yml"
         self.conf_path = conf_path
         super().__init__(process)
 
+    @property
+    def prompt(self) -> str:
+        """ Get current prompt """
+        prompt_template: str = self.config.modes[self._mode].prompt
+        return prompt_template.format(self.config.hostname)
+
     async def switch_vsys(self, command: str) -> bool:
         return False
-    
+
     async def switch_mode(self, command: str) -> bool:
         if command not in self.config.modes[self._mode].switch_mode_cmds:
             return False
 
         match self._mode:
             case Mode.ENABLE:
-                if command == "exit":
+                if command == "quit":
                     # logout
                     raise ClientExit
-                elif command == "configure private":
+                elif command == "system-view":
                     # switch to config mode
                     self._mode = Mode.CONFIG
                     return True
             case Mode.CONFIG:
-                if command == "exit":
+                if command == "quit" or command == "return":
                     # exit config mode
                     self._mode = Mode.ENABLE
                     return True
