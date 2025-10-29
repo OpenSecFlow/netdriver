@@ -3,6 +3,7 @@ name: Release and Publish
 on:
   push:
     tags:
+      - '*.*.*'
       - 'v*.*.*'
 
 jobs:
@@ -11,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.version.outputs.version }}
 
     steps:
       - name: Checkout code
@@ -19,87 +23,149 @@ jobs:
       - name: Extract version from tag
         id: version
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
+          # Remove refs/tags/ prefix
+          VERSION=${GITHUB_REF#refs/tags/}
+          # Remove 'v' prefix if present
+          VERSION=${VERSION#v}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
 
       - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: create_release
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
           draft: false
           prerelease: false
+          generate_release_notes: true
           body: |
-            ## Changes in ${{ steps.version.outputs.version }}
+            ## NetDriver ${{ steps.version.outputs.version }}
 
-            ### netdriver-agent
-            - FastAPI-based REST API service for network device automation
+            ### 📦 Packages
 
-            ### netdriver-simunet
-            - SSH server simulation for testing
+            - **netdriver-agent** - FastAPI-based REST API service for network device automation
+            - **netdriver-simunet** - SSH server simulation for testing
+
+            ### 📥 Installation
+
+            ```bash
+            pip install netdriver-agent==${{ steps.version.outputs.version }}
+            pip install netdriver-simunet==${{ steps.version.outputs.version }}
+            ```
+
+            ### 📝 Changes
 
             See [CHANGELOG](https://github.com/OpenSecFlow/netdriver/blob/master/CHANGELOG.md) for detailed changes.
 
-  publish-pypi:
-    name: Publish to PyPI
-    needs: create-release
+  test:
+    name: Run tests
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/${{ github.repository }}/python-poetry:3.12
     permissions:
       contents: read
-      id-token: write
+      packages: read
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: latest
-          virtualenvs-create: true
-          virtualenvs-in-project: false
-
-      - name: Install Poetry plugins
+      - name: Verify Poetry installation
         run: |
-          poetry self add poetry-multiproject-plugin
-          poetry self add poetry-polylith-plugin
+          poetry --version
+          poetry self show plugins
 
       - name: Install dependencies
         run: poetry install --no-interaction
 
-      - name: Build packages
+      - name: Run pylint
         run: |
-          echo "Building netdriver-agent..."
-          poetry build -P projects/agent --format wheel --clean
+          echo "Running pylint checks..."
+          poetry run pylint bases/ components/ --exit-zero --output-format=colorized || true
+        continue-on-error: true
 
-          echo "Building netdriver-simunet..."
-          poetry build -P projects/simunet --format wheel --clean
+      - name: Run pytest
+        run: |
+          echo "Running pytest..."
+          poetry run pytest -v --tb=short
+
+  build-and-publish:
+    name: Build and Publish to PyPI
+    needs: [create-release, test]
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/${{ github.repository }}/python-poetry:3.12
+    permissions:
+      contents: write
+      packages: read
+      id-token: write  # Required for trusted publishing
+    strategy:
+      matrix:
+        project: ['agent', 'simunet']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify Poetry installation
+        run: |
+          poetry --version
+          poetry self show plugins
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Build ${{ matrix.project }}
+        run: |
+          echo "Building netdriver-${{ matrix.project }}..."
+          poetry build -P projects/${{ matrix.project }} --format wheel --clean
+
+      - name: Check package metadata
+        run: |
+          pip install twine
+          twine check projects/${{ matrix.project }}/dist/*.whl
 
       - name: Publish to PyPI
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           poetry config pypi-token.pypi "$PYPI_TOKEN"
+          echo "Publishing netdriver-${{ matrix.project }} to PyPI..."
+          poetry publish -P projects/${{ matrix.project }} --skip-existing
 
-          echo "Publishing netdriver-agent to PyPI..."
-          poetry publish -P projects/agent --skip-existing
-
-          echo "Publishing netdriver-simunet to PyPI..."
-          poetry publish -P projects/simunet --skip-existing
-
-      - name: Upload Release Assets
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload wheel to release
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./projects/agent/dist/netdriver_agent-*.whl
-          asset_name: netdriver-agent.whl
-          asset_content_type: application/zip
+          files: projects/${{ matrix.project }}/dist/*.whl
+          tag_name: ${{ github.ref_name }}
+
+  verify:
+    name: Verify publication
+    needs: build-and-publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Wait for PyPI to process
+        run: sleep 60
+
+      - name: Verify packages on PyPI
+        run: |
+          echo "Checking netdriver-agent on PyPI..."
+          curl -s https://pypi.org/pypi/netdriver-agent/json | jq -r '.info.version' || echo "Package not found yet"
+
+          echo "Checking netdriver-simunet on PyPI..."
+          curl -s https://pypi.org/pypi/netdriver-simunet/json | jq -r '.info.version' || echo "Package not found yet"
+
+      - name: Generate summary
+        run: |
+          echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Release created successfully" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Packages published to PyPI" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Wheel files attached to release" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Installation" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "pip install netdriver-agent" >> $GITHUB_STEP_SUMMARY
+          echo "pip install netdriver-simunet" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY

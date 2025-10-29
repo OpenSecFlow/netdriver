@@ -8,13 +8,10 @@ on:
       - main
     paths:
       - '.github/Dockerfile.ci'
-  schedule:
-    # Rebuild weekly to get security updates
-    - cron: '0 0 * * 0'
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/ci
+  IMAGE_NAME: ${{ github.repository }}/python-poetry:3.12
 
 jobs:
   build:

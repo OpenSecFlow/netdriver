@@ -5,14 +5,14 @@ This guide will help you quickly set up and publish your packages to PyPI.
 ## Prerequisites
 
 - GitHub repository with the workflows
-- PyPI account (https://pypi.org/account/register/)
-- TestPyPI account (https://test.pypi.org/account/register/) - optional but recommended
+- PyPI account (<https://pypi.org/account/register/>)
+- TestPyPI account (<https://test.pypi.org/account/register/>) - optional but recommended
 
 ## Step 1: Get PyPI Tokens
 
 ### For PyPI
 
-1. Visit https://pypi.org/manage/account/token/
+1. Visit <https://pypi.org/manage/account/token/>
 2. Click "Add API token"
 3. Fill in:
    - Token name: `GitHub Actions - NetDriver`
@@ -22,7 +22,7 @@ This guide will help you quickly set up and publish your packages to PyPI.
 
 ### For TestPyPI (Recommended for testing)
 
-1. Visit https://test.pypi.org/manage/account/token/
+1. Visit <https://test.pypi.org/manage/account/token/>
 2. Follow same steps as above
 3. Copy the token
 
@@ -41,29 +41,25 @@ This guide will help you quickly set up and publish your packages to PyPI.
    - Name: `TEST_PYPI_API_TOKEN`
    - Secret: Paste your TestPyPI token
 
-## Step 3: Choose Your Workflow
+## Step 3: Build CI Docker Image
 
-### Option A: Standard Workflow (Recommended for first-time)
+The `publish-pypi.yml` workflow uses a pre-built Docker image for faster execution.
 
-Use `publish-pypi.yml` - installs everything on-the-fly
+**Build the image:**
 
-**No additional setup needed!**
+1. Go to **Actions** → **"Build CI Image"**
+2. Click **"Run workflow"**
+3. Select branch: `master`
+4. Click **"Run workflow"**
 
-### Option B: Docker-based Workflow (Faster)
+**Or build locally:**
 
-Use `publish-pypi-docker.yml` - uses pre-built image
+```bash
+docker build -t ghcr.io/opensecflow/netdriver/python-poetry:3.12 -f .github/Dockerfile.ci .
+docker push ghcr.io/opensecflow/netdriver/python-poetry:3.12
+```
 
-**Additional setup:**
-
-1. Build the CI image first:
-   ```bash
-   # Go to Actions → "Build CI Image" → Run workflow
-   # Or build locally and push
-   docker build -t ghcr.io/opensecflow/netdriver/ci:latest -f .github/Dockerfile.ci .
-   docker push ghcr.io/opensecflow/netdriver/ci:latest
-   ```
-
-2. Update your workflow to use the image (already configured in `publish-pypi-docker.yml`)
+**Note**: This only needs to be done once. The image will be cached and reused.
 
 ## Step 4: Test Publishing (Recommended)
 
@@ -82,10 +78,11 @@ Before publishing to production PyPI, test with TestPyPI:
 ### Verify on TestPyPI
 
 1. Check your packages:
-   - https://test.pypi.org/project/netdriver-agent/
-   - https://test.pypi.org/project/netdriver-simunet/
+   - <https://test.pypi.org/project/netdriver-agent/>
+   - <https://test.pypi.org/project/netdriver-simunet/>
 
 2. Test installation:
+
    ```bash
    pip install --index-url https://test.pypi.org/simple/ netdriver-agent
    ```
@@ -114,12 +111,15 @@ git add projects/*/pyproject.toml
 git commit -m "chore: bump version to 0.3.1"
 git push
 
-# 3. Create and push tag
-git tag v0.3.1
-git push origin v0.3.1
+# 3. Create and push tag (without 'v' prefix)
+git tag 0.3.1
+git push origin 0.3.1
 ```
 
+**Note**: Both `0.3.1` and `v0.3.1` tag formats are supported.
+
 The `release.yml` workflow will automatically:
+
 - ✅ Create a GitHub Release
 - ✅ Build both packages
 - ✅ Publish to PyPI
@@ -128,10 +128,11 @@ The `release.yml` workflow will automatically:
 ## Step 6: Verify Publication
 
 1. Check on PyPI:
-   - https://pypi.org/project/netdriver-agent/
-   - https://pypi.org/project/netdriver-simunet/
+   - <https://pypi.org/project/netdriver-agent/>
+   - <https://pypi.org/project/netdriver-simunet/>
 
 2. Test installation:
+
    ```bash
    pip install netdriver-agent
    pip install netdriver-simunet
@@ -160,11 +161,15 @@ poetry version -P projects/simunet patch
 # Then rebuild and publish
 ```
 
-### Workflow fails with "Poetry not found"
+### Workflow fails with "Poetry not found" or image pull error
 
-**Solution:**
-- If using standard workflow: Check Poetry installation step
-- If using Docker workflow: Build the CI image first
+**Solution:** Build the CI Docker image first
+
+```bash
+# Go to Actions → "Build CI Image" → Run workflow
+```
+
+Or check the image name matches: `ghcr.io/opensecflow/netdriver/python-poetry:3.12`
 
 ### Package shows as "0 B" or malformed
 
@@ -179,11 +184,13 @@ unzip -l projects/agent/dist/netdriver_agent-*.whl
 ### Version Management
 
 ✅ **DO:**
+
 - Keep version numbers in sync across `projects/agent/pyproject.toml` and `projects/simunet/pyproject.toml`
 - Use semantic versioning: `MAJOR.MINOR.PATCH`
 - Test on TestPyPI before production
 
 ❌ **DON'T:**
+
 - Publish the same version twice
 - Skip testing on TestPyPI
 - Use local version identifiers for production (e.g., `0.3.0+local`)
@@ -214,6 +221,6 @@ unzip -l projects/agent/dist/netdriver_agent-*.whl
 ## Need Help?
 
 - 📖 Full documentation: `.github/workflows/README.md`
-- 🐛 Report issues: https://github.com/OpenSecFlow/netdriver/issues
-- 📝 PyPI Help: https://pypi.org/help/
-- 🎯 GitHub Actions: https://docs.github.com/en/actions
+- 🐛 Report issues: <https://github.com/OpenSecFlow/netdriver/issues>
+- 📝 PyPI Help: <https://pypi.org/help/>
+- 🎯 GitHub Actions: <https://docs.github.com/en/actions>

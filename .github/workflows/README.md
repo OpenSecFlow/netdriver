@@ -19,7 +19,7 @@ This directory contains GitHub Actions workflows for automated building, testing
 
 **Usage**: Automatically runs on PR creation and commits
 
-### 2. Publish to PyPI (`publish-pypi.yml` / `publish-pypi-docker.yml`)
+### 2. Publish to PyPI (`publish-pypi.yml`)
 
 **Trigger**:
 
@@ -30,6 +30,7 @@ This directory contains GitHub Actions workflows for automated building, testing
 
 **What it does**:
 
+- Uses pre-built Docker container with Poetry installed
 - Builds wheel packages for selected projects
 - Publishes to PyPI or TestPyPI
 - Uploads build artifacts
@@ -43,10 +44,7 @@ This directory contains GitHub Actions workflows for automated building, testing
    - **Projects**: `all`, `agent`, `simunet`, or `agent,simunet`
 4. Click "Run workflow"
 
-**Two versions available**:
-
-- **`publish-pypi.yml`**: Standard workflow, installs Poetry and Python on-the-fly
-- **`publish-pypi-docker.yml`**: Uses pre-built Docker container (faster)
+**Note**: Requires the CI Docker image to be built first (see section 4 below)
 
 ### 3. Release and Publish (`release.yml`)
 
@@ -71,10 +69,12 @@ poetry version patch  # or minor, major
 git add projects/*/pyproject.toml
 git commit -m "chore: bump version to 0.3.1"
 
-# Create and push tag
-git tag v0.3.1
+# Create and push tag (without 'v' prefix)
+git tag 0.3.1
 git push origin master
-git push origin v0.3.1
+git push origin 0.3.1
+
+# Note: Both '0.3.1' and 'v0.3.1' formats are supported
 ```
 
 ## Setup Requirements
@@ -152,8 +152,8 @@ GitHub Actions supports PyPI's trusted publishing (no token needed):
 4. **Create and push tag**:
 
    ```bash
-   git tag v0.3.1
-   git push origin v0.3.1
+   git tag 0.3.1
+   git push origin 0.3.1
    ```
 
 5. **Workflow will automatically**:
@@ -239,14 +239,14 @@ docker build -t netdriver-ci -f .github/Dockerfile.ci .
 
 **Using the custom image in workflows**:
 
-The `publish-pypi-docker.yml` workflow demonstrates usage:
+The `publish-pypi.yml` workflow uses this approach:
 
 ```yaml
 jobs:
   publish:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/opensecflow/netdriver/ci:latest
+      image: ghcr.io/${{ github.repository }}/python-poetry:3.12
     steps:
       - uses: actions/checkout@v4
       # Poetry and plugins are already installed!
@@ -262,18 +262,15 @@ jobs:
 
 **Image locations**:
 
-- GitHub Container Registry: `ghcr.io/opensecflow/netdriver/ci:latest`
+- GitHub Container Registry: `ghcr.io/opensecflow/netdriver/python-poetry:3.12`
 - Available tags: `latest`, `master`, `<branch>-<sha>`
 
-### Workflow Comparison
+**Benefits**:
 
-| Feature | Standard (`publish-pypi.yml`) | Docker (`publish-pypi-docker.yml`) |
-|---------|------------------------------|-----------------------------------|
-| Setup time | ~2-3 minutes | ~30 seconds |
-| Python/Poetry | Installed each run | Pre-installed in image |
-| Cache | Uses GitHub Actions cache | Uses Docker layer cache |
-| Flexibility | More flexible | Faster but less flexible |
-| Best for | Development/testing | Production releases |
+- ⚡ **Faster**: Setup in ~30 seconds vs ~2-3 minutes
+- 🔒 **Consistent**: Same environment across all workflows
+- 💾 **Cacheable**: Docker layer caching
+- 🎯 **Reproducible**: Exact versions every time
 
 ## Project Structure
 
@@ -284,8 +281,7 @@ netdriver/
 │   └── workflows/
 │       ├── build-ci-image.yml      # Build Docker image
 │       ├── build-test.yml          # PR/push build validation
-│       ├── publish-pypi.yml        # Standard publishing
-│       ├── publish-pypi-docker.yml # Docker-based publishing
+│       ├── publish-pypi.yml        # Docker-based publishing
 │       └── release.yml             # Tag-based release
 ├── bases/
 │   └── netdriver/
@@ -315,7 +311,7 @@ docker push your-registry/netdriver-ci:latest
 
 ### 2. Update workflow file
 
-Edit `publish-pypi-docker.yml`:
+Edit `publish-pypi.yml`:
 
 ```yaml
 container:
@@ -325,13 +321,15 @@ container:
     password: ${{ secrets.DOCKER_PASSWORD }}
 ```
 
-### 3. Skip Poetry installation
+### 3. Verify Poetry is available
 
-Since Poetry is pre-installed, remove or comment out:
+Poetry and plugins are pre-installed, so you can use them directly:
 
 ```yaml
-# - name: Install Poetry and plugins  # Already in image
-#   run: pip install poetry ...
+- name: Verify Poetry installation
+  run: |
+    poetry --version
+    poetry self show plugins
 ```
 
 ## References
