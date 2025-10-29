@@ -1,0 +1,47 @@
+[tool.poetry]
+name = "netdriver-simunet"
+version = "0.3.0"
+description = "Simulated ssh server for network device, used for testing netdriver agent and client."
+authors = ["vincent@byntra.se", "bobby@byntra.se", "sam@byntra.se", "mark@byntra.se"]
+license = "Apache-2.0"
+homepage = "https://github.com/OpenSecFlow/netdriver"
+repository = "https://github.com/OpenSecFlow/netdriver"
+documentation = "https://github.com/OpenSecFlow/netdriver#readme"
+keywords = ["network", "automation", "cli", "ssh", "device", "driver", "netdevops"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Telecommunications Industry",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Networking",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+packages = [
+    {include = "netdriver/simunet", from = "../../bases"},
+    {include = "netdriver/exception", from = "../../components"},
+    {include = "netdriver/server", from = "../../components"},
+    {include = "netdriver/utils",from = "../../components"},
+    {include = "netdriver/log",from = "../../components"},
+]
+
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.2"
+uvicorn = "^0.32.0"
+pyyaml = "^6.0.2"
+asyncssh = "^2.17.0"
+dependency-injector = "^4.42.0"
+loguru = "^0.7.2"
+pycryptodome = "^3.21.0"
+aiofiles = "^24.1.0"
+six = "^1.16.0"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,102 @@
+name: Publish to PyPI (Docker)
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - testpypi
+          - pypi
+      projects:
+        description: 'Projects to publish (comma-separated: agent,simunet or "all")'
+        required: true
+        default: 'all'
+
+jobs:
+  publish:
+    name: Publish Python packages
+    runs-on: ubuntu-latest
+    # Use a pre-built container with Python and Poetry installed
+    container:
+      image: python:3.12-slim
+      # Or use your custom image:
+      # image: ghcr.io/your-org/python-poetry:3.12
+    environment: ${{ github.event.inputs.environment || 'pypi' }}
+    permissions:
+      contents: read
+      id-token: write  # Required for trusted publishing
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Poetry and plugins
+        run: |
+          pip install poetry poetry-multiproject-plugin poetry-polylith-plugin
+
+      - name: Verify Poetry installation
+        run: |
+          poetry --version
+          poetry self show plugins
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Determine projects to publish
+        id: projects
+        run: |
+          if [ "${{ github.event.inputs.projects }}" = "all" ] || [ -z "${{ github.event.inputs.projects }}" ]; then
+            echo "projects=agent,simunet" >> $GITHUB_OUTPUT
+          else
+            echo "projects=${{ github.event.inputs.projects }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Determine target repository
+        id: repository
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "target=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          else
+            echo "target=pypi" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and publish packages
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+          TESTPYPI_TOKEN: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        run: |
+          TARGET="${{ steps.repository.outputs.target }}"
+          IFS=',' read -ra PROJECTS <<< "${{ steps.projects.outputs.projects }}"
+
+          for project in "${PROJECTS[@]}"; do
+            project=$(echo "$project" | xargs)  # Trim whitespace
+            echo "Building $project..."
+
+            # Clean and build
+            poetry build -P "projects/$project" --format wheel --clean
+
+            # Publish
+            if [ "$TARGET" = "testpypi" ]; then
+              echo "Publishing $project to TestPyPI..."
+              poetry config pypi-token.testpypi "$TESTPYPI_TOKEN"
+              poetry publish -P "projects/$project" -r testpypi --skip-existing
+            else
+              echo "Publishing $project to PyPI..."
+              poetry config pypi-token.pypi "$PYPI_TOKEN"
+              poetry publish -P "projects/$project" --skip-existing
+            fi
+
+            echo "✓ Successfully published $project to $TARGET"
+          done
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-packages
+          path: projects/*/dist/*.whl
+          retention-days: 30

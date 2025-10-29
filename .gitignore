@@ -10,3 +10,6 @@ data/
 
 # Mac Os
 .DS_store
+
+# Claude Code
+.claude/

@@ -1,0 +1,105 @@
+name: Release and Publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
+          body: |
+            ## Changes in ${{ steps.version.outputs.version }}
+
+            ### netdriver-agent
+            - FastAPI-based REST API service for network device automation
+
+            ### netdriver-simunet
+            - SSH server simulation for testing
+
+            See [CHANGELOG](https://github.com/OpenSecFlow/netdriver/blob/master/CHANGELOG.md) for detailed changes.
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: create-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: latest
+          virtualenvs-create: true
+          virtualenvs-in-project: false
+
+      - name: Install Poetry plugins
+        run: |
+          poetry self add poetry-multiproject-plugin
+          poetry self add poetry-polylith-plugin
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Build packages
+        run: |
+          echo "Building netdriver-agent..."
+          poetry build -P projects/agent --format wheel --clean
+
+          echo "Building netdriver-simunet..."
+          poetry build -P projects/simunet --format wheel --clean
+
+      - name: Publish to PyPI
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          poetry config pypi-token.pypi "$PYPI_TOKEN"
+
+          echo "Publishing netdriver-agent to PyPI..."
+          poetry publish -P projects/agent --skip-existing
+
+          echo "Publishing netdriver-simunet to PyPI..."
+          poetry publish -P projects/simunet --skip-existing
+
+      - name: Upload Release Assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./projects/agent/dist/netdriver_agent-*.whl
+          asset_name: netdriver-agent.whl
+          asset_content_type: application/zip
