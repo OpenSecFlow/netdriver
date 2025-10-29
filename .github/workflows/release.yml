@@ -61,7 +61,7 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository }}/python-poetry:3.12
+      image: ghcr.io/opensecflow/netdriver/python-poetry:3.12
     permissions:
       contents: read
       packages: read
@@ -94,7 +94,7 @@ jobs:
     needs: [create-release, test]
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository }}/python-poetry:3.12
+      image: ghcr.io/opensecflow/netdriver/python-poetry:3.12
     permissions:
       contents: write
       packages: read

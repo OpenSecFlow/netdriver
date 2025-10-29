@@ -11,7 +11,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/python-poetry
+  IMAGE_NAME: opensecflow/netdriver/python-poetry
 
 jobs:
   build:
