@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from pytest import Session
 from netdriver.agent.models.common import CommonResponse
 from netdriver.agent.models.conn import ConnectRequest
 from netdriver.client.pool import SessionPool
+from netdriver.client.session import Session
 from netdriver.exception.errors import ConnectFailed
 
 

@@ -4,6 +4,9 @@
 This is the main module for the agent.
 It is responsible for starting the FastAPI server.
 """
+import os
+import sys
+import argparse
 from contextlib import asynccontextmanager
 
 import uvicorn
@@ -68,4 +71,58 @@ async def root() -> dict:
 
 
 def start():
-    uvicorn.run("netdriver.agent.main:app", host="0.0.0.0", port=8000, reload=True)
+    """Start the agent server with optional configuration file parameter."""
+    parser = argparse.ArgumentParser(description="NetDriver Agent Server")
+    parser.add_argument(
+        "-c", "--config",
+        type=str,
+        default=None,
+        help="Path to configuration file (default: config/agent/agent.yml or NETDRIVER_AGENT_CONFIG env var)"
+    )
+    parser.add_argument(
+        "--host",
+        type=str,
+        default="0.0.0.0",
+        help="Host to bind (default: 0.0.0.0)"
+    )
+    parser.add_argument(
+        "-p", "--port",
+        type=int,
+        default=8000,
+        help="Port to bind (default: 8000)"
+    )
+    parser.add_argument(
+        "--reload",
+        action="store_true",
+        default=True,
+        help="Enable auto-reload (default: True)"
+    )
+    parser.add_argument(
+        "--no-reload",
+        action="store_true",
+        help="Disable auto-reload"
+    )
+
+    args = parser.parse_args()
+
+    # Set config file path via environment variable if specified
+    if args.config:
+        os.environ["NETDRIVER_AGENT_CONFIG"] = args.config
+        # Reload container configuration with new config file
+        container.config.from_yaml(args.config)
+        # Reconfigure logging with new config
+        logman.configure_logman(
+            level=container.config.logging.level(),
+            intercept_loggers=container.config.logging.intercept_loggers(),
+            log_file=container.config.logging.log_file()
+        )
+
+    # Handle reload flag
+    reload = args.reload and not args.no_reload
+
+    uvicorn.run(
+        "netdriver.agent.main:app",
+        host=args.host,
+        port=args.port,
+        reload=reload
+    )
