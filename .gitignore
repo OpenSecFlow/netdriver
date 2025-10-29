@@ -1,3 +1,4 @@
+# Python
 .venv/
 .pytest_cache/
 __pycache__/
@@ -6,3 +7,6 @@ logs/
 data/
 
 *.pyc
+
+# Mac Os
+.DS_store
