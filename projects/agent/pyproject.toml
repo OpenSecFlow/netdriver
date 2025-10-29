@@ -2,7 +2,12 @@
 name = "netdriver-agent"
 version = "0.3.0"
 description = "The agent for NetDevOps, which interact with network device using CLI."
-authors = ["vincent@byntra.se", "bobby@byntra.se", "sam@byntra.se", "mark@byntra.se"]
+authors = [
+    "Vincent <vincent@byntra.se>",
+    "Bobby <bobby@byntra.se>",
+    "Sam <sam@byntra.se>",
+    "Mark <mark@byntra.se>"
+]
 license = "Apache-2.0"
 homepage = "https://github.com/OpenSecFlow/netdriver"
 repository = "https://github.com/OpenSecFlow/netdriver"
