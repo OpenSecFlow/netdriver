@@ -1,4 +1,5 @@
 # NetDriver
+
 <a name="top"></a>
 
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
@@ -19,7 +20,8 @@
 [![Share](https://img.shields.io/badge/share-FF4500?logo=reddit&logoColor=white)](https://www.reddit.com/submit?title=Check%20out%20this%20project%20on%20GitHub:%20https://github.com/Abblix/Oidc.Server)
 [![Share](https://img.shields.io/badge/share-0088CC?logo=telegram&logoColor=white)](https://t.me/share/url?url=https://github.com/Abblix/Oidc.Server&text=Check%20out%20this%20project%20on%20GitHub)
 
-# Table of Contents
+## Table of Contents
+
 - [About](#about)
 - [Updates](#updates)
 - [Comparison](#comparison)
@@ -30,6 +32,7 @@
 - [Contacts](#contacts)
 
 ## About
+
 Everyone loves netmiko cause it's the best at what it can do, so instead of reinventing the wheel we decided to add couple of sticks in to it by implementing some Quality-of-life features.
 NetDriver is a network device automation framework that enables CLI command execution through HTTP RESTful APIs.
 With features like session persistence for efficiency a command queue to avoid configuration conflicts and an HTTP RESTful API for simple third-party integration. With its plugin architecture which combines automation scalability and contemporary network management in a single framework it offers high concurrency and is built on top of AsyncSSH 
@@ -61,11 +64,9 @@ Features:
 |  **Open source**    | ✅       | ✅    |
 |   **AsyncSSH-based architecture for high concurrency**    | ✅       | ❌    |
 
-  
-
 ## Project Structure
 
-```
+```Text
 netdriver/
 ├── bases/ 
 │   └── netdriver/
@@ -179,6 +180,7 @@ poetry self add poetry-polylith-plugin
 ```
 
 > References:
+>
 > - <https://python-poetry.org/docs/#installing-with-the-official-installer>
 > - <https://davidvujic.github.io/python-polylith-docs/>
 
@@ -198,7 +200,7 @@ poetry run agent
 
 Once the Agent service is started, you can access the FastAPI OpenAPI interface through a web browser to test API calls.
 
-http://localhost:8000/docs
+<http://localhost:8000/docs>
 
 ![alt text](./docs/imgs/openapi.png)
 
@@ -241,7 +243,7 @@ Run integration tests only:
 poetry run pytest -m integration
 ```
 
-##🤝 Contributions and Requests
+## 🤝 Contributions and Requests
 
 Your contributions matter!Our project can always be better so we would be happy to recive your help!Please take a look at [contributing](./CONTRIBUTING.md) guide before submiting a pull request!
 For questions, issues, or feature requests, please open an issue on the project repository.
@@ -255,18 +257,16 @@ For questions, issues, or feature requests, please open an issue on the project 
 
 ## Support
 
-
-
 ## 📃 License
 
 This project is licensed under the [Apache License 2.0](LICENSE).
 
 ## Authors
 
-- vincent@byntra.se
-- bobby@byntra.se
-- sam@byntra.se
-- mark@byntra.se
+- <vincent@byntra.se>
+- <bobby@byntra.se>
+- <sam@byntra.se>
+- <mark@byntra.se>
 
 ## 🗨️ Contacts
 
