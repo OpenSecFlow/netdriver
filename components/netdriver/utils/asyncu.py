@@ -27,21 +27,21 @@ def async_timeout(
         @functools.wraps(func)
         async def wrapper(*args, **kwargs):
             actual_timeout = kwargs.pop(timeout_param, timeout)
-            
+
             if not actual_timeout and args:
                 instance = args[0]
                 if hasattr(instance, f"_{func.__name__}_timeout"):
                     actual_timeout = getattr(instance, f"_{func.__name__}_timeout")
                 elif hasattr(instance, "default_timeout"):
                     actual_timeout = getattr(instance, "default_timeout")
-            
+
             if actual_timeout is None:
                 return await func(*args, **kwargs)
-            
+
             try:
                 return await asyncio.wait_for(func(*args, **kwargs), timeout=actual_timeout)
             except asyncio.TimeoutError:
                 raise AsyncTimeoutError(func.__name__, actual_timeout)
-                
+
         return wrapper
     return decorator

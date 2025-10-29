@@ -49,10 +49,16 @@ jobs:
           poetry run pylint bases/ components/ --exit-zero --output-format=colorized || true
         continue-on-error: true
 
-      - name: Run pytest
+      - name: Run unit test
         run: |
-          echo "Running pytest..."
-          poetry run pytest -v --tb=short --mock-dev
+          echo "Running unit pytest..."
+          poetry run pytest -v --tb=short -m unit
+
+
+      - name: Run integration test
+        run: |
+          echo "Running integration pytest..."
+          poetry run pytest -v --tb=short --mock-dev -m integration
 
       - name: Generate test summary
         if: always()

@@ -67,7 +67,7 @@ simunet = "netdriver.simunet.main:start"
 markers = ['unit', 'integration']
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "package"
-
+addopts = "-v --tb=short --disable-warnings --strict-markers"
 
 [build-system]
 requires = ["poetry-core"]
