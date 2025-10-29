@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "netdriver"
-version = "0.1.1"
+version = "0.3.0"
 description = "The driver for network devices, which interact with network device using CLI."
 authors = ["vincent@byntra.se", "bobby@byntra.se", "sam@byntra.se", "mark@byntra.se"]
 readme = "README.md"
@@ -10,9 +10,10 @@ repository = "https://github.com/OpenSecFlow/netdriver"
 documentation = "https://github.com/OpenSecFlow/netdriver#readme"
 keywords = ["network", "automation", "cli", "ssh", "device", "driver"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
+    "Intended Audience :: Telecommunications Industry",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
