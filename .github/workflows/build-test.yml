@@ -52,7 +52,7 @@ jobs:
       - name: Run pytest
         run: |
           echo "Running pytest..."
-          poetry run pytest -v --tb=short
+          poetry run pytest -v --tb=short --mock-dev
 
       - name: Generate test summary
         if: always()
