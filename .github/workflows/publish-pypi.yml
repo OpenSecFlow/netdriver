@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     # Use pre-built container with Python and Poetry installed
     container:
-      image: ghcr.io/${{ github.repository }}/python-poetry:3.12
+      image: ghcr.io/${{ github.repository }}/python-poetry
     environment: ${{ github.event.inputs.environment || 'pypi' }}
     permissions:
       contents: read

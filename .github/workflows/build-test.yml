@@ -25,7 +25,7 @@ jobs:
     name: Lint and Test
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository }}/python-poetry:3.12
+      image: ghcr.io/${{ github.repository }}/python-poetry
     permissions:
       contents: read
       packages: read
