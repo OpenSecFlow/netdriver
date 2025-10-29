@@ -50,7 +50,7 @@ class QiAnXinBase(Base):
         @throws DetectCurrentModeFailed
         """
         if self._mode == Mode.CONFIG:
-            self.write_channel(self._CMD_EXIT_CONFIG)
+            await self.write_channel(self._CMD_EXIT_CONFIG)
         prompt = await self._get_prompt()
         self.decide_current_mode(prompt)
         self.decide_current_vsys(prompt)
