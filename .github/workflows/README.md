@@ -4,7 +4,7 @@ This directory contains GitHub Actions workflows for automated building, testing
 
 ## Workflows
 
-### 1. Build Test (`build-test.yml`)
+### 1. Build (`build.yml`)
 
 **Trigger**: Pull requests and pushes to master/main branch
 
@@ -44,37 +44,70 @@ This directory contains GitHub Actions workflows for automated building, testing
    - **Projects**: `all`, `agent`, `simunet`, or `agent,simunet`
 4. Click "Run workflow"
 
-**Note**: Requires the CI Docker image to be built first (see section 4 below)
+**Note**: Requires the CI Docker image to be built first (see section 5 below)
 
-### 3. Release and Publish (`release.yml`)
+### 3. Release and Publish
 
-**Trigger**: When a version tag is pushed (e.g., `v0.3.0`)
+The project supports independent release workflows for agent and simunet:
 
-**Purpose**: Creates GitHub release and publishes to PyPI
+#### 3.1. Independent Agent Release (`release-agent.yml`)
+
+**Trigger**: When an agent-prefixed tag is pushed (e.g., `agent-1.0.0`)
+
+**Purpose**: Creates GitHub release and publishes ONLY agent package to PyPI
 
 **What it does**:
 
-- Creates a GitHub release from the tag
-- Builds both packages
+- Creates a GitHub release for agent
+- Builds only agent package
 - Publishes to PyPI
-- Attaches wheel files to the release
+- Builds and pushes agent Docker image to GHCR
+- Attaches wheel file to the release
 
 **Usage**:
 
 ```bash
-# Bump version in pyproject.toml files
-poetry version patch  # or minor, major
+# Update agent version in pyproject.toml (optional, will be updated by workflow)
+poetry version 1.0.0 -C projects/agent
 
-# Commit version changes
-git add projects/*/pyproject.toml
-git commit -m "chore: bump version to 0.3.1"
+# Commit version changes (optional)
+git add projects/agent/pyproject.toml
+git commit -m "chore: bump agent version to 1.0.0"
 
-# Create and push tag (without 'v' prefix)
-git tag 0.3.1
+# Create and push agent tag
+git tag agent-1.0.0
 git push origin master
-git push origin 0.3.1
+git push origin agent-1.0.0
+```
 
-# Note: Both '0.3.1' and 'v0.3.1' formats are supported
+#### 3.2. Independent Simunet Release (`release-simunet.yml`)
+
+**Trigger**: When a simunet-prefixed tag is pushed (e.g., `simunet-2.5.0`)
+
+**Purpose**: Creates GitHub release and publishes ONLY simunet package to PyPI
+
+**What it does**:
+
+- Creates a GitHub release for simunet
+- Builds only simunet package
+- Publishes to PyPI
+- Builds and pushes simunet Docker image to GHCR
+- Attaches wheel file to the release
+
+**Usage**:
+
+```bash
+# Update simunet version in pyproject.toml (optional, will be updated by workflow)
+poetry version 2.5.0 -C projects/simunet
+
+# Commit version changes (optional)
+git add projects/simunet/pyproject.toml
+git commit -m "chore: bump simunet version to 2.5.0"
+
+# Create and push simunet tag
+git tag simunet-2.5.0
+git push origin master
+git push origin simunet-2.5.0
 ```
 
 ## Setup Requirements
@@ -114,52 +147,80 @@ Add the following secrets to your GitHub repository:
 GitHub Actions supports PyPI's trusted publishing (no token needed):
 
 1. Go to PyPI → Your account → Publishing
-2. Add publisher:
+2. Add publisher for each package:
    - **Owner**: Your GitHub username/organization
    - **Repository**: `netdriver`
-   - **Workflow**: `release.yml`
+   - **Workflow**: `release-agent.yml` (for netdriver-agent)
+   - **Workflow**: `release-simunet.yml` (for netdriver-simunet)
    - **Environment**: `pypi`
 
-3. Update workflow to use trusted publishing (already configured with `id-token: write`)
+3. Both workflows are already configured with `id-token: write` for trusted publishing
 
 ## Release Process
 
-### Standard Release
+### Agent Release
 
-1. **Update version numbers**:
+Use this when you only need to release the agent:
+
+1. **Update version number** (optional):
 
    ```bash
-   # From repository root
-   poetry version -P projects/agent 0.3.1
-   poetry version -P projects/simunet 0.3.1
-
-   # Or use Poetry's bump commands
-   poetry version -P projects/agent patch  # 0.3.0 → 0.3.1
-   poetry version -P projects/agent minor  # 0.3.0 → 0.4.0
-   poetry version -P projects/agent major  # 0.3.0 → 1.0.0
+   poetry version 1.0.0 -C projects/agent
    ```
 
-2. **Update CHANGELOG.md** (if exists)
-
-3. **Commit changes**:
+2. **Commit changes** (optional):
 
    ```bash
-   git add projects/*/pyproject.toml
-   git commit -m "chore: bump version to 0.3.1"
+   git add projects/agent/pyproject.toml
+   git commit -m "chore: bump agent version to 1.0.0"
    git push origin master
    ```
 
-4. **Create and push tag**:
+3. **Create and push tag**:
 
    ```bash
-   git tag 0.3.1
-   git push origin 0.3.1
+   git tag agent-1.0.0
+   git push origin agent-1.0.0
    ```
 
-5. **Workflow will automatically**:
-   - Create GitHub release
-   - Build packages
+4. **Workflow will automatically**:
+   - Update agent version to 1.0.0
+   - Create GitHub release for agent
+   - Build agent package
    - Publish to PyPI
+   - Build and push agent Docker image to GHCR
+
+### Simunet Release
+
+Use this when you need to release simunet:
+
+1. **Update version number** (optional):
+
+   ```bash
+   poetry version 2.5.0 -C projects/simunet
+   ```
+
+2. **Commit changes** (optional):
+
+   ```bash
+   git add projects/simunet/pyproject.toml
+   git commit -m "chore: bump simunet version to 2.5.0"
+   git push origin master
+   ```
+
+3. **Create and push tag**:
+
+   ```bash
+   git tag simunet-2.5.0
+   git push origin simunet-2.5.0
+   ```
+
+4. **Workflow will automatically**:
+   - Update simunet version to 2.5.0
+   - Create GitHub release for simunet
+   - Build simunet package
+   - Publish to PyPI
+   - Build and push simunet Docker image to GHCR
 
 ### Test Release
 
@@ -215,9 +276,87 @@ Check that:
 - Check package name is correct (use underscore vs hyphen)
 - Verify on PyPI website first
 
+## Docker Image Publishing
+
+All release workflows automatically build and publish Docker images to GitHub Container Registry (GHCR).
+
+### Docker Image Tags
+
+Each release creates multiple tags for flexibility:
+
+- `latest` - Always points to the most recent release
+- `<version>` - Specific version (e.g., `1.0.0`)
+- `<major>.<minor>` - Minor version (e.g., `1.0`)
+- `<major>` - Major version (e.g., `1`)
+
+### Multi-Architecture Support
+
+Docker images are built for multiple architectures:
+
+- `linux/amd64` (x86_64)
+- `linux/arm64` (ARM64/Apple Silicon)
+
+### Image Locations
+
+| Package | Registry | Image Name |
+|---------|----------|------------|
+| Agent | GHCR | `ghcr.io/opensecflow/netdriver/netdriver-agent` |
+| Simunet | GHCR | `ghcr.io/opensecflow/netdriver/netdriver-simunet` |
+
+### Using Docker Images
+
+**Agent:**
+```bash
+# Pull latest
+docker pull ghcr.io/opensecflow/netdriver/netdriver-agent:latest
+
+# Pull specific version
+docker pull ghcr.io/opensecflow/netdriver/netdriver-agent:1.0.0
+
+# Run agent
+docker run -d -p 8000:8000 \
+  -v $(pwd)/config:/app/config \
+  -v $(pwd)/logs:/app/logs \
+  ghcr.io/opensecflow/netdriver/netdriver-agent:latest
+```
+
+**Simunet:**
+```bash
+# Pull latest
+docker pull ghcr.io/opensecflow/netdriver/netdriver-simunet:latest
+
+# Pull specific version
+docker pull ghcr.io/opensecflow/netdriver/netdriver-simunet:2.5.0
+
+# Run simunet with host network mode (SSH ports bind directly to host)
+docker run -d --network host \
+  -v $(pwd)/config:/app/config \
+  -v $(pwd)/logs:/app/logs \
+  ghcr.io/opensecflow/netdriver/netdriver-simunet:latest
+```
+
+**Note**: Simunet uses host network mode (`--network host`) to bind SSH ports (default 2201-2220) directly to the host. This is required for proper SSH server functionality.
+
+### Docker Image Authentication
+
+Docker images are public and can be pulled without authentication. For private repositories, authenticate first:
+
+```bash
+echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
+```
+
+## Tag Naming Convention
+
+The project uses prefixed tag patterns for independent releases:
+
+| Tag Pattern | Workflow | Releases | Artifacts |
+|------------|----------|----------|-----------|
+| `agent-1.0.0` | `release-agent.yml` | Agent only | PyPI package + Docker image |
+| `simunet-2.5.0` | `release-simunet.yml` | Simunet only | PyPI package + Docker image |
+
 ## Using Pre-built Docker Images
 
-### 4. Build CI Image (`build-ci-image.yml`)
+### 5. Build CI Image (`build-ci-image.yml`)
 
 **Purpose**: Creates a Docker image with Poetry and Python pre-installed for faster CI/CD
 
@@ -280,9 +419,10 @@ netdriver/
 │   ├── Dockerfile.ci               # CI/CD Docker image
 │   └── workflows/
 │       ├── build-ci-image.yml      # Build Docker image
-│       ├── build-test.yml          # PR/push build validation
-│       ├── publish-pypi.yml        # Docker-based publishing
-│       └── release.yml             # Tag-based release
+│       ├── build.yml               # PR/push build validation
+│       ├── publish-pypi.yml        # Manual PyPI publishing
+│       ├── release-agent.yml       # Agent release workflow
+│       └── release-simunet.yml     # Simunet release workflow
 ├── bases/
 │   └── netdriver/
 │       ├── agent/                  # REST API service

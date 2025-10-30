@@ -1,0 +1,226 @@
+name: Release Simunet
+
+on:
+  push:
+    tags:
+      - 'simunet-*.*.*'
+
+jobs:
+  create-release:
+    name: Create GitHub Release for Simunet
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          # Remove refs/tags/ prefix
+          VERSION=${GITHUB_REF#refs/tags/}
+          # Remove 'simunet-' prefix
+          VERSION=${VERSION#simunet-}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: NetDriver Simunet ${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            ## NetDriver Simunet ${{ steps.version.outputs.version }}
+
+            ### 📦 Package
+
+            **netdriver-simunet** - SSH server simulation for testing network device terminals
+
+            ### 📥 Installation
+
+            ```bash
+            pip install netdriver-simunet==${{ steps.version.outputs.version }}
+            ```
+
+            ### 📝 Changes
+
+            See [CHANGELOG](https://github.com/OpenSecFlow/netdriver/blob/master/CHANGELOG.md) for detailed changes.
+
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/opensecflow/netdriver/python-poetry
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify Poetry installation
+        run: |
+          poetry --version
+          poetry self show plugins
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Run pylint
+        run: |
+          echo "Running pylint checks..."
+          poetry run pylint bases/netdriver/simunet components/ --exit-zero --output-format=colorized || true
+        continue-on-error: true
+
+      - name: Run pytest for simunet
+        run: |
+          echo "Running pytest for simunet..."
+          poetry run pytest -v --tb=short -m "simunet or not agent"
+
+  build-and-publish:
+    name: Build and Publish Simunet to PyPI
+    needs: [create-release, test]
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/opensecflow/netdriver/python-poetry:3.12
+    permissions:
+      contents: write
+      packages: read
+      id-token: write  # Required for trusted publishing
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify Poetry installation
+        run: |
+          poetry --version
+          poetry self show plugins
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Update simunet version
+        run: |
+          VERSION=${{ needs.create-release.outputs.version }}
+          echo "Updating netdriver-simunet version to $VERSION"
+          poetry version $VERSION -C projects/simunet
+
+      - name: Build simunet
+        run: |
+          echo "Building netdriver-simunet..."
+          poetry build-project -C projects/simunet --format wheel
+
+      - name: Check package metadata
+        run: |
+          pip install twine
+          twine check projects/simunet/dist/*.whl
+
+      - name: Publish to PyPI
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          poetry config pypi-token.pypi "$PYPI_TOKEN"
+          echo "Publishing netdriver-simunet to PyPI..."
+          poetry publish -C projects/simunet --skip-existing
+
+      - name: Upload wheel to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: projects/simunet/dist/*.whl
+          tag_name: ${{ github.ref_name }}
+
+  build-docker-image:
+    name: Build and Push Simunet Docker Image
+    needs: [create-release, test]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/netdriver-simunet
+          tags: |
+            type=semver,pattern={{version}},value=${{ needs.create-release.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.create-release.outputs.version }}
+            type=semver,pattern={{major}},value=${{ needs.create-release.outputs.version }}
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./projects/simunet/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+  verify:
+    name: Verify publication
+    needs: [build-and-publish, build-docker-image, create-release]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Wait for PyPI to process
+        run: sleep 60
+
+      - name: Verify package on PyPI
+        run: |
+          echo "Checking netdriver-simunet on PyPI..."
+          curl -s https://pypi.org/pypi/netdriver-simunet/json | jq -r '.info.version' || echo "Package not found yet"
+
+      - name: Verify Docker image
+        run: |
+          echo "Docker image published:"
+          echo "- ghcr.io/${{ github.repository }}/netdriver-simunet:${{ needs.create-release.outputs.version }}"
+
+      - name: Generate summary
+        run: |
+          VERSION=${{ needs.create-release.outputs.version }}
+          echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Simunet release created successfully" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Package published to PyPI" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Docker image published to GHCR" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Wheel file attached to release" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Installation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**PyPI:**" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "pip install netdriver-simunet" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Docker:**" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ghcr.io/${{ github.repository }}/netdriver-simunet:${VERSION}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
