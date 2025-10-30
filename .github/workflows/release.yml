@@ -118,7 +118,7 @@ jobs:
       - name: Build ${{ matrix.project }}
         run: |
           echo "Building netdriver-${{ matrix.project }}..."
-          poetry build-project -C projects/${{ matrix.project }} --format wheel --clean
+          poetry build-project -C projects/${{ matrix.project }} --format wheel
 
       - name: Check package metadata
         run: |
@@ -131,7 +131,7 @@ jobs:
         run: |
           poetry config pypi-token.pypi "$PYPI_TOKEN"
           echo "Publishing netdriver-${{ matrix.project }} to PyPI..."
-          poetry publish -P projects/${{ matrix.project }} --skip-existing
+          poetry publish -C projects/${{ matrix.project }} --skip-existing
 
       - name: Upload wheel to release
         uses: softprops/action-gh-release@v1

@@ -73,17 +73,17 @@ jobs:
             echo "Building $project..."
 
             # Clean and build
-            poetry build-project -C "projects/$project" --format wheel --clean
+            poetry build-project -C "projects/$project" --format wheel
 
             # Publish
             if [ "$TARGET" = "testpypi" ]; then
               echo "Publishing $project to TestPyPI..."
               poetry config pypi-token.testpypi "$TESTPYPI_TOKEN"
-              poetry publish -P "projects/$project" -r testpypi --skip-existing
+              poetry publish -C "projects/$project" -r testpypi --skip-existing
             else
               echo "Publishing $project to PyPI..."
               poetry config pypi-token.pypi "$PYPI_TOKEN"
-              poetry publish -P "projects/$project" --skip-existing
+              poetry publish -C "projects/$project" --skip-existing
             fi
 
             echo "✓ Successfully published $project to $TARGET"

@@ -1,4 +1,4 @@
-name: Build Test
+name: Build
 
 on:
   workflow_dispatch:
@@ -99,7 +99,7 @@ jobs:
       - name: Build ${{ matrix.project }}
         run: |
           echo "Building netdriver-${{ matrix.project }}..."
-          poetry build-project -P projects/${{ matrix.project }} --format wheel --clean
+          poetry build-project -C projects/${{ matrix.project }} --format wheel
 
       - name: Check package metadata
         run: |
