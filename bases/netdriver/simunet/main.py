@@ -47,7 +47,7 @@ async def on_shutdown() -> None:
     """ put all clean logic here """
     log.info("Shutting down the application...")
     for server in app.state.servers:
-        await server.stop()
+        server.stop()
 
 
 # Register event handlers on simunet_app instance
