@@ -73,7 +73,7 @@ jobs:
             echo "Building $project..."
 
             # Clean and build
-            poetry build -P "projects/$project" --format wheel --clean
+            poetry build-project -C "projects/$project" --format wheel --clean
 
             # Publish
             if [ "$TARGET" = "testpypi" ]; then

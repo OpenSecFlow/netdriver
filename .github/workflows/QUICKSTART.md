@@ -198,7 +198,7 @@ unzip -l projects/agent/dist/netdriver_agent-*.whl
 ### Release Process
 
 1. Develop features on branches
-2. Test locally: `poetry build -P projects/agent`
+2. Test locally: `poetry build-project -C projects/agent`
 3. Create PR and verify build test passes
 4. Merge to master
 5. Test on TestPyPI

@@ -118,7 +118,7 @@ jobs:
       - name: Build ${{ matrix.project }}
         run: |
           echo "Building netdriver-${{ matrix.project }}..."
-          poetry build -P projects/${{ matrix.project }} --format wheel --clean
+          poetry build-project -C projects/${{ matrix.project }} --format wheel --clean
 
       - name: Check package metadata
         run: |

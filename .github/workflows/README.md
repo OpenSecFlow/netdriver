@@ -250,7 +250,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # Poetry and plugins are already installed!
-      - run: poetry build -P projects/agent
+      - run: poetry build-project -C projects/agent
 ```
 
 **Benefits of using Docker image**:
