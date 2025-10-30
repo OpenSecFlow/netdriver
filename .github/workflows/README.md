@@ -305,12 +305,36 @@ Docker images are built for multiple architectures:
 
 ### Using Docker Images
 
+#### Preparation (Required for both)
+
+Before running either agent or simunet, prepare the directories and configuration:
+
+**Agent:**
+```bash
+# Create directories
+mkdir -p config/agent logs
+
+# Download default configuration
+curl -o config/agent/agent.yml https://raw.githubusercontent.com/opensecflow/netdriver/master/config/agent/agent.yml
+```
+
+**Simunet:**
+```bash
+# Create directories
+mkdir -p config/simunet logs
+
+# Download default configuration
+curl -o config/simunet/simunet.yml https://raw.githubusercontent.com/opensecflow/netdriver/master/config/simunet/simunet.yml
+```
+
+#### Running Containers
+
 **Agent:**
 ```bash
 # Pull latest
 docker pull ghcr.io/opensecflow/netdriver/netdriver-agent:latest
 
-# Pull specific version
+# Or pull specific version
 docker pull ghcr.io/opensecflow/netdriver/netdriver-agent:1.0.0
 
 # Run agent
@@ -325,7 +349,7 @@ docker run -d -p 8000:8000 \
 # Pull latest
 docker pull ghcr.io/opensecflow/netdriver/netdriver-simunet:latest
 
-# Pull specific version
+# Or pull specific version
 docker pull ghcr.io/opensecflow/netdriver/netdriver-simunet:2.5.0
 
 # Run simunet with host network mode (SSH ports bind directly to host)

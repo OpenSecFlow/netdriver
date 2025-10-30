@@ -38,17 +38,44 @@ jobs:
           prerelease: false
           generate_release_notes: true
           body: |
-            ## NetDriver Simunet ${{ steps.version.outputs.version }}
+            ## netdriver-simunet ${{ steps.version.outputs.version }}
 
             ### 📦 Package
 
             **netdriver-simunet** - SSH server simulation for testing network device terminals
 
+            ### 🛠️ Preparation
+
+            ```bash
+            # Create directories
+            mkdir -p config/simunet logs
+
+            # Download default configuration
+            curl -o config/simunet/simunet.yml https://raw.githubusercontent.com/${{ github.repository }}/master/config/simunet/simunet.yml
+            ```
+
             ### 📥 Installation
 
+            **PyPI:**
             ```bash
             pip install netdriver-simunet==${{ steps.version.outputs.version }}
             ```
+
+            **Docker:**
+            ```bash
+            # Pull the image
+            docker pull ghcr.io/${{ github.repository }}/netdriver-simunet:${{ steps.version.outputs.version }}
+
+            # Run with host network mode
+            docker run -d --network host \
+              -v $(pwd)/config:/app/config \
+              -v $(pwd)/logs:/app/logs \
+              ghcr.io/${{ github.repository }}/netdriver-simunet:${{ steps.version.outputs.version }}
+            ```
+
+            **Available tags:** `${{ steps.version.outputs.version }}`, `latest`
+
+            **Platforms:** `linux/amd64`, `linux/arm64`
 
             ### 📝 Changes
 

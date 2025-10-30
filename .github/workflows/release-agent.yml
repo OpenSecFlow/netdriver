@@ -38,17 +38,44 @@ jobs:
           prerelease: false
           generate_release_notes: true
           body: |
-            ## NetDriver Agent ${{ steps.version.outputs.version }}
+            ## netdriver-agent ${{ steps.version.outputs.version }}
 
             ### 📦 Package
 
             **netdriver-agent** - FastAPI-based REST API service for network device automation
 
+            ### 🛠️ Preparation
+
+            ```bash
+            # Create directories
+            mkdir -p config/agent logs
+
+            # Download default configuration
+            curl -o config/agent/agent.yml https://raw.githubusercontent.com/${{ github.repository }}/master/config/agent/agent.yml
+            ```
+
             ### 📥 Installation
 
+            **PyPI:**
             ```bash
             pip install netdriver-agent==${{ steps.version.outputs.version }}
             ```
+
+            **Docker:**
+            ```bash
+            # Pull the image
+            docker pull ghcr.io/${{ github.repository }}/netdriver-agent:${{ steps.version.outputs.version }}
+
+            # Run the agent
+            docker run -d -p 8000:8000 \
+              -v $(pwd)/config:/app/config \
+              -v $(pwd)/logs:/app/logs \
+              ghcr.io/${{ github.repository }}/netdriver-agent:${{ steps.version.outputs.version }}
+            ```
+
+            **Available tags:** `${{ steps.version.outputs.version }}`, `latest`
+
+            **Platforms:** `linux/amd64`, `linux/arm64`
 
             ### 📝 Changes
 
