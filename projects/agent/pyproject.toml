@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "netdriver-agent"
-version = "0.3.11"
+version = "0.4.0"
 description = "The agent for NetDevOps, which interact with network device using CLI."
 authors = [
     "Vincent <vincent@byntra.se>",
