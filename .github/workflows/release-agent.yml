@@ -64,13 +64,13 @@ jobs:
             **Docker:**
             ```bash
             # Pull the image
-            docker pull ghcr.io/${{ github.repository }}/netdriver-agent:${{ steps.version.outputs.version }}
+            docker pull ghcr.io/opensecflow/netdriver-agent:${{ steps.version.outputs.version }}
 
             # Run the agent
             docker run -d -p 8000:8000 \
               -v $(pwd)/config:/app/config \
               -v $(pwd)/logs:/app/logs \
-              ghcr.io/${{ github.repository }}/netdriver-agent:${{ steps.version.outputs.version }}
+              ghcr.io/opensecflow/netdriver-agent:${{ steps.version.outputs.version }}
             ```
 
             **Available tags:** `${{ steps.version.outputs.version }}`, `latest`
@@ -163,8 +163,8 @@ jobs:
       - name: Upload wheel to release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: agent-${{ needs.create-release.outputs.version }}
           files: projects/agent/dist/*.whl
-          tag_name: ${{ github.ref_name }}
 
   build-docker-image:
     name: Build and Push Agent Docker Image

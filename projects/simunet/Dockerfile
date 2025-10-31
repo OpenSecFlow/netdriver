@@ -52,5 +52,9 @@ ENV PYTHONUNBUFFERED=1
 ENV FATSTAPI_ENV=production
 ENV NETDRIVER_CONFIG_PATH=/app/config/simunet/simunet.yml
 
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')" || exit 1
+
 # Run simunet
 CMD ["uvicorn", "netdriver.simunet.main:app", "--host", "0.0.0.0", "--port", "8001"]

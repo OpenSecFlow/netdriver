@@ -55,6 +55,23 @@ app.add_event_handler("startup", on_startup)
 app.add_event_handler("shutdown", on_shutdown)
 
 
+@app.get("/")
+async def root() -> dict:
+    """ root endpoint """
+    return {
+        "message": "Welcome to the NetDriver SimuNet",
+    }
+
+
+@app.get("/health")
+async def health() -> dict:
+    """ health check endpoint for docker """
+    return {
+        "status": "healthy",
+        "service": "netdriver-simunet"
+    }
+
+
 def start():
     """Start the simunet server with optional configuration file parameter."""
     parser = argparse.ArgumentParser(description="NetDriver SimuNet Server")

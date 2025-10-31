@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "netdriver-simunet"
-version = "0.3.0"
+version = "0.3.14"
 description = "Simulated ssh server for network device, used for testing netdriver agent and client."
 authors = [
     "Vincent <vincent@byntra.se>",
@@ -26,6 +26,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 packages = [
+    {include = "netdriver/client", from = "../../components"},
     {include = "netdriver/simunet", from = "../../bases"},
     {include = "netdriver/exception", from = "../../components"},
     {include = "netdriver/server", from = "../../components"},
@@ -42,6 +43,7 @@ pyyaml = "^6.0.2"
 asyncssh = "^2.17.0"
 dependency-injector = "^4.42.0"
 loguru = "^0.7.2"
+asgi-correlation-id = "^4.3.4"
 pycryptodome = "^3.21.0"
 aiofiles = "^24.1.0"
 six = "^1.16.0"

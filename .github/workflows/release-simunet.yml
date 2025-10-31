@@ -64,13 +64,13 @@ jobs:
             **Docker:**
             ```bash
             # Pull the image
-            docker pull ghcr.io/${{ github.repository }}/netdriver-simunet:${{ steps.version.outputs.version }}
+            docker pull ghcr.io/opensecflow/netdriver-simunet:${{ steps.version.outputs.version }}
 
             # Run with host network mode
             docker run -d --network host \
               -v $(pwd)/config:/app/config \
               -v $(pwd)/logs:/app/logs \
-              ghcr.io/${{ github.repository }}/netdriver-simunet:${{ steps.version.outputs.version }}
+              ghcr.io/opensecflow/netdriver-simunet:${{ steps.version.outputs.version }}
             ```
 
             **Available tags:** `${{ steps.version.outputs.version }}`, `latest`
@@ -111,14 +111,14 @@ jobs:
       - name: Run pytest for simunet
         run: |
           echo "Running pytest for simunet..."
-          poetry run pytest -v --tb=short -m "simunet or not agent"
+          poetry run pytest -v --tb=short --mock-dev
 
   build-and-publish:
     name: Build and Publish Simunet to PyPI
     needs: [create-release, test]
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/opensecflow/netdriver/python-poetry:3.12
+      image: ghcr.io/opensecflow/netdriver/python-poetry
     permissions:
       contents: write
       packages: read
@@ -163,8 +163,8 @@ jobs:
       - name: Upload wheel to release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: simunet-${{ needs.create-release.outputs.version }}
           files: projects/simunet/dist/*.whl
-          tag_name: ${{ github.ref_name }}
 
   build-docker-image:
     name: Build and Push Simunet Docker Image

@@ -6,27 +6,31 @@
 [![Poetry](https://img.shields.io/badge/Poetry-1.8.3-60A5FA.svg)](https://python-poetry.org/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)](./LICENSE)
 [![Build & Test](https://github.com/OpenSecFlow/netdriver/actions/workflows/build.yml/badge.svg)](https://github.com/OpenSecFlow/netdriver/actions/workflows/build.yml)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)]()
-[![Last Commit](https://img.shields.io/github/last-commit/PanMarkCake/netdriver)](https://github.com/PanMarkCake/netdriver/commits/main)
-[![Release](https://img.shields.io/badge/release-v0.1.0-blue.svg)](https://github.com/PanMarkCake/REPO/releases/tag/v0.1.0)
-![Release Date](https://img.shields.io/badge/release--date-August_2025-blue.svg)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)](./CONTRIBUTING.md)
+[![Last Commit](https://img.shields.io/github/last-commit/OpenSecFlow/netdriver)](https://github.com/OpenSecFlow/netdriver/commits/master)
+[![Release](https://img.shields.io/github/v/release/OpenSecFlow/netdriver)](https://github.com/OpenSecFlow/netdriver/releases)
+[![Release Date](https://img.shields.io/github/release-date/OpenSecFlow/netdriver)](https://github.com/OpenSecFlow/netdriver/releases)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/BGZuQQ5g)
 
 ⭐ Star us on GitHub — your support motivates us a lot! 🙏😊
 
-[![Share](https://img.shields.io/badge/share-000000?logo=x&logoColor=white)](https://x.com/intent/tweet?text=Check%20out%20this%20project%20on%20GitHub:%20https://github.com/Abblix/Oidc.Server%20%23OpenIDConnect%20%23Security%20%23Authentication)
-[![Share](https://img.shields.io/badge/share-1877F2?logo=facebook&logoColor=white)](https://www.facebook.com/sharer/sharer.php?u=https://github.com/Abblix/Oidc.Server)
-[![Share](https://img.shields.io/badge/share-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/sharing/share-offsite/?url=https://github.com/Abblix/Oidc.Server)
-[![Share](https://img.shields.io/badge/share-FF4500?logo=reddit&logoColor=white)](https://www.reddit.com/submit?title=Check%20out%20this%20project%20on%20GitHub:%20https://github.com/Abblix/Oidc.Server)
-[![Share](https://img.shields.io/badge/share-0088CC?logo=telegram&logoColor=white)](https://t.me/share/url?url=https://github.com/Abblix/Oidc.Server&text=Check%20out%20this%20project%20on%20GitHub)
+[![Share](https://img.shields.io/badge/share-000000?logo=x&logoColor=white)](https://x.com/intent/tweet?text=Check%20out%20this%20project%20on%20GitHub:%20https://github.com/OpenSecFlow/netdriver%20%23NetworkAutomation%20%23NetDriver%20%23DevOps)
+[![Share](https://img.shields.io/badge/share-1877F2?logo=facebook&logoColor=white)](https://www.facebook.com/sharer/sharer.php?u=https://github.com/OpenSecFlow/netdriver)
+[![Share](https://img.shields.io/badge/share-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/sharing/share-offsite/?url=https://github.com/OpenSecFlow/netdriver)
+[![Share](https://img.shields.io/badge/share-FF4500?logo=reddit&logoColor=white)](https://www.reddit.com/submit?title=Check%20out%20this%20project%20on%20GitHub:%20https://github.com/OpenSecFlow/netdriver)
+[![Share](https://img.shields.io/badge/share-0088CC?logo=telegram&logoColor=white)](https://t.me/share/url?url=https://github.com/OpenSecFlow/netdriver&text=Check%20out%20this%20project%20on%20GitHub)
 
 ## Table of Contents
 
 - [About](#about)
-- [Updates](#updates)
 - [Comparison](#comparison)
-- [Build](#Build)
-- [Usage](#usage)
-- [Contributions](#contributions)
+- [Architecture](#architecture)
+- [Support Devices](#support-devices)
+  - [Supported Vendors and Models](#supported-vendors-and-models)
+  - [Plugin Architecture](#plugin-architecture)
+  - [Adding Device Support](#adding-device-support)
+- [Quick Start](#quick-start)
+- [Contributions and Requests](#contributions-and-requests)
 - [License](#license)
 - [Contacts](#contacts)
 
@@ -34,7 +38,7 @@
 
 Everyone loves netmiko cause it's the best at what it can do, so instead of reinventing the wheel we decided to add couple of sticks in to it by implementing some Quality-of-life features.
 NetDriver is a network device automation framework that enables CLI command execution through HTTP RESTful APIs.
-With features like session persistence for efficiency a command queue to avoid configuration conflicts and an HTTP RESTful API for simple third-party integration. With its plugin architecture which combines automation scalability and contemporary network management in a single framework it offers high concurrency and is built on top of AsyncSSH 
+With features like session persistence for efficiency a command queue to avoid configuration conflicts and an HTTP RESTful API for simple third-party integration. With its plugin architecture which combines automation scalability and contemporary network management in a single framework it offers high concurrency and is built on top of AsyncSSH
 for your convinience.
 
 NetDriver adopts a Monorepo architecture consisting of multiple sub-projects:
@@ -63,212 +67,95 @@ Features:
 |  **Open source**    | ✅       | ✅    |
 |   **AsyncSSH-based architecture for high concurrency**    | ✅       | ❌    |
 
-## Project Structure
+## Architecture
 
-```Text
-netdriver/
-├── bases/ 
-│   └── netdriver/
-│       ├── agent/          # netdirver-agent app
-│       └── simunet/        # netdriver-simunet app 
-├── components/
-│   └── netdriver/
-│       ├── client/         # SSH client with session management 
-│       ├── exception/      # Exception handling and error codes
-│       ├── log/           # Logging utilities
-│       ├── plugin/        # Plugin system core
-│       ├── plugins/       # Device-specific plugins
-│       ├── server/        # SSH server of simulated devices
-│       ├── textfsm/       # Enhanced Textfsm
-│       └── utils/         # Utility functions
-├── config/                # Configuration files
-├── tests/                 # Test suites
-└── pyproject.toml        # Project metadata and dependencies
+```text
+┌─────────────────┐
+│  Your App/Tool  │
+└────────┬────────┘
+         │ HTTP API
+         ▼
+┌─────────────────┐
+│ NetDriver Agent │
+└────────┬────────┘
+         │ SSH
+    ┌────┴────┐
+    │         │
+    ▼         ▼
+┌────────┐ ┌────────┐
+│SimuNet │ │ Real   │
+│Devices │ │Devices │
+└────────┘ └────────┘
 ```
 
-## Build
+## Support Devices
 
-Fallow this steps to build our package:
+NetDriver currently supports a wide range of network devices from major vendors. The plugin architecture makes it easy to add support for new devices.
 
-### Prerequisites
+### Supported Vendors and Models
 
-- Python 3.12 or higher
-- Poetry for dependency management
+| Vendor | Model | Device Type | Description |
+|--------|-------|-------------|-------------|
+| **Cisco** | ASA | Firewall | Cisco Adaptive Security Appliance |
+| | ASR | Router | Cisco Aggregation Services Router |
+| | Catalyst | Switch | Cisco Catalyst Series Switches |
+| | ISR | Router | Cisco Integrated Services Router |
+| | Nexus | Switch | Cisco Nexus Data Center Switches |
+| **Huawei** | CE | Switch | Huawei CloudEngine Series Switches |
+| | USG | Firewall | Huawei Unified Security Gateway |
+| **Juniper** | EX | Switch | Juniper EX Series Ethernet Switches |
+| | MX | Router | Juniper MX Series Universal Routing Platforms |
+| | QFX | Switch | Juniper QFX Series Data Center Switches |
+| | SRX | Firewall | Juniper SRX Series Services Gateways |
+| **Fortinet** | FortiGate | Firewall | Fortinet FortiGate Next-Generation Firewalls |
+| **Palo Alto** | PA | Firewall | Palo Alto Networks Next-Generation Firewalls |
+| **Arista** | EOS | Switch | Arista Networks EOS-based Switches |
+| **H3C** | SecPath | Firewall | H3C SecPath Series Firewalls |
+| | VSR | Router | H3C Virtual Services Router |
+| **Check Point** | Security Gateway | Firewall | Check Point Security Gateway |
+| **Hillstone** | SG | Firewall | Hillstone StoneOS-based Security Gateways |
+| **DPTech** | FW | Firewall | DPTech Firewall Series |
+| **Topsec** | NGFW | Firewall | Topsec Next-Generation Firewalls |
+| **Venustech** | USG | Firewall | Venustech Unified Security Gateway |
+| **Maipu** | NSS | Switch | Maipu Network Security Switch |
+| **Array** | AG | Gateway | Array Application Gateway |
+| **Chaitin** | CTD-SG | Gateway | Chaitin SafeLine Security Gateway |
+| **Qianxin** | NSG | Gateway | Qianxin Next-Generation Security Gateway |
+| **Leadsec** | PowerV | Firewall | Leadsec PowerV Series |
 
-## Development Environment Setup
+### Plugin Architecture
 
-### Python Installation
+The plugin system allows for easy extension and customization:
 
-Recommended using pyenv to manage and install Python.
+- **Vendor Base Plugins**: Common functionality shared across device models from the same vendor
+- **Model-Specific Plugins**: Device-specific implementations for unique features and behaviors
+- **Pattern Matching**: Automatic plugin selection based on vendor/model/version detection
+- **Extensible**: Add new device support by creating a new plugin class
 
-Install Python build dependencies
+### Adding Device Support
 
-```bash
-sudo apt update; sudo apt install build-essential libssl-dev zlib1g-dev \
-libbz2-dev libreadline-dev libsqlite3-dev curl git \
-libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
-```
+To add support for a new device, create a plugin in `components/netdriver/plugins/{vendor}/` that inherits from the vendor base class or `Base` plugin. See [Development Guidelines](./CONTRIBUTING.md) for more information.
 
-Install pyenv
+## Quick Start
 
-```bash
-curl -fsSL https://pyenv.run | bash
-```
+We can first run the Simunet service to obtain simulated network devices for testing, then use the Agent to connect and execute commands. Of course, if you have real devices that are on the [support devices](#support-devices), you can skip the Simunet guide and start using the Agent service directly.
 
-Configure `~/.bashrc` file by appending the following text to the end
+- [Simunet Guide](./docs/quick-start-simunet.md)
+- [Agent Guide](./docs/quick-start-agent.md)
 
-```bash
-# Load pyenv automatically by appending
-# the following to
-# ~/.bash_profile if it exists, otherwise ~/.bashrc (for login shells)
-# and ~/.bashrc (for interactive shells) :
-
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init - bash)"
-```
-
-Apply the changes to your current shell session
-
-```bash
-source ~/.bashrc
-```
-
-Verify pyenv installation
-
-```bash
-$ pyenv --version
-pyenv 2.6.8
-```
-
-> Reference: <https://github.com/pyenv/pyenv/wiki#suggested-build-environment>
-
-Install Python (recommended version: 3.12.7)
-
-```bash
-# List available versions
-pyenv install --list
-# Install Python 3.12.7
-pyenv install 3.12.7
-# Set as global version
-pyenv global 3.12.7
-# Verify installation
-python --version
-Python 3.12.7
-```
-
-### Poetry Installation
-
-Poetry is the default build and dependency management tool for this project
-
-```bash
-# Install Poetry
-curl -sSL https://install.python-poetry.org | python3 -
-
-# Configure ~/.bashrc
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
-
-# Verify installation
-poetry --version
-Poetry (version 1.8.3)
-
-# Install Poetry plugins
-poetry self add poetry-multiproject-plugin
-poetry self add poetry-polylith-plugin
-```
-
-> References:
->
-> - <https://python-poetry.org/docs/#installing-with-the-official-installer>
-> - <https://davidvujic.github.io/python-polylith-docs/>
-
-### Install Development Dependencies
-
-```bash
-poetry install
-```
-
-## Usage
-
-### Start the Agent Service
-
-```bash
-poetry run agent
-```
-
-Once the Agent service is started, you can access the FastAPI OpenAPI interface through a web browser to test API calls.
-
-<http://localhost:8000/docs>
-
-![alt text](./docs/imgs/openapi.png)
-
-### Start the Simulation Network Service
-
-```bash
-poetry run simunet
-```
-
-Once the Simunet service is started, you can access the simulated devices through SSH clients or the Agent.
-
-![alt text](./docs/imgs/sim_start.png)
-
-![alt text](./docs/imgs/sim_login.png)
-
-## Configuration
-
-Configuration files are located in the `config/` directory:
-
-- `config/agent/agent.yml` - Agent service configuration
-- `config/simunet/simunet.yml` - Simulation network configuration
-
-## Testing
-
-Run all tests:
-
-```bash
-poetry run pytest
-```
-
-Run unit tests only:
-
-```bash
-poetry run pytest -m unit
-```
-
-Run integration tests only:
-
-```bash
-poetry run pytest -m integration
-```
-
-## 🤝 Contributions and Requests
+## Contributions and Requests
 
 Your contributions matter!Our project can always be better so we would be happy to recive your help!Please take a look at [contributing](./CONTRIBUTING.md) guide before submiting a pull request!
 For questions, issues, or feature requests, please open an issue on the project repository.
 
-### Development Guidelines
-
-1. Follow PEP 8 style guidelines
-2. Add tests for new features
-3. Update documentation as needed
-4. Ensure all tests pass before submitting PR
-
-## Support
-
-## 📃 License
+## License
 
 This project is licensed under the [Apache License 2.0](LICENSE).
 
-## Authors
-
-- <vincent@byntra.se>
-- <bobby@byntra.se>
-- <sam@byntra.se>
-- <mark@byntra.se>
-
-## 🗨️ Contacts
+## Contacts
 
 We look forward to assisting you and ensuring your experience with our products is successful and enjoyable!
+
+[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/BGZuQQ5g)
 
 [Back to top](#top)

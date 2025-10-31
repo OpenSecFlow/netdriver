@@ -70,6 +70,15 @@ async def root() -> dict:
     }
 
 
+@app.get("/health")
+async def health() -> dict:
+    """ health check endpoint for docker """
+    return {
+        "status": "healthy",
+        "service": "netdriver-agent"
+    }
+
+
 def start():
     """Start the agent server with optional configuration file parameter."""
     parser = argparse.ArgumentParser(description="NetDriver Agent Server")
