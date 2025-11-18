@@ -36,10 +36,7 @@
 
 ## About
 
-Everyone loves netmiko cause it's the best at what it can do, so instead of reinventing the wheel we decided to add couple of sticks in to it by implementing some Quality-of-life features.
-NetDriver is a network device automation framework that enables CLI command execution through HTTP RESTful APIs.
-With features like session persistence for efficiency a command queue to avoid configuration conflicts and an HTTP RESTful API for simple third-party integration. With its plugin architecture which combines automation scalability and contemporary network management in a single framework it offers high concurrency and is built on top of AsyncSSH
-for your convinience.
+NetDriver is an advanced open-source framework for automating network devices. Its main purpose is to use a high-level HTTP RESTful interface to make it easier to execute low-level commands on different networking equipment. This architecture makes it easier to develop generalised automation solutions and integrate third parties. Its design is centred on features that guarantee operational efficiency and stability, such as advanced session management that keeps persistent connections to enhance system performance and a command queue to avoid configuration conflicts during concurrent operations. Its plugin architecture enables simple extensibility to support a broad and changing range of vendor hardware, and its asynchronous foundation provides desirable concurrency.
 
 NetDriver adopts a Monorepo architecture consisting of multiple sub-projects:
 
