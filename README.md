@@ -59,7 +59,7 @@ Features:
 | **Session persistence with customizable duration** | ✅       | ❌    |
 |  **Python-based implementation**    | ✅       | ✅    |
 |  **Command execution queue to prevent concurrent conflicts**    | ✅       | ❌    |
-|  **Plugin architecture for easier device support development**    | ✅       | ❌    |
+|  **Plugin architecture for easier device support development**    | ✅       | ✅      |
 |  **Standard CLI automation**    | ✅       | ✅    |
 |  **Open source**    | ✅       | ✅    |
 |   **AsyncSSH-based architecture for high concurrency**    | ✅       | ❌    |
