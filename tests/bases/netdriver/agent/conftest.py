@@ -59,7 +59,7 @@ def simunet_process(request: pytest.FixtureRequest):
     # Start simunet process using uvicorn directly
     logman.logger.info("Starting simunet process for integration tests...")
     process = subprocess.Popen(
-        ["poetry", "run", "simunet"],
+        ["uv", "run", "simunet"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True

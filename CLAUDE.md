@@ -63,37 +63,33 @@ Sessions track device state including:
 
 ```bash
 # Install dependencies
-poetry install
-
-# Install Poetry plugins (if not already installed)
-poetry self add poetry-multiproject-plugin
-poetry self add poetry-polylith-plugin
+uv sync
 ```
 
 ### Running Services
 
 ```bash
 # Start agent service (REST API on http://localhost:8000)
-poetry run agent
+uv run agent
 
 # Start simulation network service (SSH servers on configured ports)
-poetry run simunet
+uv run simunet
 ```
 
 ### Testing
 
 ```bash
 # Run all tests
-poetry run pytest
+uv run pytest
 
 # Run unit tests only
-poetry run pytest -m unit
+uv run pytest -m unit
 
 # Run integration tests only
-poetry run pytest -m integration
+uv run pytest -m integration
 
 # Run specific test file
-poetry run pytest tests/bases/netdriver/agent/test_cisco_nexus.py
+uv run pytest tests/bases/netdriver/agent/test_cisco_nexus.py
 ```
 
 ### Configuration
@@ -176,7 +172,7 @@ Uses Loguru configured via `netdriver.log.logman`:
 ## Important Notes
 
 - Python 3.12+ required
-- Uses Poetry for dependency management
+- Uses uv for dependency management
 - All SSH operations are async (AsyncSSH-based)
 - Session keys format: `{protocol}:{username}@{ip}:{port}`
 - The agent runs with auto-reload enabled by default (suitable for development)

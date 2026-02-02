@@ -4,16 +4,37 @@ Thank you for your interest in contributing to NetDriver! We welcome contributio
 
 ## Table of Contents
 
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Environment Setup](#development-environment-setup)
-- [How to Contribute](#how-to-contribute)
-- [Development Guidelines](#development-guidelines)
-- [Adding a New Device Plugin](#adding-a-new-device-plugin)
-- [Testing](#testing)
-- [Pull Request Process](#pull-request-process)
-- [Reporting Bugs](#reporting-bugs)
-- [Feature Requests](#feature-requests)
+- [Contributing to NetDriver](#contributing-to-netdriver)
+  - [Table of Contents](#table-of-contents)
+  - [Code of Conduct](#code-of-conduct)
+    - [Our Pledge](#our-pledge)
+    - [Our Standards](#our-standards)
+    - [Enforcement](#enforcement)
+  - [Getting Started](#getting-started)
+  - [Development Environment Setup](#development-environment-setup)
+    - [Prerequisites](#prerequisites)
+    - [Setup Steps](#setup-steps)
+  - [How to Contribute](#how-to-contribute)
+  - [Development Guidelines](#development-guidelines)
+    - [Code Style](#code-style)
+    - [Example Code Style](#example-code-style)
+    - [Commit Messages](#commit-messages)
+    - [Branch Naming](#branch-naming)
+  - [Adding a New Device Plugin](#adding-a-new-device-plugin)
+    - [1. Create Plugin File](#1-create-plugin-file)
+    - [2. Implement Plugin Class](#2-implement-plugin-class)
+    - [3. Add Tests](#3-add-tests)
+    - [4. Update Documentation](#4-update-documentation)
+  - [Testing](#testing)
+    - [Running Tests](#running-tests)
+    - [Writing Tests](#writing-tests)
+  - [Pull Request Process](#pull-request-process)
+  - [Reporting Bugs](#reporting-bugs)
+  - [Screenshots](#screenshots)
+  - [Feature Requests](#feature-requests)
+  - [Project Structure](#project-structure)
+  - [Questions or Need Help?](#questions-or-need-help)
+  - [Recognition](#recognition)
 
 ## Code of Conduct
 
@@ -59,7 +80,7 @@ Before you start contributing, please:
 ### Prerequisites
 
 - Python 3.12 or higher
-- Poetry 1.8.3 or higher
+- uv 0.9.26 or higher (https://docs.astral.sh/uv/)
 - Git
 
 ### Setup Steps
@@ -82,27 +103,23 @@ Before you start contributing, please:
    pyenv local 3.12.7
    ```
 
-3. **Install Poetry**
+3. **Install uv**
 
    ```bash
-   curl -sSL https://install.python-poetry.org | python3 -
-
-   # Install Poetry plugins
-   poetry self add poetry-multiproject-plugin
-   poetry self add poetry-polylith-plugin
+   curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
 
 4. **Install Dependencies**
 
    ```bash
-   poetry install
+   uv sync
    ```
 
 5. **Verify Installation**
 
    ```bash
    # Run tests to ensure everything is working
-   poetry run pytest
+   uv run pytest
    ```
 
 ## How to Contribute
@@ -257,19 +274,19 @@ Add the new plugin to the supported devices list in the README.
 
 ```bash
 # Run all tests
-poetry run pytest
+uv run pytest
 
 # Run with coverage
-poetry run pytest --cov=components --cov=bases
+uv run pytest --cov=components --cov=bases
 
 # Run specific test file
-poetry run pytest tests/bases/netdriver/agent/test_cisco_nexus.py
+uv run pytest tests/bases/netdriver/agent/test_cisco_nexus.py
 
 # Run unit tests only
-poetry run pytest -m unit
+uv run pytest -m unit
 
 # Run integration tests only
-poetry run pytest -m integration
+uv run pytest -m integration
 ```
 
 ### Writing Tests

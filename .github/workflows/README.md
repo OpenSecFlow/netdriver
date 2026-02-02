@@ -30,7 +30,7 @@ This directory contains GitHub Actions workflows for automated building, testing
 
 **What it does**:
 
-- Uses pre-built Docker container with Poetry installed
+- Uses pre-built Docker container with uv installed
 - Builds wheel packages for selected projects
 - Publishes to PyPI or TestPyPI
 - Uploads build artifacts
@@ -68,7 +68,7 @@ The project supports independent release workflows for agent and simunet:
 
 ```bash
 # Update agent version in pyproject.toml (optional, will be updated by workflow)
-poetry version 1.0.0 -C projects/agent
+sed -i 's/^version = ".*"/version = "1.0.0"/' projects/agent/pyproject.toml
 
 # Commit version changes (optional)
 git add projects/agent/pyproject.toml
@@ -98,7 +98,7 @@ git push origin agent-1.0.0
 
 ```bash
 # Update simunet version in pyproject.toml (optional, will be updated by workflow)
-poetry version 2.5.0 -C projects/simunet
+sed -i 's/^version = ".*"/version = "2.5.0"/' projects/simunet/pyproject.toml
 
 # Commit version changes (optional)
 git add projects/simunet/pyproject.toml
@@ -165,7 +165,7 @@ Use this when you only need to release the agent:
 1. **Update version number** (optional):
 
    ```bash
-   poetry version 1.0.0 -C projects/agent
+   sed -i 's/^version = ".*"/version = "1.0.0"/' projects/agent/pyproject.toml
    ```
 
 2. **Commit changes** (optional):
@@ -197,7 +197,7 @@ Use this when you need to release simunet:
 1. **Update version number** (optional):
 
    ```bash
-   poetry version 2.5.0 -C projects/simunet
+   sed -i 's/^version = ".*"/version = "2.5.0"/' projects/simunet/pyproject.toml
    ```
 
 2. **Commit changes** (optional):
@@ -235,8 +235,8 @@ To test publishing before official release:
 2. **Or use CLI**:
 
    ```bash
-   poetry publish -P projects/agent -r testpypi
-   poetry publish -P projects/simunet -r testpypi
+   uv publish --directory projects/agent --publish-url https://test.pypi.org/legacy/ --token $TESTPYPI_TOKEN
+   uv publish --directory projects/simunet --publish-url https://test.pypi.org/legacy/ --token $TESTPYPI_TOKEN
    ```
 
 3. **Verify on TestPyPI**:
@@ -382,12 +382,12 @@ The project uses prefixed tag patterns for independent releases:
 
 ### 5. Build CI Image (`build-ci-image.yml`)
 
-**Purpose**: Creates a Docker image with Poetry and Python pre-installed for faster CI/CD
+**Purpose**: Creates a Docker image with uv and Python pre-installed for faster CI/CD
 
 **What it includes**:
 
 - Python 3.12
-- Poetry with multiproject and polylith plugins
+- uv package manager
 - Git and essential build tools
 
 **Building the image**:
@@ -408,24 +408,24 @@ The `publish-pypi.yml` workflow uses this approach:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/${{ github.repository }}/python-poetry:3.12
     steps:
       - uses: actions/checkout@v4
-      # Poetry and plugins are already installed!
-      - run: poetry build-project -C projects/agent
+      - uses: astral-sh/setup-uv@v4
+      - run: uv python install
+      - run: uv sync
+      - run: uv build --directory projects/agent
 ```
 
 **Benefits of using Docker image**:
 
-- ⚡ **Faster**: No need to install Poetry and plugins on every run
+- ⚡ **Faster**: No need to install uv on every run
 - 🔒 **Consistent**: Same environment across all workflows
 - 💾 **Cacheable**: Image layers are cached by Docker
 - 🎯 **Reproducible**: Exact same versions every time
 
 **Image locations**:
 
-- GitHub Container Registry: `ghcr.io/opensecflow/netdriver/python-poetry:3.12`
+- GitHub Container Registry: `ghcr.io/opensecflow/netdriver/python-uv:3.12`
 - Available tags: `latest`, `master`, `<branch>-<sha>`
 
 **Benefits**:
@@ -485,20 +485,18 @@ container:
     password: ${{ secrets.DOCKER_PASSWORD }}
 ```
 
-### 3. Verify Poetry is available
+### 3. Verify uv is available
 
-Poetry and plugins are pre-installed, so you can use them directly:
+uv is pre-installed, so you can use it directly:
 
 ```yaml
-- name: Verify Poetry installation
+- name: Verify uv installation
   run: |
-    poetry --version
-    poetry self show plugins
+    uv --version
 ```
 
 ## References
 
-- [Poetry Documentation](https://python-poetry.org/docs/)
-- [Poetry Polylith Plugin](https://github.com/DavidVujic/poetry-polylith-plugin)
+- [uv Documentation](https://docs.astral.sh/uv/)
 - [PyPI Publishing Guide](https://packaging.python.org/tutorials/packaging-projects/)
 - [GitHub Actions - Python](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python)
