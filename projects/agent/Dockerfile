@@ -1,39 +1,44 @@
 # Multi-stage build for netdriver-agent
-FROM ghcr.io/opensecflow/netdriver/python-poetry AS builder
+FROM ghcr.io/opensecflow/netdriver/python-uv AS builder
 
 LABEL org.opencontainers.image.source="https://github.com/OpenSecFlow/netdriver"
 LABEL org.opencontainers.image.description="NetDriver Agent - Network Device Automation REST API"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 
-# Poetry is already installed with plugins in the base image
-ENV POETRY_NO_INTERACTION=1
-ENV POETRY_VIRTUALENVS_IN_PROJECT=true
-ENV POETRY_VIRTUALENVS_CREATE=true
+# uv is already installed in the base image
+ENV UV_NO_PROGRESS=1
+ENV UV_PYTHON=python3.12
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
 
 WORKDIR /build
 
 # Copy project files
 COPY . .
 
-# Install dependencies and build
-RUN poetry install --only main --no-interaction --no-ansi \
-    && poetry build-project -C projects/agent
+# Build the wheel using uv
+RUN uv build --directory projects/agent --wheel
 
 # Final stage
-FROM python:3.12-slim
+FROM ghcr.io/astral-sh/uv:python3.12-trixie
 
 LABEL org.opencontainers.image.source="https://github.com/OpenSecFlow/netdriver"
 LABEL org.opencontainers.image.description="NetDriver Agent - Network Device Automation REST API"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
+
+# Set uv environment variables for production
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
+ENV UV_PYTHON=python3.12
 
 # Create non-root user
 RUN useradd -m -u 1000 netdriver
 
 WORKDIR /app
 
-# Copy built wheel and install it
+# Copy built wheel and install it using uv
 COPY --from=builder /build/projects/agent/dist/*.whl /tmp/
-RUN pip install --no-cache-dir /tmp/*.whl \
+RUN uv pip install --system --no-cache /tmp/*.whl \
     && rm -rf /tmp/*.whl
 
 # Copy configuration files
