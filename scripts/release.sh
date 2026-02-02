@@ -42,7 +42,7 @@ Examples:
   $0 simunet 0.4.0
 
 This script will:
-  1. Update version in pyproject.toml using poetry
+  1. Update version in pyproject.toml
   2. Commit version changes
   3. Create a git tag (agent-X.X.X or simunet-X.X.X)
   4. Push changes and tag to trigger the release workflow
@@ -87,10 +87,10 @@ if ! git rev-parse --git-dir > /dev/null 2>&1; then
     exit 1
 fi
 
-# Check if poetry is installed
-if ! command -v poetry &> /dev/null; then
-    print_error "Poetry is not installed"
-    print_error "Install it from: https://python-poetry.org/docs/#installation"
+# Check if uv is installed
+if ! command -v uv &> /dev/null; then
+    print_error "uv is not installed"
+    print_error "Install it from: https://docs.astral.sh/uv/getting-started/installation/"
     exit 1
 fi
 
@@ -128,7 +128,7 @@ fi
 # Update version in pyproject.toml
 echo
 print_info "Updating version in projects/${PROJECT}/pyproject.toml to ${VERSION}..."
-poetry version "$VERSION" -C "projects/${PROJECT}"
+sed -i '' "s/^version = \".*\"/version = \"${VERSION}\"/" "projects/${PROJECT}/pyproject.toml"
 print_success "Version updated"
 
 # Commit version changes
