@@ -11,7 +11,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: opensecflow/netdriver/python-poetry
+  IMAGE_NAME: opensecflow/netdriver/python-uv
 
 jobs:
   build:
