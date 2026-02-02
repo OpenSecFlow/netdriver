@@ -1,18 +1,24 @@
-[tool.poetry]
+[project]
 name = "netdriver-simunet"
 version = "0.4.0"
 description = "Simulated ssh server for network device, used for testing netdriver agent and client."
 authors = [
-    "Vincent <vincent@byntra.se>",
-    "Bobby <bobby@byntra.se>",
-    "Sam <sam@byntra.se>",
-    "Mark <mark@byntra.se>"
+    { name = "Vincent", email = "vincent@byntra.se" },
+    { name = "Bobby", email = "bobby@byntra.se" },
+    { name = "Sam", email = "sam@byntra.se" },
+    { name = "Mark", email = "mark@byntra.se" },
 ]
+requires-python = ">=3.12,<4"
 license = "Apache-2.0"
-homepage = "https://github.com/OpenSecFlow/netdriver"
-repository = "https://github.com/OpenSecFlow/netdriver"
-documentation = "https://github.com/OpenSecFlow/netdriver#readme"
-keywords = ["network", "automation", "cli", "ssh", "device", "driver", "netdevops"]
+keywords = [
+    "network",
+    "automation",
+    "cli",
+    "ssh",
+    "device",
+    "driver",
+    "netdevops",
+]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
@@ -24,31 +30,55 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: System :: Networking",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
-packages = [
-    {include = "netdriver/client", from = "../../components"},
-    {include = "netdriver/simunet", from = "../../bases"},
-    {include = "netdriver/exception", from = "../../components"},
-    {include = "netdriver/server", from = "../../components"},
-    {include = "netdriver/utils",from = "../../components"},
-    {include = "netdriver/log",from = "../../components"},
+dependencies = [
+    "fastapi>=0.115.2,<0.116",
+    "uvicorn>=0.32.0,<0.33",
+    "pyyaml>=6.0.2,<7",
+    "asyncssh>=2.17.0,<3",
+    "dependency-injector>=4.42.0,<5",
+    "loguru>=0.7.2,<0.8",
+    "asgi-correlation-id>=4.3.4,<5",
+    "pycryptodome>=3.21.0,<4",
+    "aiofiles>=24.1.0,<25",
+    "six>=1.16.0,<2",
 ]
 
+[project.urls]
+Homepage = "https://github.com/OpenSecFlow/netdriver"
+Repository = "https://github.com/OpenSecFlow/netdriver"
+Documentation = "https://github.com/OpenSecFlow/netdriver#readme"
 
-[tool.poetry.dependencies]
-python = "^3.12"
-fastapi = "^0.115.2"
-uvicorn = "^0.32.0"
-pyyaml = "^6.0.2"
-asyncssh = "^2.17.0"
-dependency-injector = "^4.42.0"
-loguru = "^0.7.2"
-asgi-correlation-id = "^4.3.4"
-pycryptodome = "^3.21.0"
-aiofiles = "^24.1.0"
-six = "^1.16.0"
+[tool.hatch.build.targets.sdist]
+include = [
+    "../../components/netdriver/client",
+    "../../bases/netdriver/simunet",
+    "../../components/netdriver/exception",
+    "../../components/netdriver/server",
+    "../../components/netdriver/utils",
+    "../../components/netdriver/log",
+]
 
+[tool.hatch.build.targets.wheel]
+include = [
+    "../../components/netdriver/client",
+    "../../bases/netdriver/simunet",
+    "../../components/netdriver/exception",
+    "../../components/netdriver/server",
+    "../../components/netdriver/utils",
+    "../../components/netdriver/log",
+]
+
+[tool.hatch.build.targets.wheel.sources]
+"../../components/netdriver/client" = "netdriver/client"
+"../../bases/netdriver/simunet" = "netdriver/simunet"
+"../../components/netdriver/exception" = "netdriver/exception"
+"../../components/netdriver/server" = "netdriver/server"
+"../../components/netdriver/utils" = "netdriver/utils"
+"../../components/netdriver/log" = "netdriver/log"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
