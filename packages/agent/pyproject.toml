@@ -37,6 +37,9 @@ dependencies = [
     "netdriver-core",
 ]
 
+[project.scripts]
+agent = "netdriver_agent.main:start"
+
 [project.urls]
 Homepage = "https://github.com/OpenSecFlow/netdriver"
 Repository = "https://github.com/OpenSecFlow/netdriver"

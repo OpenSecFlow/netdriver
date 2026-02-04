@@ -37,6 +37,9 @@ dependencies = [
     "netdriver-core",
 ]
 
+[project.scripts]
+simunet = "netdriver_simunet.main:start"
+
 [project.urls]
 Homepage = "https://github.com/OpenSecFlow/netdriver"
 Repository = "https://github.com/OpenSecFlow/netdriver"
