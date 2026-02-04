@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from netdriver.plugins.maipu import MaiPuBase
-from netdriver.utils import regex
+from netdriver_agent.plugins.maipu import MaiPuBase
+from netdriver_core.utils import regex
 
 
 @pytest.mark.unit

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from netdriver.utils import files
+from netdriver_core.utils import files
 
 
 @pytest.mark.skip

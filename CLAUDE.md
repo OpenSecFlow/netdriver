@@ -119,8 +119,8 @@ Configuration files in `config/`:
 Example:
 
 ```python
-from netdriver.plugin.plugin_info import PluginInfo
-from netdriver.plugins.cisco import CiscoBase
+from netdriver_agent.plugin.plugin_info import PluginInfo
+from netdriver_agent.plugins.cisco import CiscoBase
 
 class CiscoNexus(CiscoBase):
     info = PluginInfo(
@@ -157,16 +157,16 @@ The agent uses `dependency-injector` (see `bases/netdriver/agent/containers.py`)
 
 ### Logging
 
-Uses Loguru configured via `netdriver.log.logman`:
+Uses Loguru configured via `netdriver_core.log.logman`:
 
 - Correlation ID middleware tracks requests (agent only)
 - Log levels configurable in respective config files
 - Log files are separated by service:
-  - Agent: `logs/agent.log` (excludes `netdriver.server` modules in test environment)
-  - Simunet: `logs/simunet.log` (only `netdriver.server` modules)
+  - Agent: `logs/agent.log` (excludes `netdriver_simunet.server` modules in test environment)
+  - Simunet: `logs/simunet.log` (only `netdriver_simunet.server` modules)
 - Intercepts uvicorn logs for unified output
 - Log rotation: 1 day, retention: 60 days
-- Module filtering: Uses `logger.patch()` in `netdriver.server.device` to ensure correct module identification
+- Module filtering: Uses `logger.patch()` in `netdriver_simunet.server.device` to ensure correct module identification
 - In test environment: Both handlers are configured to prevent log duplication
 
 ## Important Notes

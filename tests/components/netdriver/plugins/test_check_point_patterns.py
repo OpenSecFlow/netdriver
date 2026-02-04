@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import pytest
-from netdriver.plugins.check_point import CheckPointBase
-from netdriver.utils import regex
+from netdriver_agent.plugins.check_point import CheckPointBase
+from netdriver_core.utils import regex
 
 
 @pytest.mark.unit

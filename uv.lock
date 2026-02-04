@@ -2,6 +2,14 @@ version = 1
 revision = 3
 requires-python = ">=3.12, <4"
 
+[manifest]
+members = [
+    "netdriver",
+    "netdriver-agent",
+    "netdriver-core",
+    "netdriver-simunet",
+]
+
 [[package]]
 name = "aiofiles"
 version = "24.1.0"
@@ -340,7 +348,49 @@ wheels = [
 [[package]]
 name = "netdriver"
 version = "0.3.0"
-source = { editable = "." }
+source = { virtual = "." }
+dependencies = [
+    { name = "netdriver-agent" },
+    { name = "netdriver-core" },
+    { name = "netdriver-simunet" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pylint" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "netdriver-agent", editable = "packages/agent" },
+    { name = "netdriver-core", editable = "packages/core" },
+    { name = "netdriver-simunet", editable = "packages/simunet" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pylint", specifier = ">=3.3.0,<4" },
+    { name = "pytest", specifier = ">=8.3.3,<9" },
+    { name = "pytest-asyncio", specifier = ">=0.24.0,<0.25" },
+]
+
+[[package]]
+name = "netdriver-agent"
+version = "0.4.0"
+source = { editable = "packages/agent" }
+dependencies = [
+    { name = "netdriver-core" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "netdriver-core", editable = "packages/core" }]
+
+[[package]]
+name = "netdriver-core"
+version = "0.4.0"
+source = { editable = "packages/core" }
 dependencies = [
     { name = "aiofiles" },
     { name = "asgi-correlation-id" },
@@ -354,13 +404,6 @@ dependencies = [
     { name = "six" },
     { name = "tabulate" },
     { name = "uvicorn" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pylint" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
 ]
 
 [package.metadata]
@@ -379,12 +422,16 @@ requires-dist = [
     { name = "uvicorn", specifier = ">=0.32.0,<0.33" },
 ]
 
-[package.metadata.requires-dev]
-dev = [
-    { name = "pylint", specifier = ">=3.3.0,<4" },
-    { name = "pytest", specifier = ">=8.3.3,<9" },
-    { name = "pytest-asyncio", specifier = ">=0.24.0,<0.25" },
+[[package]]
+name = "netdriver-simunet"
+version = "0.4.0"
+source = { editable = "packages/simunet" }
+dependencies = [
+    { name = "netdriver-core" },
 ]
+
+[package.metadata]
+requires-dist = [{ name = "netdriver-core", editable = "packages/core" }]
 
 [[package]]
 name = "packaging"

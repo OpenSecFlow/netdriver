@@ -7,8 +7,8 @@ from typing import Generator
 import pytest
 from fastapi.testclient import TestClient
 
-from netdriver.agent.main import app
-from netdriver.log import logman
+from netdriver_agent.main import app
+from netdriver_core.log import logman
 
 
 _ARG_MOCK_DEV = "--mock-dev"
@@ -16,12 +16,12 @@ _ARG_MOCK_DEV = "--mock-dev"
 # Configure simunet log for test environment
 # This needs to be called after agent.main import to add simunet log handler
 # Also need to update agent handler to exclude server logs
-from netdriver.log import logman as logman_module
+from netdriver_core.log import logman as logman_module
 
 # Remove the default agent handler and re-add with exclude filter
 if logman_module._logger_initialized:
     # Get current config from agent container
-    from netdriver.agent.containers import container as agent_container
+    from netdriver_agent.containers import container as agent_container
 
     # Remove existing handlers
     logman.logger.remove()
@@ -32,14 +32,14 @@ if logman_module._logger_initialized:
         level=agent_container.config.logging.level(),
         intercept_loggers=agent_container.config.logging.intercept_loggers(),
         log_file=agent_container.config.logging.log_file(),
-        exclude_filter="netdriver.server"
+        exclude_filter="netdriver_simunet.server"
     )
 
     # Add simunet handler
     logman.configure_logman(
         level="INFO",
         log_file="logs/simunet.log",
-        module_filter="netdriver.server"
+        module_filter="netdriver_simunet.server"
     )
 
 

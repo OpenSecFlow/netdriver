@@ -6,7 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 from fastapi import status
 
-from netdriver.exception.error_code import ErrorCode
+from netdriver_core.exception.error_code import ErrorCode
 
 _base_body = {
     "protocol": "ssh",

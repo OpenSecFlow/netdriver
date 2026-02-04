@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import pytest
-from netdriver.utils.terminal import simulate_output
+from netdriver_core.utils.terminal import simulate_output
 
 @pytest.mark.unit
 @pytest.mark.asyncio

@@ -222,8 +222,8 @@ components/netdriver/plugins/cisco/cisco_asa.py
 ### 2. Implement Plugin Class
 
 ```python
-from netdriver.plugin.plugin_info import PluginInfo
-from netdriver.plugins.cisco import CiscoBase
+from netdriver_agent.plugin.plugin_info import PluginInfo
+from netdriver_agent.plugins.cisco import CiscoBase
 
 class CiscoASA(CiscoBase):
     """Cisco ASA Firewall Plugin."""

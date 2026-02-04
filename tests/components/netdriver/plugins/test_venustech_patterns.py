@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from netdriver.plugins.venustech import VenustechBase
-from netdriver.utils import regex
+from netdriver_agent.plugins.venustech import VenustechBase
+from netdriver_core.utils import regex
 
 
 @pytest.mark.unit

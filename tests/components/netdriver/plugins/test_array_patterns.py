@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from netdriver.utils import regex
-from netdriver.plugins.array import ArrayBase
+from netdriver_core.utils import regex
+from netdriver_agent.plugins.array import ArrayBase
 
 
 @pytest.mark.unit

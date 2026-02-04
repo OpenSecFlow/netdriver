@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from netdriver.plugins.h3c import H3CBase
-from netdriver.utils import regex
+from netdriver_agent.plugins.h3c import H3CBase
+from netdriver_core.utils import regex
 
 
 @pytest.mark.unit

@@ -1,0 +1,77 @@
+#!/usr/bin/env python3.10.6
+# -*- coding: utf-8 -*-
+from asyncssh import SSHServerProcess
+
+from netdriver_simunet.server.handlers.arista.arista_eos import AristaEOSHandler
+from netdriver_simunet.server.handlers.array.array_ag import ArrayAGHandler
+from netdriver_simunet.server.handlers.chaitin.chaitin_ctdsg import ChaiTinCTDSGHandler
+from netdriver_simunet.server.handlers.check_point.check_point_gaia import CheckPointGaiaHandler
+from netdriver_simunet.server.handlers.cisco.cisco_asa import CiscoASAHandler
+from netdriver_simunet.server.handlers.cisco.cisco_nexus import CiscoNexusHandler
+from netdriver_simunet.server.handlers.command_handler import CommandHandler
+from netdriver_simunet.server.handlers.dptech.dptech_fw1000 import DptechFW1000Handler
+from netdriver_simunet.server.handlers.fortinet.fortinet_fortigate import FortinetFortigateHandler
+from netdriver_simunet.server.handlers.huawei.huawei_ce import HuaweiCEHandler
+from netdriver_simunet.server.handlers.huawei.huawei_usg import HuaweiUSGHandler
+from netdriver_simunet.server.handlers.hillstone.hillstone_sg6000 import HillstoneSG6000Handler
+from netdriver_simunet.server.handlers.h3c.h3c_secpath import H3CSecPathHandler
+from netdriver_simunet.server.handlers.h3c.h3c_vsr import H3CVsrHandler
+from netdriver_simunet.server.handlers.juniper.juniper_srx import JuniperSRXHandler
+from netdriver_simunet.server.handlers.juniper.juniper_ex import JuniperEXHandler
+from netdriver_simunet.server.handlers.maipu.maipu_nss import MaiPuNSSHandler
+from netdriver_simunet.server.handlers.paloalto.paloalto_pa import PaloaltoPAHandler
+from netdriver_simunet.server.handlers.qianxin.qianxin_nsg import QiAnXinNSGHandler
+from netdriver_simunet.server.handlers.topsec.topsec_ngfw import TopSecNGFWHandler
+from netdriver_simunet.server.handlers.venustech.venustech_usg import VenustechUSGHandler
+class CommandHandlerFactory:
+
+    @staticmethod
+    def create_handler(process: SSHServerProcess,
+                             vendor: str,
+                             model: str,
+                             version: str,
+                             conf_path: str = None) -> CommandHandler:
+        if CiscoNexusHandler.is_selectable(vendor, model, version):
+            return CiscoNexusHandler(process, conf_path)
+        elif ArrayAGHandler.is_selectable(vendor, model, version):
+            return ArrayAGHandler(process, conf_path)
+        elif HuaweiUSGHandler.is_selectable(vendor, model, version):
+            return HuaweiUSGHandler(process, conf_path)
+        elif HillstoneSG6000Handler.is_selectable(vendor, model, version):
+            return HillstoneSG6000Handler(process, conf_path)
+        elif CiscoASAHandler.is_selectable(vendor, model, version):
+            return CiscoASAHandler(process, conf_path)
+        elif H3CSecPathHandler.is_selectable(vendor, model, version):
+            return H3CSecPathHandler(process, conf_path)
+        elif H3CVsrHandler.is_selectable(vendor, model, version):
+            return H3CVsrHandler(process, conf_path)
+        elif DptechFW1000Handler.is_selectable(vendor, model, version):
+            return DptechFW1000Handler(process, conf_path)
+        elif JuniperSRXHandler.is_selectable(vendor, model, version):
+            return JuniperSRXHandler(process, conf_path)
+        elif JuniperEXHandler.is_selectable(vendor, model, version):
+            return JuniperEXHandler(process, conf_path)
+        elif MaiPuNSSHandler.is_selectable(vendor, model, version):
+            return MaiPuNSSHandler(process, conf_path)
+        elif QiAnXinNSGHandler.is_selectable(vendor, model, version):
+            return QiAnXinNSGHandler(process, conf_path)
+        elif VenustechUSGHandler.is_selectable(vendor, model, version):
+            return VenustechUSGHandler(process, conf_path)
+        elif ChaiTinCTDSGHandler.is_selectable(vendor, model, version):
+            return ChaiTinCTDSGHandler(process, conf_path)
+        elif TopSecNGFWHandler.is_selectable(vendor, model, version):
+            return TopSecNGFWHandler(process, conf_path)
+        elif AristaEOSHandler.is_selectable(vendor, model, version):
+            return AristaEOSHandler(process, conf_path)
+        elif CheckPointGaiaHandler.is_selectable(vendor, model, version):
+            return CheckPointGaiaHandler(process, conf_path)
+        elif FortinetFortigateHandler.is_selectable(vendor, model, version):
+            return FortinetFortigateHandler(process, conf_path)
+        elif PaloaltoPAHandler.is_selectable(vendor, model, version):
+            return PaloaltoPAHandler(process, conf_path)
+        elif HuaweiCEHandler.is_selectable(vendor, model, version):
+            return HuaweiCEHandler(process, conf_path)
+        elif AristaEOSHandler.is_selectable(vendor, model, version):
+            return AristaEOSHandler(process, conf_path)
+        else:
+            raise ValueError(f"Unsupported device: {vendor}:{model}:{version}")

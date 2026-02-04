@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from netdriver.utils import regex
-from netdriver.plugins.hillstone import HillstoneBase
+from netdriver_core.utils import regex
+from netdriver_agent.plugins.hillstone import HillstoneBase
 
 
 @pytest.mark.unit

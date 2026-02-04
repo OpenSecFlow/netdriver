@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from netdriver.utils import regex
-from netdriver.plugins.huawei import HuaweiBase
+from netdriver_core.utils import regex
+from netdriver_agent.plugins.huawei import HuaweiBase
 
 
 @pytest.mark.unit

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from netdriver.utils.string import is_blank
+from netdriver_core.utils.string import is_blank
 
 
 def test_is_blank():

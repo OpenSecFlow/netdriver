@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from netdriver.plugins.juniper import JuniperBase
-from netdriver.utils import regex
+from netdriver_agent.plugins.juniper import JuniperBase
+from netdriver_core.utils import regex
 
 
 @pytest.mark.unit

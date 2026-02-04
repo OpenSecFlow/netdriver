@@ -1,0 +1,47 @@
+[project]
+name = "netdriver-agent"
+version = "0.4.0"
+description = "The agent for NetDevOps, which interact with network device using CLI."
+authors = [
+    { name = "Vincent", email = "vincent@byntra.se" },
+    { name = "Bobby", email = "bobby@byntra.se" },
+    { name = "Sam", email = "sam@byntra.se" },
+    { name = "Mark", email = "mark@byntra.se" },
+]
+requires-python = ">=3.12,<4"
+license = "Apache-2.0"
+keywords = [
+    "network",
+    "automation",
+    "cli",
+    "ssh",
+    "device",
+    "driver",
+    "netdevops",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Telecommunications Industry",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Networking",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "netdriver-core",
+]
+
+[project.urls]
+Homepage = "https://github.com/OpenSecFlow/netdriver"
+Repository = "https://github.com/OpenSecFlow/netdriver"
+Documentation = "https://github.com/OpenSecFlow/netdriver#readme"
+
+[build-system]
+requires = ["uv_build>=0.9.17,<0.10.0"]
+build-backend = "uv_build"
