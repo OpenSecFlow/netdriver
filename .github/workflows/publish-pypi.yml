@@ -71,15 +71,15 @@ jobs:
             echo "Building $project..."
 
             # Clean and build
-            uv build --directory "projects/$project"
+            uv build --directory "packages/$project"
 
             # Publish
             if [ "$TARGET" = "testpypi" ]; then
               echo "Publishing $project to TestPyPI..."
-              uv publish --directory "projects/$project" --token "$TESTPYPI_TOKEN" --publish-url https://test.pypi.org/legacy/
+              uv publish --directory "packages/$project" --token "$TESTPYPI_TOKEN" --publish-url https://test.pypi.org/legacy/
             else
               echo "Publishing $project to PyPI..."
-              uv publish --directory "projects/$project" --token "$PYPI_TOKEN"
+              uv publish --directory "packages/$project" --token "$PYPI_TOKEN"
             fi
 
             echo "✓ Successfully published $project to $TARGET"
@@ -89,5 +89,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist-packages
-          path: projects/*/dist/*.whl
+          path: packages/*/dist/*.whl
           retention-days: 30

@@ -138,30 +138,30 @@ jobs:
         run: |
           VERSION=${{ needs.create-release.outputs.version }}
           echo "Updating netdriver-simunet version to $VERSION"
-          sed -i 's/^version = ".*"/version = "'$VERSION'"/' projects/simunet/pyproject.toml
+          sed -i 's/^version = ".*"/version = "'$VERSION'"/' packages/simunet/pyproject.toml
 
       - name: Build simunet
         run: |
           echo "Building netdriver-simunet..."
-          uv build --directory projects/simunet
+          uv build --directory packages/simunet
 
       - name: Check package metadata
         run: |
           uv pip install twine
-          twine check projects/simunet/dist/*.whl
+          twine check packages/simunet/dist/*.whl
 
       - name: Publish to PyPI
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           echo "Publishing netdriver-simunet to PyPI..."
-          uv publish --directory projects/simunet --token "$PYPI_TOKEN"
+          uv publish --directory packages/simunet --token "$PYPI_TOKEN"
 
       - name: Upload wheel to release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: simunet-${{ needs.create-release.outputs.version }}
-          files: projects/simunet/dist/*.whl
+          files: packages/simunet/dist/*.whl
 
   build-docker-image:
     name: Build and Push Simunet Docker Image
@@ -200,7 +200,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./projects/simunet/Dockerfile
+          file: ./packages/simunet/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

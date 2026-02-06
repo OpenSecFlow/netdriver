@@ -7,7 +7,7 @@ on:
     paths:
       - 'bases/**'
       - 'components/**'
-      - 'projects/**'
+      - 'packages/**'
       - 'pyproject.toml'
       - 'uv.lock'
       - 'tests/**'
@@ -16,7 +16,7 @@ on:
     paths:
       - 'bases/**'
       - 'components/**'
-      - 'projects/**'
+      - 'packages/**'
       - 'pyproject.toml'
       - 'uv.lock'
       - 'tests/**'
@@ -97,22 +97,22 @@ jobs:
       - name: Build ${{ matrix.project }}
         run: |
           echo "Building netdriver-${{ matrix.project }}..."
-          uv build --directory projects/${{ matrix.project }}
+          uv build --directory packages/${{ matrix.project }}
 
       - name: Check package metadata
         run: |
           uv pip install twine
-          twine check projects/${{ matrix.project }}/dist/*.whl
+          twine check packages/${{ matrix.project }}/dist/*.whl
 
       - name: Verify package contents
         run: |
-          python -m zipfile -l projects/${{ matrix.project }}/dist/*.whl
+          python -m zipfile -l packages/${{ matrix.project }}/dist/*.whl
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: netdriver-${{ matrix.project }}
-          path: projects/${{ matrix.project }}/dist/*.whl
+          path: packages/${{ matrix.project }}/dist/*.whl
           retention-days: 7
 
   verify:

@@ -138,30 +138,30 @@ jobs:
         run: |
           VERSION=${{ needs.create-release.outputs.version }}
           echo "Updating netdriver-agent version to $VERSION"
-          sed -i 's/^version = ".*"/version = "'$VERSION'"/' projects/agent/pyproject.toml
+          sed -i 's/^version = ".*"/version = "'$VERSION'"/' packages/agent/pyproject.toml
 
       - name: Build agent
         run: |
           echo "Building netdriver-agent..."
-          uv build --directory projects/agent
+          uv build --directory packages/agent
 
       - name: Check package metadata
         run: |
           uv pip install twine
-          twine check projects/agent/dist/*.whl
+          twine check packages/agent/dist/*.whl
 
       - name: Publish to PyPI
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           echo "Publishing netdriver-agent to PyPI..."
-          uv publish --directory projects/agent --token "$PYPI_TOKEN"
+          uv publish --directory packages/agent --token "$PYPI_TOKEN"
 
       - name: Upload wheel to release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: agent-${{ needs.create-release.outputs.version }}
-          files: projects/agent/dist/*.whl
+          files: packages/agent/dist/*.whl
 
   build-docker-image:
     name: Build and Push Agent Docker Image
@@ -200,7 +200,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./projects/agent/Dockerfile
+          file: ./packages/agent/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
