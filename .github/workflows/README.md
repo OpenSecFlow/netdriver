@@ -68,10 +68,10 @@ The project supports independent release workflows for agent and simunet:
 
 ```bash
 # Update agent version in pyproject.toml (optional, will be updated by workflow)
-sed -i 's/^version = ".*"/version = "1.0.0"/' projects/agent/pyproject.toml
+sed -i 's/^version = ".*"/version = "1.0.0"/' packages/agent/pyproject.toml
 
 # Commit version changes (optional)
-git add projects/agent/pyproject.toml
+git add packages/agent/pyproject.toml
 git commit -m "chore: bump agent version to 1.0.0"
 
 # Create and push agent tag
@@ -98,10 +98,10 @@ git push origin agent-1.0.0
 
 ```bash
 # Update simunet version in pyproject.toml (optional, will be updated by workflow)
-sed -i 's/^version = ".*"/version = "2.5.0"/' projects/simunet/pyproject.toml
+sed -i 's/^version = ".*"/version = "2.5.0"/' packages/simunet/pyproject.toml
 
 # Commit version changes (optional)
-git add projects/simunet/pyproject.toml
+git add packages/simunet/pyproject.toml
 git commit -m "chore: bump simunet version to 2.5.0"
 
 # Create and push simunet tag
@@ -165,13 +165,13 @@ Use this when you only need to release the agent:
 1. **Update version number** (optional):
 
    ```bash
-   sed -i 's/^version = ".*"/version = "1.0.0"/' projects/agent/pyproject.toml
+   sed -i 's/^version = ".*"/version = "1.0.0"/' packages/agent/pyproject.toml
    ```
 
 2. **Commit changes** (optional):
 
    ```bash
-   git add projects/agent/pyproject.toml
+   git add packages/agent/pyproject.toml
    git commit -m "chore: bump agent version to 1.0.0"
    git push origin master
    ```
@@ -197,13 +197,13 @@ Use this when you need to release simunet:
 1. **Update version number** (optional):
 
    ```bash
-   sed -i 's/^version = ".*"/version = "2.5.0"/' projects/simunet/pyproject.toml
+   sed -i 's/^version = ".*"/version = "2.5.0"/' packages/simunet/pyproject.toml
    ```
 
 2. **Commit changes** (optional):
 
    ```bash
-   git add projects/simunet/pyproject.toml
+   git add packages/simunet/pyproject.toml
    git commit -m "chore: bump simunet version to 2.5.0"
    git push origin master
    ```
@@ -235,8 +235,8 @@ To test publishing before official release:
 2. **Or use CLI**:
 
    ```bash
-   uv publish --directory projects/agent --publish-url https://test.pypi.org/legacy/ --token $TESTPYPI_TOKEN
-   uv publish --directory projects/simunet --publish-url https://test.pypi.org/legacy/ --token $TESTPYPI_TOKEN
+   uv publish --directory packages/agent --publish-url https://test.pypi.org/legacy/ --token $TESTPYPI_TOKEN
+   uv publish --directory packages/simunet --publish-url https://test.pypi.org/legacy/ --token $TESTPYPI_TOKEN
    ```
 
 3. **Verify on TestPyPI**:
@@ -413,7 +413,7 @@ jobs:
       - uses: astral-sh/setup-uv@v4
       - run: uv python install
       - run: uv sync
-      - run: uv build --directory projects/agent
+      - run: uv build --directory packages/agent
 ```
 
 **Benefits of using Docker image**:
@@ -452,7 +452,7 @@ netdriver/
 │       ├── agent/                  # REST API service
 │       └── simunet/                # Simulation network
 ├── components/                     # Shared components
-└── projects/
+└── packages/
     ├── agent/
     │   └── pyproject.toml
     └── simunet/
@@ -498,5 +498,5 @@ uv is pre-installed, so you can use it directly:
 ## References
 
 - [uv Documentation](https://docs.astral.sh/uv/)
-- [PyPI Publishing Guide](https://packaging.python.org/tutorials/packaging-projects/)
+- [PyPI Publishing Guide](https://packaging.python.org/tutorials/packaging-packages/)
 - [GitHub Actions - Python](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python)

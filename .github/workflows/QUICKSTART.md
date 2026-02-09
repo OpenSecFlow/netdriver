@@ -103,11 +103,11 @@ Before publishing to production PyPI, test with TestPyPI:
 
 ```bash
 # 1. Update version numbers
-sed -i 's/^version = ".*"/version = "0.3.1"/' projects/agent/pyproject.toml
-sed -i 's/^version = ".*"/version = "0.3.1"/' projects/simunet/pyproject.toml
+sed -i 's/^version = ".*"/version = "0.3.1"/' packages/agent/pyproject.toml
+sed -i 's/^version = ".*"/version = "0.3.1"/' packages/simunet/pyproject.toml
 
 # 2. Commit changes
-git add projects/*/pyproject.toml
+git add packages/*/pyproject.toml
 git commit -m "chore: bump version to 0.3.1"
 git push
 
@@ -157,8 +157,8 @@ The `release.yml` workflow will automatically:
 
 ```bash
 # Manually update version in pyproject.toml files
-sed -i 's/^version = ".*"/version = "0.3.2"/' projects/agent/pyproject.toml
-sed -i 's/^version = ".*"/version = "0.3.2"/' projects/simunet/pyproject.toml
+sed -i 's/^version = ".*"/version = "0.3.2"/' packages/agent/pyproject.toml
+sed -i 's/^version = ".*"/version = "0.3.2"/' packages/simunet/pyproject.toml
 # Then rebuild and publish
 ```
 
@@ -177,7 +177,7 @@ Or check the image name matches: `ghcr.io/opensecflow/netdriver/python-uv:3.12`
 **Solution:** Check build output - Polylith path warnings are normal, verify wheel contents:
 
 ```bash
-unzip -l projects/agent/dist/netdriver_agent-*.whl
+unzip -l packages/agent/dist/netdriver_agent-*.whl
 ```
 
 ## Best Practices
@@ -186,7 +186,7 @@ unzip -l projects/agent/dist/netdriver_agent-*.whl
 
 ✅ **DO:**
 
-- Keep version numbers in sync across `projects/agent/pyproject.toml` and `projects/simunet/pyproject.toml`
+- Keep version numbers in sync across `packages/agent/pyproject.toml` and `packages/simunet/pyproject.toml`
 - Use semantic versioning: `MAJOR.MINOR.PATCH`
 - Test on TestPyPI before production
 
@@ -199,7 +199,7 @@ unzip -l projects/agent/dist/netdriver_agent-*.whl
 ### Release Process
 
 1. Develop features on branches
-2. Test locally: `uv build --directory projects/agent`
+2. Test locally: `uv build --directory packages/agent`
 3. Create PR and verify build test passes
 4. Merge to master
 5. Test on TestPyPI

@@ -127,13 +127,13 @@ fi
 
 # Update version in pyproject.toml
 echo
-print_info "Updating version in projects/${PROJECT}/pyproject.toml to ${VERSION}..."
-sed -i '' "s/^version = \".*\"/version = \"${VERSION}\"/" "projects/${PROJECT}/pyproject.toml"
+print_info "Updating version in packages/${PROJECT}/pyproject.toml to ${VERSION}..."
+sed -i '' "s/^version = \".*\"/version = \"${VERSION}\"/" "packages/${PROJECT}/pyproject.toml"
 print_success "Version updated"
 
 # Commit version changes
 print_info "Committing version changes..."
-git add "projects/${PROJECT}/pyproject.toml"
+git add "packages/${PROJECT}/pyproject.toml"
 git commit -m "chore: bump ${PROJECT} version to ${VERSION}"
 print_success "Version changes committed"
 

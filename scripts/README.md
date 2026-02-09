@@ -37,7 +37,7 @@ A convenient script to create and push release tags.
 2. Checks prerequisites (git repository, uv installation)
 3. Verifies working directory is clean
 4. Verifies the tag doesn't already exist
-5. Updates version in `projects/<project>/pyproject.toml`
+5. Updates version in `packages/<project>/pyproject.toml`
 6. Commits the version change
 7. Creates an annotated git tag (e.g., `agent-0.3.5`)
 8. Pushes the commit and tag to remote
