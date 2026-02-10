@@ -128,11 +128,8 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v4
 
-      - name: Set up Python
-        run: uv python install
-
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --all-packages
 
       - name: Update agent version
         run: |
@@ -147,8 +144,7 @@ jobs:
 
       - name: Check package metadata
         run: |
-          uv pip install twine
-          twine check packages/agent/dist/*.whl
+          uv run twine check packages/agent/dist/*.whl
 
       - name: Publish to PyPI
         env:

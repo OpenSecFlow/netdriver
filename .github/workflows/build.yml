@@ -40,7 +40,7 @@ jobs:
         run: uv python install
 
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --all-packages
 
       - name: Run pylint
         run: |
@@ -88,11 +88,8 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v4
 
-      - name: Set up Python
-        run: uv python install
-
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --all-packages
 
       - name: Build ${{ matrix.project }}
         run: |
@@ -101,8 +98,7 @@ jobs:
 
       - name: Check package metadata
         run: |
-          uv pip install twine
-          twine check packages/${{ matrix.project }}/dist/*.whl
+          uv run twine check packages/${{ matrix.project }}/dist/*.whl
 
       - name: Verify package contents
         run: |
