@@ -2,6 +2,7 @@
 name = "netdriver-simunet"
 version = "0.4.0"
 description = "Simulated ssh server for network device, used for testing netdriver agent and client."
+readme = {file = "README.md", content-type = "text/markdown"}
 authors = [
     { name = "Vincent", email = "vincent@byntra.se" },
     { name = "Bobby", email = "bobby@byntra.se" },

@@ -94,7 +94,7 @@ jobs:
       - name: Build ${{ matrix.project }}
         run: |
           echo "Building netdriver-${{ matrix.project }}..."
-          uv build --directory packages/${{ matrix.project }}
+          uv build --directory packages/${{ matrix.project }} --out-dir dist/
 
       - name: Check package metadata
         run: |

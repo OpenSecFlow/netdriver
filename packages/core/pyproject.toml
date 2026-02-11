@@ -2,6 +2,7 @@
 name = "netdriver-core"
 version = "0.4.0"
 description = "The netdriver core package for NetDevOps, which interact with network device using CLI."
+readme = {file = "README.md", content-type = "text/markdown"}
 authors = [
     { name = "Vincent", email = "vincent@byntra.se" },
     { name = "Bobby", email = "bobby@byntra.se" },
