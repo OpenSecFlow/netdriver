@@ -16,8 +16,9 @@ WORKDIR /build
 # Copy project files
 COPY . .
 
-# Build the wheel using uv
-RUN uv build --directory packages/simunet --wheel
+# Build all workspace dependency wheels
+RUN uv build --directory packages/core --wheel \
+    && uv build --directory packages/simunet --wheel
 
 # Final stage
 FROM ghcr.io/astral-sh/uv:python3.12-trixie
@@ -37,7 +38,7 @@ RUN useradd -m -u 1000 netdriver
 WORKDIR /app
 
 # Copy built wheel and install it using uv
-COPY --from=builder /build/packages/simunet/dist/*.whl /tmp/
+COPY --from=builder /build/dist/*.whl /tmp/
 RUN uv pip install --system --no-cache /tmp/*.whl \
     && rm -rf /tmp/*.whl
 
