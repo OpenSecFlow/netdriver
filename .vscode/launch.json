@@ -7,7 +7,7 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "netdriver.agent.main:app",
+                "netdriver_agent.main:app",
                 "--host=0.0.0.0",
                 "--port=8000",
                 "--reload"
@@ -22,7 +22,7 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "netdriver.simunet.main:app",
+                "netdriver_simunet.main:app",
                 "--host=0.0.0.0",
                 "--port=8001",
                 "--reload"
