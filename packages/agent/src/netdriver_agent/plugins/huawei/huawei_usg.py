@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from netdriver_core import utils
-from netdriver_agent.client.mode import Mode
+from netdriver_core.dev.mode import Mode
 from netdriver_core.exception.errors import SwitchVsysFailed
 from netdriver_core.plugin.plugin_info import PluginInfo
 from netdriver_agent.plugins.huawei import HuaweiBase

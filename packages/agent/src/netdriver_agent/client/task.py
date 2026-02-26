@@ -4,7 +4,7 @@ import time
 from asyncio import Future
 from typing import List
 
-from netdriver_agent.client.mode import Mode
+from netdriver_core.dev.mode import Mode
 from netdriver_core.exception.errors import BaseError
 from netdriver_core.plugin.types import ConfigType
 

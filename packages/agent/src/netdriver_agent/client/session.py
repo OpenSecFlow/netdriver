@@ -15,7 +15,7 @@ from pydantic import IPvAnyAddress
 from netdriver_core import utils
 from netdriver_agent.client.channel import DEFAULT_SESSION_PROFILE, Channel, ReadBuffer
 from netdriver_agent.client.merger import Merger
-from netdriver_agent.client.mode import Mode
+from netdriver_core.dev.mode import Mode
 from netdriver_agent.client.task import CmdTask, CmdTaskResult, PullTask, PullTaskResult
 from netdriver_core.exception.errors import (ConnectTimeout, ExecCmdError, ExecCmdTimeout, ExecError, GetPromptFailed,
     LoginFailed, PullConfigFailed, QueueFullError, SessionInitFailed, UnsupportedConfigType)

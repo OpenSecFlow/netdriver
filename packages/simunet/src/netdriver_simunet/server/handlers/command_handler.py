@@ -7,7 +7,7 @@ from pathlib import Path
 import yaml
 from asyncssh import SSHServerProcess
 
-from netdriver_core.client.mode import Mode
+from netdriver_core.dev.mode import Mode
 from netdriver_core.log import logman
 from netdriver_simunet.server.models import DeviceBaseInfo, DeviceConfig
 

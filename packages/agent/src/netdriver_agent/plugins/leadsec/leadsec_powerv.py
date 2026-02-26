@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from math import log
-from netdriver_agent.client.mode import Mode
+from netdriver_core.dev.mode import Mode
 from netdriver_core.exception.errors import DetectCurrentModeFailed
 from netdriver_core.plugin.plugin_info import PluginInfo
 from netdriver_agent.plugins.leadsec import LeadsecBase

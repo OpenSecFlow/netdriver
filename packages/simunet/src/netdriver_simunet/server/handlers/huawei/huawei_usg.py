@@ -5,7 +5,7 @@ from enum import StrEnum
 from pathlib import Path
 import re
 from asyncssh import SSHServerProcess
-from netdriver_core.client.mode import Mode
+from netdriver_core.dev.mode import Mode
 from netdriver_core.exception.server import ClientExit
 from netdriver_simunet.server.handlers.command_handler import CommandHandler
 from netdriver_simunet.server.models import DeviceBaseInfo

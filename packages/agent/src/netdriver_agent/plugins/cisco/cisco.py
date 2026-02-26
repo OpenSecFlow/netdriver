@@ -3,7 +3,7 @@
 
 import re
 from netdriver_agent.client.channel import ReadBuffer
-from netdriver_agent.client.mode import Mode
+from netdriver_core.dev.mode import Mode
 from netdriver_core.exception.errors import EnableFailed
 from netdriver_core.plugin.plugin_info import PluginInfo
 from netdriver_agent.plugins.base import Base

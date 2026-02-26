@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, List
 from pydantic import BaseModel, model_validator
 
-from netdriver_core.client.mode import Mode
+from netdriver_core.dev.mode import Mode
 
 
 @dataclass
