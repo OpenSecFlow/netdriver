@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import asyncio
 from typing import Dict, List
-from netdriver_core.client.task import PullTask
+from netdriver_agent.client.task import PullTask
 
 
 class Merger:

@@ -5,9 +5,7 @@ description = "The agent for NetDevOps, which interact with network device using
 readme = {file = "README.md", content-type = "text/markdown"}
 authors = [
     { name = "Vincent", email = "vincent@byntra.se" },
-    { name = "Bobby", email = "bobby@byntra.se" },
     { name = "Sam", email = "sam@byntra.se" },
-    { name = "Mark", email = "mark@byntra.se" },
 ]
 requires-python = ">=3.12,<4"
 license = "Apache-2.0"
@@ -37,6 +35,13 @@ classifiers = [
 dependencies = [
     "netdriver-core",
     "netdriver-textfsm",
+    "fastapi>=0.115.2,<0.116",
+    "uvicorn>=0.32.0,<0.33",
+    "asgi-correlation-id>=4.3.4,<5",
+    "dependency-injector>=4.42.0,<5",
+    "asyncssh>=2.17.0,<3",
+    "tabulate>=0.9.0,<0.10",
+    "aiofiles>=24.1.0,<25",
 ]
 
 [project.scripts]

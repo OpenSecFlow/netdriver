@@ -6,8 +6,6 @@ readme = {file = "README.md", content-type = "text/markdown"}
 authors = [
     { name = "Vincent", email = "vincent@byntra.se" },
     { name = "Bobby", email = "bobby@byntra.se" },
-    { name = "Sam", email = "sam@byntra.se" },
-    { name = "Mark", email = "mark@byntra.se" },
 ]
 requires-python = ">=3.12,<4"
 license = "Apache-2.0"
@@ -36,6 +34,11 @@ classifiers = [
 ]
 dependencies = [
     "netdriver-core",
+    "fastapi>=0.115.2,<0.116",
+    "uvicorn>=0.32.0,<0.33",
+    "pyyaml>=6.0.2,<7",
+    "asyncssh>=2.17.0,<3",
+    "dependency-injector>=4.42.0,<5",
 ]
 
 [project.scripts]

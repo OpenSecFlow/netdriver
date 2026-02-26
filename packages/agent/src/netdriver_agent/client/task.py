@@ -4,9 +4,9 @@ import time
 from asyncio import Future
 from typing import List
 
-from netdriver_core.client.mode import Mode
+from netdriver_agent.client.mode import Mode
 from netdriver_core.exception.errors import BaseError
-from netdriver_agent.plugin.types import ConfigType
+from netdriver_core.plugin.types import ConfigType
 
 
 class TaskResult:

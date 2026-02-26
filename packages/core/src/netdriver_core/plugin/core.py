@@ -4,7 +4,7 @@
 from typing import List, Dict
 
 from netdriver_core.log import logman
-from netdriver_agent.plugin.plugin_info import PluginInfo
+from netdriver_core.plugin.plugin_info import PluginInfo
 
 
 log = logman.logger

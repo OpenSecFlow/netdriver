@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from netdriver_core import utils
-from netdriver_core.client.mode import Mode
+from netdriver_agent.client.mode import Mode
 from netdriver_core.exception.errors import DetectCurrentVsysFailed, SwitchVsysFailed
-from netdriver_agent.plugin.plugin_info import PluginInfo
+from netdriver_core.plugin.plugin_info import PluginInfo
 from netdriver_agent.plugins.fortinet import FortinetBase
 
 

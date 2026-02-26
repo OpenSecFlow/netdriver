@@ -5,7 +5,7 @@ import os
 import importlib
 import re
 from typing import List, Optional
-from netdriver_agent.plugin.core import IPluginRegistry, PluginCore
+from netdriver_core.plugin.core import IPluginRegistry, PluginCore
 from netdriver_core.log import logman
 
 
@@ -16,8 +16,8 @@ class PluginEngine:
     """ Plugin Engine Singleton Class """
     _instance = None
     # relative path to the plugins directory
-    # get upper dir/plugins
-    _plugins_dir = os.path.join(os.path.dirname(__file__), "..", "plugins")
+    # engine.py is now inside the plugins directory
+    _plugins_dir = os.path.dirname(__file__)
 
     def __new__(cls) -> "PluginEngine":
         if not cls._instance:

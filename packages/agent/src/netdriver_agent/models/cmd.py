@@ -5,7 +5,7 @@ from asgi_correlation_id import correlation_id
 from pydantic import BaseModel, Field
 
 from netdriver_agent.models.common import CommonRequest, CommonResponse
-from netdriver_core.client.mode import Mode
+from netdriver_agent.client.mode import Mode
 
 
 class CommandRet(BaseModel):

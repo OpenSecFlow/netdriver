@@ -13,14 +13,14 @@ from dependency_injector.providers import Configuration
 from pydantic import IPvAnyAddress
 
 from netdriver_core import utils
-from netdriver_core.client.channel import DEFAULT_SESSION_PROFILE, Channel, ReadBuffer
-from netdriver_core.client.merger import Merger
-from netdriver_core.client.mode import Mode
-from netdriver_core.client.task import CmdTask, CmdTaskResult, PullTask, PullTaskResult
+from netdriver_agent.client.channel import DEFAULT_SESSION_PROFILE, Channel, ReadBuffer
+from netdriver_agent.client.merger import Merger
+from netdriver_agent.client.mode import Mode
+from netdriver_agent.client.task import CmdTask, CmdTaskResult, PullTask, PullTaskResult
 from netdriver_core.exception.errors import (ConnectTimeout, ExecCmdError, ExecCmdTimeout, ExecError, GetPromptFailed,
     LoginFailed, PullConfigFailed, QueueFullError, SessionInitFailed, UnsupportedConfigType)
 from netdriver_core.log.logman import create_session_logger
-from netdriver_agent.plugin.types import ConfigType
+from netdriver_core.plugin.types import ConfigType
 from netdriver_core.utils.asyncu import AsyncTimeoutError, async_timeout
 
 

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 from netdriver_agent.models.common import CommonResponse
 from netdriver_agent.models.conn import ConnectRequest
-from netdriver_core.client.pool import SessionPool
-from netdriver_core.client.session import Session
+from netdriver_agent.client.pool import SessionPool
+from netdriver_agent.client.session import Session
 from netdriver_core.exception.errors import ConnectFailed
 
 

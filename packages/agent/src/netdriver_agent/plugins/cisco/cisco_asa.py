@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from netdriver_core.client.mode import Mode
-from netdriver_agent.plugin.plugin_info import PluginInfo
+from netdriver_agent.client.mode import Mode
+from netdriver_core.plugin.plugin_info import PluginInfo
 from netdriver_agent.plugins.cisco import CiscoBase
 
 

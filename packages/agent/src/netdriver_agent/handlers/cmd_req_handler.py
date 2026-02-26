@@ -4,10 +4,10 @@ from datetime import datetime
 from typing import List
 
 from netdriver_agent.models.cmd import CommandRequest, CommandResponse, CommandRet
-from netdriver_core.client.channel import ReadBuffer
-from netdriver_core.client.pool import SessionPool
-from netdriver_core.client.session import Session
-from netdriver_core.client.task import CmdTaskResult
+from netdriver_agent.client.channel import ReadBuffer
+from netdriver_agent.client.pool import SessionPool
+from netdriver_agent.client.session import Session
+from netdriver_agent.client.task import CmdTaskResult
 from netdriver_core.exception.error_code import ErrorCode
 from netdriver_core.exception.errors import ExecError
 from netdriver_textfsm import TextFSMParser

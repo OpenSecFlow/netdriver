@@ -16,8 +16,8 @@ from fastapi import FastAPI
 from netdriver_agent.api import rest
 from netdriver_agent.containers import container
 from netdriver_agent.handlers.error_handlers import global_exception_handlers
-from netdriver_core.client.pool import SessionPool
-from netdriver_agent.plugin.engine import PluginEngine
+from netdriver_agent.client.pool import SessionPool
+from netdriver_agent.plugins.engine import PluginEngine
 from netdriver_core.log import logman
 
 

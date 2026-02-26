@@ -3,8 +3,8 @@
 
 import re
 
-from netdriver_core.client.mode import Mode
-from netdriver_agent.plugin.plugin_info import PluginInfo
+from netdriver_agent.client.mode import Mode
+from netdriver_core.plugin.plugin_info import PluginInfo
 from netdriver_agent.plugins.base import Base
 
 

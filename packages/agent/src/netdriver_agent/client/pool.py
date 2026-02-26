@@ -5,10 +5,10 @@ from typing import Dict, Optional
 from pydantic import IPvAnyAddress
 from tabulate import tabulate
 from dependency_injector.providers import Configuration
-from netdriver_core.client.session import Session, gen_session_key
+from netdriver_agent.client.session import Session, gen_session_key
 from netdriver_core.exception.errors import PluginNotFound, SessionInitFailed
 from netdriver_core.log import logman
-from netdriver_agent.plugin.engine import PluginEngine
+from netdriver_agent.plugins.engine import PluginEngine
 
 
 log = logman.logger

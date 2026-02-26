@@ -3,11 +3,11 @@
 
 import abc
 import re
-from netdriver_core.client.channel import ReadBuffer
-from netdriver_core.client.mode import Mode
-from netdriver_core.client.session import Session
+from netdriver_agent.client.channel import ReadBuffer
+from netdriver_agent.client.mode import Mode
+from netdriver_agent.client.session import Session
 from netdriver_core.exception.errors import ConfigFailed, DetectCurrentModeFailed, DisableFailed, EnableFailed, ExitConfigFailed, UnsupportedMode
-from netdriver_agent.plugin.core import PluginCore
+from netdriver_core.plugin.core import PluginCore
 from netdriver_core.utils.asyncu import async_timeout
 
 
