@@ -10,7 +10,7 @@ from netdriver_core.client.session import Session
 from netdriver_core.client.task import CmdTaskResult
 from netdriver_core.exception.error_code import ErrorCode
 from netdriver_core.exception.errors import ExecError
-from netdriver_agent.textfsm import TextFSMParser
+from netdriver_textfsm import TextFSMParser
 from netdriver_core import utils
 
 

@@ -8,6 +8,7 @@ members = [
     "netdriver-agent",
     "netdriver-core",
     "netdriver-simunet",
+    "netdriver-textfsm",
 ]
 
 [[package]]
@@ -551,10 +552,14 @@ version = "0.4.0"
 source = { editable = "packages/agent" }
 dependencies = [
     { name = "netdriver-core" },
+    { name = "netdriver-textfsm" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "netdriver-core", editable = "packages/core" }]
+requires-dist = [
+    { name = "netdriver-core", editable = "packages/core" },
+    { name = "netdriver-textfsm", editable = "packages/textfsm" },
+]
 
 [[package]]
 name = "netdriver-core"
@@ -601,6 +606,17 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [{ name = "netdriver-core", editable = "packages/core" }]
+
+[[package]]
+name = "netdriver-textfsm"
+version = "0.4.0"
+source = { editable = "packages/textfsm" }
+dependencies = [
+    { name = "six" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "six", specifier = ">=1.16.0,<2" }]
 
 [[package]]
 name = "nh3"

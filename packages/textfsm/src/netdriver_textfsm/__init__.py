@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from io import StringIO
 from typing import Dict, List
-from netdriver_agent.textfsm import parser
+from netdriver_textfsm import parser
 
 __all__ = ["parser"]
 

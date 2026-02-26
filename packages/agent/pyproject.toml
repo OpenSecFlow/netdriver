@@ -36,6 +36,7 @@ classifiers = [
 ]
 dependencies = [
     "netdriver-core",
+    "netdriver-textfsm",
 ]
 
 [project.scripts]
