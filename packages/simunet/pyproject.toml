@@ -1,0 +1,54 @@
+[project]
+name = "netdriver-simunet"
+version = "0.4.0"
+description = "Simulated ssh server for network device, used for testing netdriver agent and client."
+readme = {file = "README.md", content-type = "text/markdown"}
+authors = [
+    { name = "Vincent", email = "vincent@byntra.se" },
+    { name = "Bobby", email = "bobby@byntra.se" },
+]
+requires-python = ">=3.12,<4"
+license = "Apache-2.0"
+keywords = [
+    "network",
+    "automation",
+    "cli",
+    "ssh",
+    "device",
+    "driver",
+    "netdevops",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Telecommunications Industry",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Networking",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "netdriver-core",
+    "fastapi>=0.115.2,<0.116",
+    "uvicorn>=0.32.0,<0.33",
+    "pyyaml>=6.0.2,<7",
+    "asyncssh>=2.17.0,<3",
+    "dependency-injector>=4.42.0,<5",
+]
+
+[project.scripts]
+simunet = "netdriver_simunet.main:start"
+
+[project.urls]
+Homepage = "https://github.com/OpenSecFlow/netdriver"
+Repository = "https://github.com/OpenSecFlow/netdriver"
+Documentation = "https://github.com/OpenSecFlow/netdriver#readme"
+
+[build-system]
+requires = ["uv_build>=0.9.17,<0.10.0"]
+build-backend = "uv_build"

@@ -200,14 +200,14 @@ After successful startup, you'll see output similar to:
 
 ```text
 λ › tail -f logs/agent.log                                                                                                                                             docker-instances/netdriver-agent main
-2025-10-31 09:51:12.594 +00:00 | INFO | - | netdriver.plugin.core:__init__:25 | registed plugin: array/base -> <class 'netdriver.plugins.array.array.ArrayBase'>
-2025-10-31 09:51:12.595 +00:00 | INFO | - | netdriver.plugin.core:__init__:25 | registed plugin: array/ag -> <class 'netdriver.plugins.array.array_ag.ArrayAG'>
-2025-10-31 09:51:12.595 +00:00 | INFO | - | netdriver.plugin.core:__init__:25 | registed plugin: chaitin/base -> <class 'netdriver.plugins.chaitin.chaitin.ChaiTinBase'>
-2025-10-31 09:51:12.595 +00:00 | INFO | - | netdriver.plugin.core:__init__:25 | registed plugin: chaitin/ctdsg.* -> <class 'netdriver.plugins.chaitin.chaitin_ctdsg.ChaiTinCTDSG'>
-2025-10-31 09:51:12.595 +00:00 | INFO | - | netdriver.plugin.core:__init__:25 | registed plugin: venustech/base -> <class 'netdriver.plugins.venustech.venustech.VenustechBase'>
-2025-10-31 09:51:12.596 +00:00 | INFO | - | netdriver.plugin.core:__init__:25 | registed plugin: venustech/usg.* -> <class 'netdriver.plugins.venustech.venustech_usg.VenustechUSG'>
-2025-10-31 09:51:12.596 +00:00 | INFO | - | netdriver.plugin.engine:_load_plugins:45 | Loaded 43 plugins.
-2025-10-31 09:51:12.596 +00:00 | INFO | - | netdriver.client.pool:__new__:28 | Creating SessionManager instance
+2025-10-31 09:51:12.594 +00:00 | INFO | - | netdriver_agent.plugin.core:__init__:25 | registed plugin: array/base -> <class 'netdriver_agent.plugins.array.array.ArrayBase'>
+2025-10-31 09:51:12.595 +00:00 | INFO | - | netdriver_agent.plugin.core:__init__:25 | registed plugin: array/ag -> <class 'netdriver_agent.plugins.array.array_ag.ArrayAG'>
+2025-10-31 09:51:12.595 +00:00 | INFO | - | netdriver_agent.plugin.core:__init__:25 | registed plugin: chaitin/base -> <class 'netdriver_agent.plugins.chaitin.chaitin.ChaiTinBase'>
+2025-10-31 09:51:12.595 +00:00 | INFO | - | netdriver_agent.plugin.core:__init__:25 | registed plugin: chaitin/ctdsg.* -> <class 'netdriver_agent.plugins.chaitin.chaitin_ctdsg.ChaiTinCTDSG'>
+2025-10-31 09:51:12.595 +00:00 | INFO | - | netdriver_agent.plugin.core:__init__:25 | registed plugin: venustech/base -> <class 'netdriver_agent.plugins.venustech.venustech.VenustechBase'>
+2025-10-31 09:51:12.596 +00:00 | INFO | - | netdriver_agent.plugin.core:__init__:25 | registed plugin: venustech/usg.* -> <class 'netdriver_agent.plugins.venustech.venustech_usg.VenustechUSG'>
+2025-10-31 09:51:12.596 +00:00 | INFO | - | netdriver_agent.plugin.engine:_load_plugins:45 | Loaded 43 plugins.
+2025-10-31 09:51:12.596 +00:00 | INFO | - | netdriver_core.client.pool:__new__:28 | Creating SessionManager instance
 2025-10-31 09:51:12.596 +00:00 | INFO | - | uvicorn.lifespan.on:startup:62 | Application startup complete.
 2025-10-31 09:51:12.596 +00:00 | INFO | - | uvicorn.server:_log_started_message:214 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 2025-10-31 09:51:17.448 +00:00 | INFO | 3df1be5d06f5456b80f5cb8a0dec5b1f | uvicorn.protocols.http.h11_impl:send:473 | 127.0.0.1:46318 - "GET /health HTTP/1.1" 200

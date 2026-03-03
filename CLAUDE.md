@@ -63,37 +63,33 @@ Sessions track device state including:
 
 ```bash
 # Install dependencies
-poetry install
-
-# Install Poetry plugins (if not already installed)
-poetry self add poetry-multiproject-plugin
-poetry self add poetry-polylith-plugin
+uv sync
 ```
 
 ### Running Services
 
 ```bash
 # Start agent service (REST API on http://localhost:8000)
-poetry run agent
+uv run agent
 
 # Start simulation network service (SSH servers on configured ports)
-poetry run simunet
+uv run simunet
 ```
 
 ### Testing
 
 ```bash
 # Run all tests
-poetry run pytest
+uv run pytest
 
 # Run unit tests only
-poetry run pytest -m unit
+uv run pytest -m unit
 
 # Run integration tests only
-poetry run pytest -m integration
+uv run pytest -m integration
 
 # Run specific test file
-poetry run pytest tests/bases/netdriver/agent/test_cisco_nexus.py
+uv run pytest tests/bases/netdriver/agent/test_cisco_nexus.py
 ```
 
 ### Configuration
@@ -123,8 +119,8 @@ Configuration files in `config/`:
 Example:
 
 ```python
-from netdriver.plugin.plugin_info import PluginInfo
-from netdriver.plugins.cisco import CiscoBase
+from netdriver_agent.plugin.plugin_info import PluginInfo
+from netdriver_agent.plugins.cisco import CiscoBase
 
 class CiscoNexus(CiscoBase):
     info = PluginInfo(
@@ -161,22 +157,22 @@ The agent uses `dependency-injector` (see `bases/netdriver/agent/containers.py`)
 
 ### Logging
 
-Uses Loguru configured via `netdriver.log.logman`:
+Uses Loguru configured via `netdriver_core.log.logman`:
 
 - Correlation ID middleware tracks requests (agent only)
 - Log levels configurable in respective config files
 - Log files are separated by service:
-  - Agent: `logs/agent.log` (excludes `netdriver.server` modules in test environment)
-  - Simunet: `logs/simunet.log` (only `netdriver.server` modules)
+  - Agent: `logs/agent.log` (excludes `netdriver_simunet.server` modules in test environment)
+  - Simunet: `logs/simunet.log` (only `netdriver_simunet.server` modules)
 - Intercepts uvicorn logs for unified output
 - Log rotation: 1 day, retention: 60 days
-- Module filtering: Uses `logger.patch()` in `netdriver.server.device` to ensure correct module identification
+- Module filtering: Uses `logger.patch()` in `netdriver_simunet.server.device` to ensure correct module identification
 - In test environment: Both handlers are configured to prevent log duplication
 
 ## Important Notes
 
 - Python 3.12+ required
-- Uses Poetry for dependency management
+- Uses uv for dependency management
 - All SSH operations are async (AsyncSSH-based)
 - Session keys format: `{protocol}:{username}@{ip}:{port}`
 - The agent runs with auto-reload enabled by default (suitable for development)

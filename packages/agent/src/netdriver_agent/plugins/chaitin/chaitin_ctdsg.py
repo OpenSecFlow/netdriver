@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from netdriver_core.plugin.plugin_info import PluginInfo
+from netdriver_agent.plugins.chaitin import ChaiTinBase
+
+
+# pylint: disable=abstract-method
+class ChaiTinCTDSG(ChaiTinBase):
+    """ ChaiTin CTDSG Plugin """
+
+    info = PluginInfo(
+            vendor="chaitin",
+            model="ctdsg.*",
+            version="base",
+            description="ChaiTin CTDSG Plugin"
+        )

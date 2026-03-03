@@ -84,8 +84,6 @@ jobs:
   test:
     name: Run tests
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/opensecflow/netdriver/python-poetry
     permissions:
       contents: read
       packages: read
@@ -94,31 +92,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Verify Poetry installation
-        run: |
-          poetry --version
-          poetry self show plugins
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        run: uv python install
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: uv sync
 
       - name: Run pylint
         run: |
           echo "Running pylint checks..."
-          poetry run pylint bases/netdriver/agent components/ --exit-zero --output-format=colorized || true
+          uv run pylint bases/netdriver/agent components/ --exit-zero --output-format=colorized || true
         continue-on-error: true
 
       - name: Run pytest for agent
         run: |
           echo "Running pytest for agent..."
-          poetry run pytest -v --tb=short --mock-dev
+          uv run pytest -v --tb=short --mock-dev
 
   build-and-publish:
     name: Build and Publish Agent to PyPI
     needs: [create-release, test]
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/opensecflow/netdriver/python-poetry
     permissions:
       contents: write
       packages: read
@@ -128,43 +125,39 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Verify Poetry installation
-        run: |
-          poetry --version
-          poetry self show plugins
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: uv sync --all-packages
 
       - name: Update agent version
         run: |
           VERSION=${{ needs.create-release.outputs.version }}
           echo "Updating netdriver-agent version to $VERSION"
-          poetry version $VERSION -C projects/agent
+          sed -i 's/^version = ".*"/version = "'$VERSION'"/' packages/agent/pyproject.toml
 
       - name: Build agent
         run: |
           echo "Building netdriver-agent..."
-          poetry build-project -C projects/agent --format wheel
+          uv build --directory packages/agent
 
       - name: Check package metadata
         run: |
-          pip install twine
-          twine check projects/agent/dist/*.whl
+          uv run twine check packages/agent/dist/*.whl
 
       - name: Publish to PyPI
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          poetry config pypi-token.pypi "$PYPI_TOKEN"
           echo "Publishing netdriver-agent to PyPI..."
-          poetry publish -C projects/agent --skip-existing
+          uv publish --directory packages/agent --token "$PYPI_TOKEN"
 
       - name: Upload wheel to release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: agent-${{ needs.create-release.outputs.version }}
-          files: projects/agent/dist/*.whl
+          files: packages/agent/dist/*.whl
 
   build-docker-image:
     name: Build and Push Agent Docker Image
@@ -203,7 +196,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./projects/agent/Dockerfile
+          file: ./packages/agent/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

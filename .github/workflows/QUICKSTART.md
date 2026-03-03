@@ -55,8 +55,8 @@ The `publish-pypi.yml` workflow uses a pre-built Docker image for faster executi
 **Or build locally:**
 
 ```bash
-docker build -t ghcr.io/opensecflow/netdriver/python-poetry:3.12 -f .github/Dockerfile.ci .
-docker push ghcr.io/opensecflow/netdriver/python-poetry:3.12
+docker build -t ghcr.io/opensecflow/netdriver/python-uv:3.12 -f .github/Dockerfile.ci .
+docker push ghcr.io/opensecflow/netdriver/python-uv:3.12
 ```
 
 **Note**: This only needs to be done once. The image will be cached and reused.
@@ -103,11 +103,11 @@ Before publishing to production PyPI, test with TestPyPI:
 
 ```bash
 # 1. Update version numbers
-poetry version -P projects/agent 0.3.1
-poetry version -P projects/simunet 0.3.1
+sed -i 's/^version = ".*"/version = "0.3.1"/' packages/agent/pyproject.toml
+sed -i 's/^version = ".*"/version = "0.3.1"/' packages/simunet/pyproject.toml
 
 # 2. Commit changes
-git add projects/*/pyproject.toml
+git add packages/*/pyproject.toml
 git commit -m "chore: bump version to 0.3.1"
 git push
 
@@ -156,12 +156,13 @@ The `release.yml` workflow will automatically:
 **Solution:** Version already exists on PyPI. Bump the version:
 
 ```bash
-poetry version -P projects/agent patch
-poetry version -P projects/simunet patch
+# Manually update version in pyproject.toml files
+sed -i 's/^version = ".*"/version = "0.3.2"/' packages/agent/pyproject.toml
+sed -i 's/^version = ".*"/version = "0.3.2"/' packages/simunet/pyproject.toml
 # Then rebuild and publish
 ```
 
-### Workflow fails with "Poetry not found" or image pull error
+### Workflow fails with "uv not found" or image pull error
 
 **Solution:** Build the CI Docker image first
 
@@ -169,14 +170,14 @@ poetry version -P projects/simunet patch
 # Go to Actions → "Build CI Image" → Run workflow
 ```
 
-Or check the image name matches: `ghcr.io/opensecflow/netdriver/python-poetry:3.12`
+Or check the image name matches: `ghcr.io/opensecflow/netdriver/python-uv:3.12`
 
 ### Package shows as "0 B" or malformed
 
 **Solution:** Check build output - Polylith path warnings are normal, verify wheel contents:
 
 ```bash
-unzip -l projects/agent/dist/netdriver_agent-*.whl
+unzip -l packages/agent/dist/netdriver_agent-*.whl
 ```
 
 ## Best Practices
@@ -185,7 +186,7 @@ unzip -l projects/agent/dist/netdriver_agent-*.whl
 
 ✅ **DO:**
 
-- Keep version numbers in sync across `projects/agent/pyproject.toml` and `projects/simunet/pyproject.toml`
+- Keep version numbers in sync across `packages/agent/pyproject.toml` and `packages/simunet/pyproject.toml`
 - Use semantic versioning: `MAJOR.MINOR.PATCH`
 - Test on TestPyPI before production
 
@@ -198,7 +199,7 @@ unzip -l projects/agent/dist/netdriver_agent-*.whl
 ### Release Process
 
 1. Develop features on branches
-2. Test locally: `poetry build-project -C projects/agent`
+2. Test locally: `uv build --directory packages/agent`
 3. Create PR and verify build test passes
 4. Merge to master
 5. Test on TestPyPI

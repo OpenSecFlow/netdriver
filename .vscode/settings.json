@@ -39,8 +39,11 @@
         "-s",
         "-v",
         "--mock-dev",
-        "tests"
+        "tests",
+        "packages/agent/tests",
+        "packages/core/tests",
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
+    "python.defaultInterpreterPath": ".venv/bin/python3"
 }

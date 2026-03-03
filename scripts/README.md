@@ -34,10 +34,10 @@ A convenient script to create and push release tags.
 ### What it does
 
 1. Validates input parameters
-2. Checks prerequisites (git repository, poetry installation)
+2. Checks prerequisites (git repository, uv installation)
 3. Verifies working directory is clean
 4. Verifies the tag doesn't already exist
-5. Updates version in `projects/<project>/pyproject.toml` using `poetry version`
+5. Updates version in `packages/<project>/pyproject.toml`
 6. Commits the version change
 7. Creates an annotated git tag (e.g., `agent-0.3.5`)
 8. Pushes the commit and tag to remote
@@ -84,7 +84,7 @@ git push origin :refs/tags/agent-0.3.5
 
 ### Prerequisites
 
-- **Poetry** installed and configured
+- **uv** installed and configured
 - **Git** configured and authenticated
 - Push permissions to the repository
 - **Clean working directory** (no uncommitted changes)

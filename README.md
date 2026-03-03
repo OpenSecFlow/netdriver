@@ -4,7 +4,7 @@
 <a name="top"></a>
 
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
-[![Poetry](https://img.shields.io/badge/Poetry-1.8.3-60A5FA.svg)](https://python-poetry.org/)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)](./LICENSE)
 [![Build & Test](https://github.com/OpenSecFlow/netdriver/actions/workflows/build.yml/badge.svg)](https://github.com/OpenSecFlow/netdriver/actions/workflows/build.yml)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)](./CONTRIBUTING.md)

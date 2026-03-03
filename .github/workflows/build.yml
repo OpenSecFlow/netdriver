@@ -7,26 +7,24 @@ on:
     paths:
       - 'bases/**'
       - 'components/**'
-      - 'projects/**'
+      - 'packages/**'
       - 'pyproject.toml'
-      - 'poetry.lock'
+      - 'uv.lock'
       - 'tests/**'
   push:
     branches: [master, main]
     paths:
       - 'bases/**'
       - 'components/**'
-      - 'projects/**'
+      - 'packages/**'
       - 'pyproject.toml'
-      - 'poetry.lock'
+      - 'uv.lock'
       - 'tests/**'
 
 jobs:
   test:
     name: Lint and Test
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/opensecflow/netdriver/python-poetry
     permissions:
       contents: read
       packages: read
@@ -35,30 +33,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Verify Poetry installation
-        run: |
-          poetry --version
-          poetry self show plugins
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        run: uv python install
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: uv sync --all-packages
 
       - name: Run pylint
         run: |
           echo "Running pylint checks..."
-          poetry run pylint bases/ components/ --exit-zero --output-format=colorized || true
+          uv run pylint bases/ components/ --exit-zero --output-format=colorized || true
         continue-on-error: true
 
       - name: Run unit test
         run: |
           echo "Running unit pytest..."
-          poetry run pytest -v --tb=short -m unit
+          uv run pytest -v --tb=short -m unit
 
 
       - name: Run integration test
         run: |
           echo "Running integration pytest..."
-          poetry run pytest -v --tb=short --mock-dev -m integration
+          uv run pytest -v --tb=short --mock-dev -m integration
 
       - name: Generate test summary
         if: always()
@@ -75,8 +74,6 @@ jobs:
     name: Build packages
     needs: test
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/opensecflow/netdriver/python-poetry
     permissions:
       contents: read
       packages: read
@@ -88,33 +85,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Verify Poetry installation
-        run: |
-          poetry --version
-          poetry self show plugins
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: uv sync --all-packages
 
       - name: Build ${{ matrix.project }}
         run: |
           echo "Building netdriver-${{ matrix.project }}..."
-          poetry build-project -C projects/${{ matrix.project }} --format wheel
+          uv build --directory packages/${{ matrix.project }} --out-dir dist/
 
       - name: Check package metadata
         run: |
-          pip install twine
-          twine check projects/${{ matrix.project }}/dist/*.whl
+          uv run twine check packages/${{ matrix.project }}/dist/*.whl
 
       - name: Verify package contents
         run: |
-          python -m zipfile -l projects/${{ matrix.project }}/dist/*.whl
+          python -m zipfile -l packages/${{ matrix.project }}/dist/*.whl
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: netdriver-${{ matrix.project }}
-          path: projects/${{ matrix.project }}/dist/*.whl
+          path: packages/${{ matrix.project }}/dist/*.whl
           retention-days: 7
 
   verify:

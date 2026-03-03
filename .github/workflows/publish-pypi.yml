@@ -21,9 +21,6 @@ jobs:
   publish:
     name: Publish Python packages
     runs-on: ubuntu-latest
-    # Use pre-built container with Python and Poetry installed
-    container:
-      image: ghcr.io/opensecflow/netdriver/python-poetry
     environment: ${{ github.event.inputs.environment || 'pypi' }}
     permissions:
       contents: read
@@ -34,13 +31,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Verify Poetry installation
-        run: |
-          poetry --version
-          poetry self show plugins
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        run: uv python install
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: uv sync
 
       - name: Determine projects to publish
         id: projects
@@ -73,17 +71,15 @@ jobs:
             echo "Building $project..."
 
             # Clean and build
-            poetry build-project -C "projects/$project" --format wheel
+            uv build --directory "packages/$project"
 
             # Publish
             if [ "$TARGET" = "testpypi" ]; then
               echo "Publishing $project to TestPyPI..."
-              poetry config pypi-token.testpypi "$TESTPYPI_TOKEN"
-              poetry publish -C "projects/$project" -r testpypi --skip-existing
+              uv publish --directory "packages/$project" --token "$TESTPYPI_TOKEN" --publish-url https://test.pypi.org/legacy/
             else
               echo "Publishing $project to PyPI..."
-              poetry config pypi-token.pypi "$PYPI_TOKEN"
-              poetry publish -C "projects/$project" --skip-existing
+              uv publish --directory "packages/$project" --token "$PYPI_TOKEN"
             fi
 
             echo "✓ Successfully published $project to $TARGET"
@@ -93,5 +89,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist-packages
-          path: projects/*/dist/*.whl
+          path: packages/*/dist/*.whl
           retention-days: 30

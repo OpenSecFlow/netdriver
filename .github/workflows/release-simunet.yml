@@ -84,8 +84,6 @@ jobs:
   test:
     name: Run tests
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/opensecflow/netdriver/python-poetry
     permissions:
       contents: read
       packages: read
@@ -94,31 +92,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Verify Poetry installation
-        run: |
-          poetry --version
-          poetry self show plugins
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        run: uv python install
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: uv sync
 
       - name: Run pylint
         run: |
           echo "Running pylint checks..."
-          poetry run pylint bases/netdriver/simunet components/ --exit-zero --output-format=colorized || true
+          uv run pylint bases/netdriver/simunet components/ --exit-zero --output-format=colorized || true
         continue-on-error: true
 
       - name: Run pytest for simunet
         run: |
           echo "Running pytest for simunet..."
-          poetry run pytest -v --tb=short --mock-dev
+          uv run pytest -v --tb=short --mock-dev
 
   build-and-publish:
     name: Build and Publish Simunet to PyPI
     needs: [create-release, test]
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/opensecflow/netdriver/python-poetry
     permissions:
       contents: write
       packages: read
@@ -128,43 +125,39 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Verify Poetry installation
-        run: |
-          poetry --version
-          poetry self show plugins
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: uv sync --all-packages
 
       - name: Update simunet version
         run: |
           VERSION=${{ needs.create-release.outputs.version }}
           echo "Updating netdriver-simunet version to $VERSION"
-          poetry version $VERSION -C projects/simunet
+          sed -i 's/^version = ".*"/version = "'$VERSION'"/' packages/simunet/pyproject.toml
 
       - name: Build simunet
         run: |
           echo "Building netdriver-simunet..."
-          poetry build-project -C projects/simunet --format wheel
+          uv build --directory packages/simunet
 
       - name: Check package metadata
         run: |
-          pip install twine
-          twine check projects/simunet/dist/*.whl
+          uv run twine check packages/simunet/dist/*.whl
 
       - name: Publish to PyPI
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          poetry config pypi-token.pypi "$PYPI_TOKEN"
           echo "Publishing netdriver-simunet to PyPI..."
-          poetry publish -C projects/simunet --skip-existing
+          uv publish --directory packages/simunet --token "$PYPI_TOKEN"
 
       - name: Upload wheel to release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: simunet-${{ needs.create-release.outputs.version }}
-          files: projects/simunet/dist/*.whl
+          files: packages/simunet/dist/*.whl
 
   build-docker-image:
     name: Build and Push Simunet Docker Image
@@ -203,7 +196,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./projects/simunet/Dockerfile
+          file: ./packages/simunet/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
