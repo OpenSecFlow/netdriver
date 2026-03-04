@@ -33,7 +33,7 @@ class H3CBase(Base):
     def get_ignore_error_patterns(self) -> list[re.Pattern]:
         return H3CBase.PatternHelper.get_ignore_error_patterns()
 
-    def get_auto_confirm_patterns(self) -> dict[str, re.Pattern]:
+    def get_auto_confirm_patterns(self) -> dict[re.Pattern, str]:
         return H3CBase.PatternHelper.get_auto_confirm_patterns()
 
     def get_mode_prompt_patterns(self) -> dict[Mode, re.Pattern]:
@@ -98,12 +98,12 @@ class H3CBase(Base):
             return [re.compile(regex_str, re.MULTILINE) for regex_str in regex_strs]
         
         @staticmethod
-        def get_auto_confirm_patterns() -> dict[str, re.Pattern]:
+        def get_auto_confirm_patterns() -> dict[re.Pattern, str]:
             return {
-                re.compile(r"The current configuration will be written to the device. Are you sure? \[Y\/N\]:", re.MULTILINE): "Y",
+                re.compile(r"The current configuration will be written to the device\. Are you sure\? \[Y\/N\]:", re.MULTILINE): "Y",
                 re.compile(r"\(To leave the existing filename unchanged, press the enter key\):", re.MULTILINE): "",
-                re.compile(r"flash:/startup.cfg exists, overwrite? \[Y\/N\]:", re.MULTILINE): "Y",
-                re.compile(r"Are you sure you want to continue the save operation? \[Y\/N\]:", re.MULTILINE): "Y"
+                re.compile(r"flash:\/startup\.cfg exists, overwrite\? \[Y\/N\]:", re.MULTILINE): "Y",
+                re.compile(r"Are you sure you want to continue the save operation\? \[Y\/N\]:", re.MULTILINE): "Y"
             }
 
         @staticmethod

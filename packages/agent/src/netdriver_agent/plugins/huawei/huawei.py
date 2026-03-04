@@ -33,7 +33,7 @@ class HuaweiBase(Base):
     def get_ignore_error_patterns(self) -> list[re.Pattern]:
         return HuaweiBase.PatternHelper.get_ignore_error_patterns()
     
-    def get_auto_confirm_patterns(self) -> dict[str, re.Pattern]:
+    def get_auto_confirm_patterns(self) -> dict[re.Pattern, str]:
         return HuaweiBase.PatternHelper.get_auto_confirm_patterns()
 
     def get_mode_prompt_patterns(self) -> dict[Mode, re.Pattern]:
@@ -120,9 +120,10 @@ class HuaweiBase(Base):
         @staticmethod
         def get_auto_confirm_patterns() -> dict[re.Pattern, str]:
             return {
-                re.compile(r"Are you sure to continue\?\[Y\/N\]: ", re.MULTILINE): "Y",
-                re.compile(r"startup saved-configuration file on peer device\?\[Y\/N\]: ", re.MULTILINE): "Y",
-                re.compile(r"Warning: The current configuration will be written to the device. Continue? \[Y\/N\]: ", re.MULTILINE): "Y",
+                re.compile(r"Are you sure to continue\?\[Y\/N\]", re.MULTILINE): "Y",
+                re.compile(r"startup saved-configuration file on peer device\?\[Y\/N\]", re.MULTILINE): "Y",
+                re.compile(r"Warning: The current configuration will be written to the device\. Continue\? \[Y\/N\]", re.MULTILINE): "Y",
+                re.compile(r"Warning: This command will invalidate the rule\. Continue\?\[Y\/N\]", re.MULTILINE): "Y"
             }
         
         @staticmethod

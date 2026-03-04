@@ -26,6 +26,7 @@ class HuaweiUSG(HuaweiBase):
         """ Register hooks for specific commands """
         self.register_hook("save", self.save)
         self.register_hook("save all", self.save)
+        self.register_hook("disable", self.save)
 
     def decide_current_vsys(self, prompt: str):
         """ Decide current vsys

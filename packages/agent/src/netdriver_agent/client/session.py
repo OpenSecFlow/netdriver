@@ -444,9 +444,8 @@ class Session:
 
     async def exec_cmd_hooks(self, command: str) -> str:
         """ Execute command hooks """
-        if command in self._cmd_hooks:
-            self._logger.info(f"Exec command hook for command: {command}")
-            return await self._cmd_hooks[command](command)
+        self._logger.info(f"Exec command hook for command: {command}")
+        return await self._cmd_hooks[command](command)
 
     async def exec_cmd(self, command: str) -> str:
         """

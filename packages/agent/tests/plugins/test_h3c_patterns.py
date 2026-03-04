@@ -71,3 +71,17 @@ async def test_error_catch(output: str):
     ignore_patterns = H3CBase.PatternHelper.get_ignore_error_patterns()
     error_str = regex.catch_error_of_output(output, error_patterns, ignore_patterns)
     assert error_str
+
+
+@pytest.mark.unit
+@pytest.mark.asyncio
+@pytest.mark.parametrize("output", [
+    ("The current configuration will be written to the device. Are you sure? [Y/N]:"),
+    ("(To leave the existing filename unchanged, press the enter key):"),
+    ("flash:/startup.cfg exists, overwrite? [Y/N]:"),
+    ("Are you sure you want to continue the save operation? [Y/N]:")
+])
+async def test_auto_confirm(output: str):
+    auto_confirm_patterns = H3CBase.PatternHelper.get_auto_confirm_patterns()
+    confirm_cmd = regex.catch_auto_confirm_of_output(output, auto_confirm_patterns)
+    assert confirm_cmd != None

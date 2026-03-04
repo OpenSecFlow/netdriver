@@ -98,7 +98,7 @@ class JuniperBase(Base):
         @staticmethod
         def get_auto_confirm_patterns() -> dict[re.Pattern, str]:
             return {
-                re.compile(r"Exit with uncommitted changes? [yes,no] (yes) ", re.MULTILINE): "yes"
+                re.compile(r"Exit with uncommitted changes\? \[yes,no\] \(yes\) ", re.MULTILINE): "yes"
             }
         
         @staticmethod

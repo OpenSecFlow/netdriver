@@ -38,6 +38,17 @@ def catch_error_of_output(output: str,
     return None
 
 
+def catch_auto_confirm_of_output(output: str, 
+                                 auto_confirm_patterns: dict[re.Pattern, str]) -> str | None:
+    log.debug("Catching auto confirm in output.")
+    output = output.replace("\r", "")
+    for pattern, confirm_cmd in auto_confirm_patterns.items():
+        if pattern.search(output):
+            return confirm_cmd
+    log.debug("No auto confirm found in output")
+    return None
+
+
 def remove_suffix(text: str, suffix: str) -> str:
     """ Remove suffix from text
     :param text: text

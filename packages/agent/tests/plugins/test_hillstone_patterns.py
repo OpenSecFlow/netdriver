@@ -71,3 +71,21 @@ async def test_error_catch(output: str):
     ignore_patterns = HillstoneBase.PatternHelper.get_ignore_error_patterns()
     error_str = regex.catch_error_of_output(output, error_patterns, ignore_patterns)
     assert error_str
+
+
+@pytest.mark.unit
+@pytest.mark.asyncio
+@pytest.mark.parametrize("output", [
+    ("Save configuration, are you sure? [y]/n: "),
+    ("Save configuration for all VSYS, are you sure? [y]/n: "),
+    ("Backup start configuration file, are you sure? y/[n]: "),
+    ("Backup all start configuration files, are you sure? y/[n]: "),
+    ("保存配置，请确认 [y]/n: "),
+    ("备份启动配置文件，请确认 y/[n]: "),
+    ("保存所有VSYS的配置，请确认 [y]/n: "),
+    ("备份所有启动配置文件，请确认 y/[n]: ")
+])
+async def test_auto_confirm(output: str):
+    auto_confirm_patterns = HillstoneBase.PatternHelper.get_auto_confirm_patterns()
+    confirm_cmd = regex.catch_auto_confirm_of_output(output, auto_confirm_patterns)
+    assert confirm_cmd != None

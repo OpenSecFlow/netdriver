@@ -33,7 +33,7 @@ class PaloaltoBase(Base):
     def get_ignore_error_patterns(self) -> list[re.Pattern]:
         return PaloaltoBase.PatternHelper.get_ignore_error_patterns()
 
-    def get_auto_confirm_patterns(self) -> dict[str, re.Pattern]:
+    def get_auto_confirm_patterns(self) -> dict[re.Pattern, str]:
         return PaloaltoBase.PatternHelper.get_auto_confirm_patterns()
 
     def get_mode_prompt_patterns(self) -> dict[Mode, re.Pattern]:
