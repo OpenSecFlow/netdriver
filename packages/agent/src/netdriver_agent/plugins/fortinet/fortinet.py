@@ -57,10 +57,10 @@ class FortinetBase(Base):
 
     class PatternHelper:
         """ Inner class for patterns """
-        # hostname # 
-        _PATTERN_ENABLE = r"^\r{0,1}\S+\s*#\s*$"
-        # hostname (root) #
-        _PATTERN_VSYS= r"^\r{0,1}\S+\s*\((\S+)\)\s*#\s*$"
+        # hostname # or hostname $
+        _PATTERN_ENABLE = r"^\r{0,1}\S+\s*(\(\S+\))?\s*(#|\$)\s*$"
+        # hostname (root) # or hostname (root) $
+        _PATTERN_VSYS= r"^\r{0,1}\S+\s*\((\S+)\)\s*(#|\$)\s*$"
         # --More--
         _PATTERN_MORE = r"--More--"
 
