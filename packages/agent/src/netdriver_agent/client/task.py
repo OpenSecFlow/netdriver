@@ -70,7 +70,7 @@ class CmdTask(Task):
                  timeout: float = 10, catch_error: bool = True, 
                  detail_output: bool = True, future: Future = None):
         super().__init__(vsys, timeout, catch_error, future)
-        self.command = command.strip()
+        self.command = command
         self.mode = mode
         self.detail_output = detail_output
 

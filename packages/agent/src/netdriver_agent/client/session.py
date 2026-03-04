@@ -322,7 +322,7 @@ class Session:
             line_size = len(lines)
             i = 0
             while not has_error and i < line_size:
-                line = lines[i]
+                line = lines[i].strip()
                 self._logger.info((f"Exec cmd[{i}]: {line}"))
                 output += await self.exec_cmd(line)
                 if task.catch_error:
@@ -471,7 +471,7 @@ class Session:
         line_size = len(lines)
         i = 0
         while i < line_size:
-            line = lines[i]
+            line = lines[i].strip()
             output += await self.exec_cmd(line)
             i += 1
         return output 
