@@ -30,6 +30,10 @@ session:
     # https://asyncssh.readthedocs.io/en/latest/api.html#supported-algorithms
     # enabled all algorithms by default, add extra algorithms if needed
     encryption_algs: []
+    # Set terminal size, optional item
+    term_size:
+      width: 1000
+      height: 100
   profiles:
     # global profile, used when no other profile matche
     global:
@@ -38,6 +42,9 @@ session:
       expiration_time: "16:00"
       # If the idle time exceeds the maximum, close the session. Unit: Seconds
       max_idle_time: 600.0
+      # https://asyncssh.readthedocs.io/en/stable/api.html#publickeyalgs
+      # A list of server host key algorithms to allow during the SSH handshake
+      server_host_key_algs: []
     # profile based on vendor/type/version, priority is higher than default
     vendor:
       cisco:
@@ -46,13 +53,16 @@ session:
             read_timeout: 60.0
             expiration_time: "16:00"
             max_idle_time: 600.0
+            server_host_key_algs: []
     #       9.8:
     #         read_timeout: 12.0
     #         expiration_time: "16:00"
     #         max_idle_time: 600.0
+    #         server_host_key_algs: []
     # profile based on IP address, priority is higher than vendor/type/version
     # ip:
     #   192.168.60.198:
     #     read_timeout: 15.0
     #     expiration_time: "16:00"
     #     max_idle_time: 600.0
+    #     server_host_key_algs: []

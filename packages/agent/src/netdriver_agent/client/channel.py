@@ -7,7 +7,7 @@ from re import Match, Pattern
 from typing import Optional, Tuple, List
 import asyncssh
 
-from netdriver_core.exception.errors import ChannelError, ChannelReadTimeout
+from netdriver_core.exception.errors import ChannelError
 from netdriver_core.log import logman
 from netdriver_core.utils.asyncu import async_timeout
 
@@ -95,19 +95,26 @@ _DEFAUTL_SSH_CONFIG = {
 _DEFAULT_READ_BUFFER_SIZE = 8192
 
 
-def update_ssh_config(kwargs: dict, config: Configuration) -> dict:
+def update_ssh_config(kwargs: dict, profile: dict, config: Configuration) -> dict:
     """ Update SSH configuration with defaults and provided parameters """
-    extra_kex_algs = set(config.session.ssh.kex_algs() or [])
-    extra_encryption_algs = (config.session.ssh.encryption_algs() or [])
+    ssh = config.session.ssh
+    extra_kex_algs = set(ssh.kex_algs() or [])
+    extra_encryption_algs = (ssh.encryption_algs() or [])
     ssh_config = _DEFAUTL_SSH_CONFIG.copy()
     ssh_config["kex_algs"] = list(ssh_config["kex_algs"].union(extra_kex_algs))
     ssh_config["encryption_algs"] = list(ssh_config["encryption_algs"].union(extra_encryption_algs))
-    ssh_config["login_timeout"] = config.session.ssh.login_timeout() or ssh_config["login_timeout"]
-    ssh_config["connect_timeout"] = config.session.ssh.connect_timeout() or ssh_config["connect_timeout"]
-    ssh_config["keepalive_interval"] = config.session.ssh.keepalive_interval() or ssh_config["keepalive_interval"]
-    ssh_config["keepalive_count_max"] = config.session.ssh.keepalive_count_max() or ssh_config["keepalive_count_max"]
+    ssh_config["login_timeout"] = ssh.login_timeout() or ssh_config["login_timeout"]
+    ssh_config["connect_timeout"] = ssh.connect_timeout() or ssh_config["connect_timeout"]
+    ssh_config["keepalive_interval"] = ssh.keepalive_interval() or ssh_config["keepalive_interval"]
+    ssh_config["keepalive_count_max"] = ssh.keepalive_count_max() or ssh_config["keepalive_count_max"]
+    server_host_key_algs = profile.get("server_host_key_algs", [])
+    if server_host_key_algs:
+        ssh_config["server_host_key_algs"] = server_host_key_algs
+    term_size = ()
     kwargs.update(ssh_config)
-    return kwargs
+    if ssh.term_size() and ssh.term_size.width() and ssh.term_size.height():
+        term_size = (ssh.term_size.width(), ssh.term_size.height())
+    return kwargs, term_size
 
 
 class Channel:
@@ -125,7 +132,6 @@ class Channel:
                  username: Optional[str] = None,
                  password: Optional[str] = None,
                  encode: str = "utf-8",
-                 term_size: Tuple = None,
                  logger: object = None,
                  profile: dict = {},
                  config: Configuration = None,
@@ -136,7 +142,7 @@ class Channel:
         cls._read_channel_until_timeout = profile.get("read_timeout", DEFAULT_SESSION_PROFILE.get("read_timeout", 10))
 
         if protocol == "ssh":
-            kwargs = update_ssh_config(kwargs, config)
+            kwargs, term_size = update_ssh_config(kwargs, profile, config)
             conn = await asyncssh.connect(
                 host=str(ip), port=port, username=username, password=password,
                 encoding=encode, **kwargs)
