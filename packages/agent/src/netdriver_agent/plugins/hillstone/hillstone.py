@@ -21,7 +21,6 @@ class HillstoneBase(Base):
 
     _CMD_CONFIG = "configure"
     _CMD_EXIT_CONFIG = "end"
-    _CMD_CANCEL_MORE = "terminal length 0"
     _SUPPORTED_MODES = [Mode.CONFIG, Mode.ENABLE]
 
     def get_union_pattern(self) -> re.Pattern:
