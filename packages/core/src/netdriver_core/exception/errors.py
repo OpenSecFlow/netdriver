@@ -66,13 +66,6 @@ class SessionInitFailed(BaseError):
         self.code = ErrorCode.SESSION_INIT_FAILED
 
 
-class UnsupportedConfigType(BaseError):
-    def __init__(self, msg: str = "Config type only supports: running, routes, hit_counts.") -> None:
-        super().__init__(msg)
-        self.status_code = 400
-        self.code = ErrorCode.UNSUPPORTED_CONFIG_TYPE
-
-
 class ExecError(BaseError):
     """ Base class for execute command error """
     output: str
@@ -170,13 +163,6 @@ class GetPromptFailed(ExecError):
         super().__init__(msg, output)
         self.status_code = 500
         self.code = ErrorCode.GET_PROMPT_FAILED
-
-
-class PullConfigFailed(ExecError):
-    def __init__(self, msg: str, output: str) -> None:
-        super().__init__(msg, output)
-        self.status_code = 500
-        self.code = ErrorCode.PULL_CONFIG_ERROR
 
 
 class UpdateTimeout(ExecError):

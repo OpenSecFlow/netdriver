@@ -14,13 +14,11 @@ from pydantic import IPvAnyAddress
 
 from netdriver_core import utils
 from netdriver_agent.client.channel import DEFAULT_SESSION_PROFILE, Channel, ReadBuffer
-from netdriver_agent.client.merger import Merger
 from netdriver_core.dev.mode import Mode
-from netdriver_agent.client.task import CmdTask, CmdTaskResult, PullTask, PullTaskResult
+from netdriver_agent.client.task import CmdTask, CmdTaskResult
 from netdriver_core.exception.errors import (ConnectTimeout, ExecCmdError, ExecCmdTimeout, ExecError, GetPromptFailed,
-    LoginFailed, PullConfigFailed, QueueFullError, SessionInitFailed, UnsupportedConfigType)
+    LoginFailed, QueueFullError, SessionInitFailed)
 from netdriver_core.log.logman import create_session_logger
-from netdriver_core.plugin.types import ConfigType
 from netdriver_core.utils.asyncu import AsyncTimeoutError, async_timeout
 
 
@@ -47,12 +45,6 @@ class Session:
     _config: Configuration
     _cmd_queue: Queue
     _cmd_task_consumer: asyncio.Task
-    _runconf_req_merger: Merger
-    _runconf_req_consumer: asyncio.Task
-    _route_req_merger: Merger
-    _route_req_consumer: asyncio.Task
-    _hitcount_req_merger: Merger
-    _route_req_consumer: asyncio.Task
     _channel: Channel
     # current mode
     _mode: Mode
@@ -125,22 +117,6 @@ class Session:
         """ Get more pattern and more command """
         raise NotImplementedError("Method get_more_pattern not implemented")
 
-    @abc.abstractmethod
-    async def pull_running_config(self, vsys: str = None) -> str:
-        """ Pull running config """
-        raise NotImplementedError("Method pull_running_config not implemented")
-
-    @abc.abstractmethod
-    async def pull_routes(self, vsys: str = None) -> str:
-        """ Pull routes """
-        raise NotImplementedError("Method pull_routes not implemented")
-
-    @abc.abstractmethod
-    async def pull_hitcounts(self, vsys: str = None) -> str:
-        """ Pull hit counts """
-        raise NotImplementedError("Method pull_hit_counts not implemented")
-
-
     @classmethod
     async def create(cls, *args, **kwargs) -> "Session":
         """ Create session
@@ -197,9 +173,6 @@ class Session:
         profiles = self._config.session.profiles() if self._config else {}
         self._session_profile = self.load_session_profile(profiles)
         self._cmd_queue = Queue(queue_size)
-        self._runconf_req_merger = Merger()
-        self._route_req_merger = Merger()
-        self._hitcount_req_merger = Merger()
         self._create_time = datetime.now().timestamp()
         self._last_use = None
         self._cmd_hooks = {}
@@ -269,12 +242,6 @@ class Session:
             await self._init_session()
             self._cmd_task_consumer = asyncio.create_task(self._consume_cmd_queue(),
                                                           name=f"{self.session_key}_cmd_consumer")
-            self._runconf_req_consumer = asyncio.create_task(self._consume_runconf_queue(),
-                                                             name=f"{self.session_key}_runconf_req_consumer")
-            self._route_req_consumer = asyncio.create_task(self._consume_routes_queue(),
-                                                           name=f"{self.session_key}_route_req_consumer")
-            self._hitcount_req_consumer = asyncio.create_task(self._consume_hitcounts_queue(),
-                                                              name=f"{self.session_key}_hitcount_req_consumer")
         except ConnectTimeout as e:
             raise e
         except ExecError as e:
@@ -409,85 +376,6 @@ class Session:
                 except Exception as e:
                     self._logger.warning("Called task_done too many times.")
 
-    async def _consume_runconf_queue(self):
-        self._logger.info(f"Start consuming runconf queue")
-        output: str = ""
-        while not self._is_closing:
-            task_dict = await self._runconf_req_merger.get_mergable_tasks()
-            if not task_dict:
-                continue
-            for vsys, tasks in task_dict.items():
-                output = None
-                exception = None
-                try:
-                    self._logger.info(f"Get [{len(tasks)}] pull_running_config tasks of {vsys}.")
-                    self._logger.info(f"Pulling running config.")
-                    output = await self.pull_running_config(vsys)
-                    self._logger.info(f"Pulled running config, length: [{len(output)}].")
-                except asyncio.CancelledError as e:
-                    self._logger.warning(f"_consume_runconf_queue cancelled: {e}", exc_info=True)
-                    break
-                except ExecError as exec_e:
-                    exec_e.output = output
-                    exception = exception
-                except BaseException as e:
-                    exception = PullConfigFailed(e, output=output)
-                finally:
-                    self._runconf_req_merger.set_mergable_tasks_result(tasks=tasks, output=output, exception=exception)
-            
-    async def _consume_routes_queue(self):
-        self._logger.info(f"Start consuming routes queue")
-        output: str = ""
-        while not self._is_closing:
-            task_dict = await self._route_req_merger.get_mergable_tasks()
-            if not task_dict:
-                continue
-            for vsys, tasks in task_dict.items():
-                output = None
-                exception = None
-                try:
-                    self._logger.info(f"Get [{len(tasks)}] pull_routes tasks of {vsys}.")
-                    self._logger.info(f"Pulling routes.")
-                    output = await self.pull_routes(vsys)
-                    self._logger.info(f"Pulled routes, length: [{len(output)}].")
-                except asyncio.CancelledError as e:
-                    self._logger.warning(f"_consume_routes_queue cancelled: {e}", exc_info=True)
-                    break
-                except ExecError as exec_e:
-                    exec_e.output = output
-                    exception = exec_e
-                except BaseException as e:
-                    exception = PullConfigFailed(e, output=output)
-                finally:
-                    self._route_req_merger.set_mergable_tasks_result(tasks=tasks, output=output, exception=exception)
-
-    async def _consume_hitcounts_queue(self):
-        self._logger.info(f"Start cosuming hitcountrs queue")
-        while not self._is_closing:
-            task_dict = await self._hitcount_req_merger.get_mergable_tasks()
-            if not task_dict:
-                continue
-            output = None
-            exception = None
-            for vsys, tasks in task_dict.items():
-                output = None
-                exception = None
-                try:
-                    self._logger.info(f"Get [{len(tasks)}] pull_hitcounts tasks of {vsys}.")
-                    self._logger.info(f"Pulling hit_counts.")
-                    output = await self.pull_hitcounts(vsys)
-                    self._logger.info(f"Pulled hit_counts, length: [{len(output)}].")
-                except asyncio.CancelledError as e:
-                    self._logger.warning(f"_consume_hitcounts_queue cancelled: {e}", exc_info=True)
-                    break
-                except ExecError as exec_e:
-                    exec_e.output = output
-                    exception = exec_e
-                except BaseException as e:
-                    exception = PullConfigFailed(e, output=output)
-                finally:
-                     self._hitcount_req_merger.set_mergable_tasks_result(tasks=tasks, output=output, exception=exception)
-
     async def _get_prompt(self, write_return: bool = True) -> str:
         """ Get current prompt """
         if write_return:
@@ -516,12 +404,6 @@ class Session:
             self._is_closing = True
             self._cmd_task_consumer.cancel()
             await self._cmd_queue.join()
-            self._runconf_req_consumer.cancel()
-            await self._runconf_req_merger.join()
-            self._route_req_consumer.cancel()
-            await self._route_req_merger.join()
-            self._hitcount_req_consumer.cancel()
-            await self._hitcount_req_merger.join()
         except Exception as e:
             self._logger.error(f"Error closing session {self.session_key}: {e}")   
         finally:
@@ -641,25 +523,6 @@ class Session:
         finally:
             task.cacnel()
             # del task
-
-    async def pull(self, type: ConfigType, vsys: str, timeout: float = 10.0) -> PullTaskResult:
-        """ Send request to pull queue
-        :param task: PullTask
-        :return: PullTaskResult
-        """
-        task: PullTask = PullTask(type=type, vsys=vsys, timeout=timeout,
-                        future=get_event_loop().create_future())
-        match task.type:
-            case ConfigType.RUNNING:
-                await self._runconf_req_merger.enqueue(task)
-            case ConfigType.ROUTE:
-                await self._route_req_merger.enqueue(task)
-            case ConfigType.HIT_COUNT:
-                await self._hitcount_req_merger.enqueue(task)
-            case _:
-                self._logger.warning(f"Unsupported config type: {task.type}")
-                task.set_result(exception=UnsupportedConfigType())
-        return await task.get_result()
 
     async def get_display_info(self) -> List[Any]:
         """Return session information."""
