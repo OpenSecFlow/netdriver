@@ -8,6 +8,7 @@ from re import Pattern
 from typing import Dict, Optional, List, Any, Tuple
 
 from asyncio import CancelledError, Queue, QueueFull, get_event_loop
+from asgi_correlation_id import correlation_id
 from asyncssh import PermissionDenied
 from dependency_injector.providers import Configuration
 from pydantic import IPvAnyAddress
@@ -363,6 +364,7 @@ class Session:
             task = await self._dequeue()
             if task is None:
                 continue
+            correlation_id.set(task.context_id)
             self._idle = False
             try:
                 # run task withtimeout

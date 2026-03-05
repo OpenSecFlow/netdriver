@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import time
 from asyncio import Future
-from typing import List
 
+from asgi_correlation_id import correlation_id
 from netdriver_core.dev.mode import Mode
 from netdriver_core.exception.errors import BaseError
 
@@ -65,6 +65,7 @@ class CmdTask(Task):
     mode: Mode
     command: str
     detail_output: bool
+    context_id: str
 
     def __init__(self, command: str, vsys: str = None, mode: Mode = None,
                  timeout: float = 10, catch_error: bool = True, 
@@ -73,6 +74,7 @@ class CmdTask(Task):
         self.command = command
         self.mode = mode
         self.detail_output = detail_output
+        self.context_id = correlation_id.get()
 
     def __str__(self):
         return f"[{self.command}|{self.vsys}|{self.mode}|{self.timeout}]"
