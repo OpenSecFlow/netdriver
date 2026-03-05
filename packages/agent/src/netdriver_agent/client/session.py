@@ -109,13 +109,18 @@ class Session:
 
     @abc.abstractmethod
     def get_auto_confirm_patterns(self) -> Dict[Pattern, str]:
-        """ Get auto confirm patterns and cmds"""
+        """ Get auto confirm patterns and cmds """
         raise NotImplementedError("Method get_auto_confirm_patterns not implemented")
 
     @abc.abstractmethod
     def get_more_pattern(self) -> Tuple[Pattern, str]:
         """ Get more pattern and more command """
         raise NotImplementedError("Method get_more_pattern not implemented")
+
+    @abc.abstractmethod
+    def get_ignore_password_change_patterns(self) -> dict[Pattern, str]:
+        """ Get pattern of all mode ignore password change prompts """
+        raise NotImplementedError("Method get_ignore_password_change_patterns not implemented")
 
     @classmethod
     async def create(cls, *args, **kwargs) -> "Session":
@@ -272,6 +277,7 @@ class Session:
 
     async def _init_session(self) -> None:
         self._logger.info(f"Init session")
+        await self._ignore_password_change()
         await self._decide_init_state()
         await self.disable_pagging()
         self._logger.info(f"Session init done")
@@ -573,38 +579,36 @@ class Session:
 
         return output.get_data()
 
-    async def get_runconf_templates(self) -> Dict[str, str]:
-        """ Get running config tempaltes
-        using aiofiles to load templates from ./{vendor}_{model} directory:
-        load all files which ends with .textfsm, and the filename should be runconf_{key}.textfsm,
-        content as value
-        :return: Dict[str, str]
-        """
-        directory = utils.files.get_plugin_dir(self)
-        return await utils.files.load_templates(
-            directory= f"{directory}/{self.info.vendor}_{self.info.model}", prefix="runconf")
+    @async_timeout(10)
+    async def _ignore_password_change(self, timeout: float = 10.0, auto_enter: bool = True) -> str:
+        """ Ignore password change """
+        self._logger.info("Ignore password change")
+        ignore_password_change_patterns = self.get_ignore_password_change_patterns()
+        output = ReadBuffer()
+        if ignore_password_change_patterns:
+            union_pattern = self.get_union_pattern()
+            pattern_count = len(ignore_password_change_patterns) + 1
+            while not self._channel.read_at_eof():
+                chunk = await self.read_channel()
+                output.append(chunk)
+                # make sure the last check should update the position
+                i = 1
+                is_update_pos = True if i == pattern_count else False
 
-    async def get_hitcounts_templates(self) -> Dict[str, str]:
-        """ Get hit counts tempaltes
-        using aiofiles to load templates from ./{vendor}_{model} directory:
-        load all files which ends with .textfsm, and the filename should be hitcounts_{key}.textfsm,
-        content as value
-        :return: Dict[str, str]
-        """
-        directory = utils.files.get_plugin_dir(self)
-        return await utils.files.load_templates(
-            directory= f"{directory}/{self.info.vendor}_{self.info.model}", prefix="hitcount")
+                i += 1
+                if union_pattern and output.check_pattern(union_pattern, is_update_pos):
+                    self._logger.info("Finished ignore password change")
+                    break
 
-    async def get_routes_templates(self) -> Dict[str, str]:
-        """ Get routes tempaltes
-        using aiofiles to load templates from ./{vendor}_{model} directory:
-        load all files which ends with .textfsm, and the filename should be routes_{key}.textfsm,
-        content as value
-        :return: Dict[str, str]
-        """
-        directory = utils.files.get_plugin_dir(self)
-        return await utils.files.load_templates(
-            directory= f"{directory}/{self.info.vendor}_{self.info.model}", prefix="route")
+                for pattern, cmd in ignore_password_change_patterns.items():
+                    is_update_pos = True if i == pattern_count else False
+                    i += 1
+                    if output.check_pattern(pattern, is_update_pos):
+                        self._logger.info(f"Matched ignore password change pattern: {pattern}, send ignore password change cmd: {cmd}")
+                        await self.write_channel(cmd, auto_enter=auto_enter)
+        else:
+          self._logger.info(f"Do not ignore password change")
+        return output.get_data()
 
     def check_idle_time(self) -> bool:
         """Check whether the session needs to be closed due to prolonged idle time"""

@@ -76,6 +76,9 @@ class Base(Session, PluginCore):
     def get_auto_confirm_patterns(self) -> dict[re.Pattern, str]:
         return {}
 
+    def get_ignore_password_change_patterns(self) -> dict[re.Pattern, str]:
+        return {}
+
     async def switch_mode(self, mode: Mode) -> str:
         """
         Switch to the target mode

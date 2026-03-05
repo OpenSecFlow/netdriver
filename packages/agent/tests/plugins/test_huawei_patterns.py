@@ -45,6 +45,8 @@ async def test_config_pattern():
     assert config_pattern.search("HRP_M[USG6000v]")
     assert config_pattern.search("HRP_S[USG6000v]")
     assert config_pattern.search("HRP_S[USG6000V2-object-address-set-test obj]")
+    assert not config_pattern.search("[Y/N]")
+    assert not config_pattern.search("[y/n]")
 
 
 @pytest.mark.unit
@@ -78,6 +80,8 @@ async def test_union_pattern():
     assert union_pattern.search("HRP_M[USG6000v]")
     assert union_pattern.search("HRP_S[USG6000v]")
     assert union_pattern.search("HRP_S[USG6000V2-object-address-set-test obj]")
+    assert not union_pattern.search("[Y/N]")
+    assert not union_pattern.search("[y/n]")
 
 
 @pytest.mark.unit
@@ -133,4 +137,15 @@ async def test_error_ignore(output: str):
 async def test_auto_confirm(output: str):
     auto_confirm_patterns = HuaweiBase.PatternHelper.get_auto_confirm_patterns()
     confirm_cmd = regex.catch_auto_confirm_of_output(output, auto_confirm_patterns)
+    assert confirm_cmd != None
+
+
+@pytest.mark.unit
+@pytest.mark.asyncio
+@pytest.mark.parametrize("output", [
+    ("The password needs to be changed, Continue? [Y/N]")
+])
+async def test_ignore_password_change(output: str):
+    ignore_password_change_patterns = HuaweiBase.PatternHelper.get_ignore_password_change_patterns()
+    confirm_cmd = regex.catch_auto_confirm_of_output(output, ignore_password_change_patterns)
     assert confirm_cmd != None

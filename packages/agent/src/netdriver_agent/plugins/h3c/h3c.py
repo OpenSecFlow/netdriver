@@ -44,7 +44,10 @@ class H3CBase(Base):
 
     def get_more_pattern(self) -> tuple[re.Pattern, str]:
         return (H3CBase.PatternHelper.get_more_pattern(), self._CMD_MORE)
-    
+
+    def get_ignore_password_change_patterns(self) -> dict[re.Pattern, str]:
+        return H3CBase.PatternHelper.get_ignore_password_change_patterns()
+
     async def _decide_init_state(self) -> str:
         """ Decide init state
         @override
@@ -109,3 +112,9 @@ class H3CBase(Base):
         @staticmethod
         def get_more_pattern() -> re.Pattern:
             return re.compile(H3CBase.PatternHelper._PATTERN_MORE, re.MULTILINE)
+
+        @staticmethod
+        def get_ignore_password_change_patterns() -> dict[re.Pattern, str]:
+            return {
+                re.compile(r"Your password will expire in \d+ days\. Do you want to change it\?", re.MULTILINE): "N"
+            }

@@ -88,3 +88,14 @@ async def test_auto_confirm(output: str):
     auto_confirm_patterns = H3CBase.PatternHelper.get_auto_confirm_patterns()
     confirm_cmd = regex.catch_auto_confirm_of_output(output, auto_confirm_patterns)
     assert confirm_cmd != None
+
+
+@pytest.mark.unit
+@pytest.mark.asyncio
+@pytest.mark.parametrize("output", [
+    ("Your password will expire in 30 days. Do you want to change it?")
+])
+async def test_ignore_password_change(output: str):
+    ignore_password_change_patterns = H3CBase.PatternHelper.get_ignore_password_change_patterns()
+    confirm_cmd = regex.catch_auto_confirm_of_output(output, ignore_password_change_patterns)
+    assert confirm_cmd != None
