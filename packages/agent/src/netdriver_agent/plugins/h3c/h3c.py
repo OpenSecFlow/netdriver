@@ -60,9 +60,9 @@ class H3CBase(Base):
     class PatternHelper:
         """ Inner class for patterns """
         # <hostname>
-        _PATTERN_ENABLE = r"^\r{0,1}(RBM_P|RBM_S)?<.+>\s*$"
+        _PATTERN_ENABLE = r"^\r{0,1}\x00{0,1}(RBM_P|RBM_S)?<.+>\s*$"
         # [hostname]
-        _PATTERN_CONFIG = r"^\r{0,1}(RBM_P|RBM_S)?\[.+\]\s*$"
+        _PATTERN_CONFIG = r"^\r{0,1}(RBM_P|RBM_S)?\[(?![Yy]\/[Nn]).+\]\s*$"
         # ---- More ----
         _PATTERN_MORE = r"---- More ----"
 
