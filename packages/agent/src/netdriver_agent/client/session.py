@@ -217,28 +217,37 @@ class Session:
                 self._logger.debug(f"Load session profile from ip: {self.ip}, profile: {profile}")
                 return profile
 
-        model_profile = profiles.get("vendor", {}).get(self.vendor, {}).get(self.model, {})
-        if model_profile:
-            version_profile = model_profile.get(self.version, {})
-            base_profile = model_profile.get("base", {})
-            # version specific profile is the #2 priority
-            if version_profile:
-                self._logger.debug(
-                    f"Load session profile from: {self.vendor}/{self.model}/{self.version}, profile: {version_profile}")
-                return version_profile
-            # base profile is the #3 priority
-            if base_profile:
-                self._logger.debug(
-                    f"Load session profile from: {self.vendor}/{self.model}/base, profile: {base_profile}")
-                return base_profile
+        vendor_profile = profiles.get("vendor", {}).get(self.vendor, {})
+        if vendor_profile:
+            model_profile = vendor_profile.get(self.model, {})
+            if model_profile:
+                # version specific profile is the #2 priority
+                version_profile = model_profile.get(self.version, {})
+                if version_profile:
+                    self._logger.debug(
+                        f"Load session profile from: {self.vendor}/{self.model}/{self.version}, profile: {version_profile}")
+                    return version_profile
+
+                # base profile is the #3 priority
+                base_profile = model_profile.get("base", {})
+                if base_profile:
+                    self._logger.debug(
+                        f"Load session profile from: {self.vendor}/{self.model}/base, profile: {base_profile}")
+                    return base_profile
+        # base model profile is the #4 priority
+        base_model_profile = vendor_profile.get('base', {})
+        if base_model_profile:
+            self._logger.debug(
+                f"Load session profile from: {self.vendor}/base/base, profile: {base_model_profile}")
+            return base_model_profile
 
         global_profile = profiles.get("global", {})
         if global_profile:
-            # Global profile is the #4 priority
+            # Global profile is the #5 priority
             self._logger.debug(f"Load session profile from global, profile: {global_profile}")
             return global_profile
         else:
-            # Default profile is the #5 priority
+            # Default profile is the #6 priority
             self._logger.debug(f"Load session profile from default, profile: {DEFAULT_SESSION_PROFILE}")
             return DEFAULT_SESSION_PROFILE
 
@@ -517,25 +526,6 @@ class Session:
             task.set_result(exception=QueueFullError(_msg))
 
         return await task.get_result()
-
-    async def send_cmd_only(self, command: str, vsys: str, mode: Mode):
-        """
-        Execute command in specific mode without output
-        :param command: command to execute, supoort multi-line command
-        :param vsys: vsys to execute, if not set, use current vsys
-        :param mode: mode to execute, if not set, use current mode
-
-        """
-        task: CmdTask = CmdTask(command, vsys=vsys, mode=mode)
-        try:
-            self._enqueue(task)
-        except QueueFull:
-            _msg = f"Send cmd failed! Session: {self.session_key} Cmd: [{ task }]; \
-                Reason: Queue is full, please retry or check the agent."
-            self._logger.error(_msg)
-        finally:
-            task.cacnel()
-            # del task
 
     async def get_display_info(self) -> List[Any]:
         """Return session information."""
