@@ -346,6 +346,10 @@ class Session:
             self._logger.info(f"Finished exec cmd task: {task}, cost: {time_consumed:.3f}s")
             task.set_result(output=output,
                             exception=ExecCmdError(err_msg, output=output) if has_error else None)
+        except asyncio.CancelledError as e:
+            self._logger.exception(e)
+            task.set_result(output=output, exception=ExecCmdTimeout(
+                msg=f"Exec timed out after {task.timeout} seconds", output=output))
         except AsyncTimeoutError as e:
             task.set_result(output=output, exception=e)
         except ExecError as e:
@@ -354,6 +358,7 @@ class Session:
             task.set_result(output=output, exception=e)
         except BaseException as e:
             # catch all exception
+            self._logger.exception(e)
             task.set_result(output=output, exception=ExecError(e, output=output))
         return output
 
@@ -373,6 +378,7 @@ class Session:
                 self._logger.warning(f"_consume_cmd_queue cancelled: {e}", exc_info=True)
                 break
             except asyncio.TimeoutError as e:
+                self._logger.exception(e)
                 task.set_result(output=output, exception=ExecCmdTimeout(e, output=output))
             except BaseException as e:
                 self._logger.exception(e)
