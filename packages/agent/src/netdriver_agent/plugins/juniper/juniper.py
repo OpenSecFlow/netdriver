@@ -90,8 +90,7 @@ class JuniperBase(Base):
         @staticmethod
         def get_ignore_error_patterns() -> list[re.Pattern]:
             regex_strs = [
-                r"warning: statement not found",
-                r"warning: element \S+ not found"
+                r"warning:.+"
             ]
             return [re.compile(regex_str, re.MULTILINE) for regex_str in regex_strs]
 

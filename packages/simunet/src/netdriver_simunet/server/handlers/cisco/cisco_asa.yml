@@ -813,6 +813,9 @@ modes:
     - cmd: "hostname cisco-asa"
       output: ""
 
+    - cmd: "terminal width 0"
+      output: ""
+
 common:
   - cmd: "show version"
     output: |

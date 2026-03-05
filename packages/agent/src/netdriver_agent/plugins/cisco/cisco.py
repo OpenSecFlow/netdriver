@@ -126,7 +126,7 @@ class CiscoBase(Base):
                 r"\^$",
                 r"^%.+",
                 r"^Command authorization failed.*",
-                r"^Command rejected:.*"
+                r"^Command rejected:.*",
                 r"ERROR:.+",
                 r"Invalid password",
                 r"Access denied.",

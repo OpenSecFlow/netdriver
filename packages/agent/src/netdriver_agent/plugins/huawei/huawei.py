@@ -96,24 +96,19 @@ class HuaweiBase(Base):
             regex_strs = [
                 # Address
                 r"Error: Address item conflicts!",
-                r"Error: The address item does not exist!",
                 r"Error: The delete configuration does not exist.",
                 r"Error: The address or address set is not created!",
                 # Service
                 r"Error: Cannot add! Service item conflicts or illegal reference!",
                 r"Error: The service item does not exist!",
                 r"Error: Service item conflicts!",
-                r"Error: The service item does not exist!",
                 r"Error: The service set is not created(.+)!",
-                # Schedule
-                r"Error: No such a time-range.",
                 # NAT
                 r"Error: The specified address-group does not exist.",
                 r"Error: The specified rule does not exist yet.",
                 # NetD
                 r"This condition has already been configured",
-                r"[a-zA-Z]* (item conflicts|Service item exists\.)",
-                r"Error: Worng parameter found at.*"
+                r"[a-zA-Z]* (item conflicts|Service item exists\.)"
             ]
             return [re.compile(regex_str, re.MULTILINE) for regex_str in regex_strs]
         
