@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field, IPvAnyAddress, field_validator, model_val
 
 
 _VENDOR_MODELS = {
-    "array": ["ag"],
+    "array": ["ag", "apv"],
     "cisco": ["nexus", "isr.*", "asr.*", "catalyst", "asa"],
     "huawei": ["usg.*", "ce.*"],
     "h3c": ["secpath", "vsr.*", "s5130s.*"],
