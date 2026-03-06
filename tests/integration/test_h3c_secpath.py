@@ -76,6 +76,7 @@ async def test_pull_config(test_client: TestClient, h3c_secpath_dev: dict):
     assert not response.json().get("err_msg")
     assert len(response.json().get("result")) == 1
 
+
 @pytest.mark.asyncio
 @pytest.mark.integration
 async def test_set_and_save(test_client: TestClient, h3c_secpath_dev: dict):

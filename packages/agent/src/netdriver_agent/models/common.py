@@ -10,7 +10,7 @@ _VENDOR_MODELS = {
     "array": ["ag"],
     "cisco": ["nexus", "isr.*", "asr.*", "catalyst", "asa"],
     "huawei": ["usg.*", "ce.*"],
-    "h3c": ["secpath", "vsr.*"],
+    "h3c": ["secpath", "vsr.*", "s5130s.*"],
     "hillstone": ["sg.*"],
     "juniper": ["ex.*", "qfx.*", "mx.*", "srx.*"],
     "paloalto": ["pa.*"],
@@ -22,7 +22,8 @@ _VENDOR_MODELS = {
     "qianxin": ["nsg.*"],
     "venustech": ["usg.*"],
     "chaitin": ["ctdsg.*"],
-    "topsec": ["ngfw.*"]
+    "topsec": ["ngfw.*"],
+    "leadsec": ["power.*"]
 }
 _VENDOR_PATTERNS = "|".join(_VENDOR_MODELS.keys())
 _models = set()

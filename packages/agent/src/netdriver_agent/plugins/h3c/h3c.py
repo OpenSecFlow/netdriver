@@ -91,7 +91,9 @@ class H3CBase(Base):
                 r".+%.+",
                 r".+doesn't exist.+",
                 r".+does not exist.+",
-                r"Object group with given name exists with different type."
+                r"Object group with given name exists with different type.",
+                r"Permission denied.",
+                r"Failed to apply .+"
             ]
             return [re.compile(regex_str, re.MULTILINE) for regex_str in regex_strs]
 
