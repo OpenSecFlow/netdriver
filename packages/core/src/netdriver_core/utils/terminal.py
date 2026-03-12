@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+import re
+
+
 def simulate_output(input: str) -> str:
     """ Simulate the terminal to handle char stream and get the compressed output
     Input:
@@ -62,3 +66,39 @@ def simulate_output(input: str) -> str:
 
 def is_carry_return(escape: str) -> bool:
     return escape == "\r\r\n" or escape == "\r\n"
+
+
+def oct_to_chinese(oct_str: str, encoding: str ="gbk") -> str:
+    oct_parts = [p for p in oct_str.split("\\") if p]
+    valid_bytes = []
+    for part in oct_parts:
+        dec_val = int(part, 8) % 256
+        valid_bytes.append(dec_val)
+
+    bytes_data = bytes(valid_bytes)
+    return bytes_data.decode(encoding, errors="ignore")
+
+
+def simulate_output_oct_to_chinese(output: str, encoding: str ="gbk") -> str:
+    """ Simulate the terminal to handle octal to Chinese conversion """
+    if not output:
+        return output
+    oct_pattern = r"(\\\d{3})+"
+    start = 0
+    end = 0
+    result = []
+    for match in re.finditer(oct_pattern, output):
+        oct_str = match.group()
+        start = match.start()
+        if end == 0:
+            result.append(output[:start])
+        else:
+            result.pop()
+            result.append(output[end:start])
+        try:
+            result.append(oct_to_chinese(oct_str=oct_str, encoding=encoding))
+        except Exception:
+            result.append(oct_str)
+        end = match.end()
+        result.append(output[end:])
+    return "".join(result) if result else output

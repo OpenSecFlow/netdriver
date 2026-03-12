@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 from abc import abstractmethod
 from dependency_injector.providers import Configuration
+from netdriver_core.utils.terminal import simulate_output, simulate_output_oct_to_chinese
 from pydantic import IPvAnyAddress
 from re import Match, Pattern
 from typing import Optional, Tuple, List
 import asyncssh
+import re
 
 from netdriver_core.exception.errors import ChannelError
 from netdriver_core.log import logman
@@ -148,7 +151,7 @@ class Channel:
                 encoding=encode, **kwargs)
             terminal = await conn.create_process(term_type="ansi", term_size=term_size)
             terminal.stdout.channel.set_encoding(encoding=encode, errors='replace')
-            return SSHChannel(conn, terminal, logger=logger)
+            return SSHChannel(conn, terminal, logger=logger, encode=encode)
         else:
             raise ValueError(f"protocol {protocol} not supported.")
 
@@ -201,11 +204,13 @@ class SSHChannel(Channel):
 
     def __init__(self, conn: asyncssh.SSHClientConnection,
                  terminal: asyncssh.SSHClientProcess,
-                 logger: object = None) -> None:
+                 logger: object = None,
+                 encode: str = "utf-8") -> None:
         """ SSH Channel """
         self._conn = conn
         self._terminal = terminal
         self._logger = logger
+        self._encode = encode
 
     def _check_channel(self):
         if not self._conn:
@@ -241,7 +246,7 @@ class SSHChannel(Channel):
         :return: str, the data read from the channel
         """
         self._check_channel()
-        output = ReadBuffer(cmd=cmd)
+        output = ReadBuffer(cmd=cmd, encode=self._encode)
         while not self.read_at_eof():
             chunk = await self.read_channel(self._read_buffer_size)
             output.append(chunk)
@@ -282,20 +287,74 @@ class ReadBuffer:
     _cmd: str
     _is_cmd_displayed: bool = False
 
-    def __init__(self, cmd: str = '', line_break: str = '\n') -> None:
+    def __init__(self, cmd: str = '', line_break: str = '\n', encode: str = None) -> None:
         """ Initialize read buffer """
         self._buffer = []
         self._last_line_pos = (0, 0)
         self._line_break = line_break
         self._cmd = cmd
         self._is_cmd_displayed = False
+        self._encode = encode
 
-    def _check_cmd_displayed(self, line: str = '') -> bool:
+    def _check_cmd_displayed(self, pattern: Pattern, line: str = '') -> bool:
         if not self._is_cmd_displayed and self._cmd and line:
             # check if the command is displayed in the line
-            if self._cmd in line:
+            if self._cmd_in_line(pattern, line):
                 self._is_cmd_displayed = True
                 log.trace(f"Command '{self._cmd}' is displayed in the line: {line}")
+
+    def _cmd_in_line(self, pattern: Pattern, line: str = '') -> bool:
+        """check if the line contains cmd"""
+
+        log.trace(f"Line repr = {repr(line)}")
+        log.trace(f"Line escape = {line.encode('unicode_escape').decode('ascii')}")
+
+        # Topsec output extra ' \r' char
+        # Fortinet output extra ' \x08' char
+        if self._cmd in re.sub(r'\s[\r\x08]', '', line):
+            return True
+
+        # Juniper input extra spaces, and the output will remove the extra spaces
+        if self._cmd.replace(' ', '') in re.sub(r'[\x07\s]', '', line):
+            return True
+
+        # Fortinet input Chinese and output octal char
+        chinese = simulate_output_oct_to_chinese(output=line, encoding=self._encode)
+        log.trace(f"Line oct to chinese: {repr(chinese)}")
+        if self._cmd in chinese:
+            return True
+
+        # Line Remove prompt
+        for index in range(1, len(line)):
+            if re.match(pattern, line[:index]):
+                line = line[index:].lstrip()
+                break
+        log.trace(f"Line remove prompt = {repr(line)}")
+
+        # Topsec chinese escape failed, character ignored
+        if '\ufffd' in line:
+            line_splits = re.sub(r"(\s\r|\r\n)", '', line).split('\ufffd')
+            log.trace(f"Line split by \\ufffd = {line_splits}")
+            for line_split in line_splits:
+                if line_split not in self._cmd:
+                    return False
+            return True
+
+        line = simulate_output(line)
+        log.trace(f"Line simulate output = {repr(line)}")
+
+        # Line simulate output remove prompt
+        for index in range(1, len(line)):
+            if re.match(pattern, line[:index]):
+                line = line[index:].lstrip()
+                break
+        log.trace(f"Line simulate output remove prompt = {repr(line)}")
+
+        # Array or Cisco display ultra wide processing
+        if '$' in line and line.replace('\x08', '').split('$')[0] in self._cmd:
+            return True
+
+        return False
     
     def _is_real_prompt(self) -> bool:
         if self._cmd:
@@ -338,7 +397,7 @@ class ReadBuffer:
             while lb_pos != -1:
                 # found a line break, concat the line
                 line = ''.join([line, self._buffer[i][line_start_pos:lb_pos], self._line_break])
-                self._check_cmd_displayed(line)
+                self._check_cmd_displayed(pattern, line)
                 line_start_pos = lb_pos + len(self._line_break)
                 log.trace(f"Checking buffer[{i}][:{line_start_pos}]: {line}")
                 matched = pattern.search(line)
@@ -356,7 +415,7 @@ class ReadBuffer:
             
             # no line break found, check the rest of buffer item
             line = ''.join([line, self._buffer[i][line_start_pos:]])
-            self._check_cmd_displayed(line)
+            self._check_cmd_displayed(pattern, line)
             line_start_pos += len(line)
             if i == buffer_size - 1:
                 # if no line break found and no more buffer, check the last line
