@@ -90,15 +90,14 @@ class JuniperBase(Base):
         @staticmethod
         def get_ignore_error_patterns() -> list[re.Pattern]:
             regex_strs = [
-                r"warning: statement not found",
-                r"warning: element \S+ not found"
+                r"warning:.+"
             ]
             return [re.compile(regex_str, re.MULTILINE) for regex_str in regex_strs]
 
         @staticmethod
         def get_auto_confirm_patterns() -> dict[re.Pattern, str]:
             return {
-                re.compile(r"Exit with uncommitted changes? [yes,no] (yes) ", re.MULTILINE): "yes"
+                re.compile(r"Exit with uncommitted changes\? \[yes,no\] \(yes\) ", re.MULTILINE): "yes"
             }
         
         @staticmethod

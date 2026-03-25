@@ -19,7 +19,7 @@ class TopSecBase(Base):
         description="TopSec Base Plugin"
     )
 
-    SUPPORTED_MODES = [Mode.ENABLE]
+    _SUPPORTED_MODES = [Mode.ENABLE]
 
     def get_union_pattern(self) -> re.Pattern:
         return TopSecBase.PatternHelper.get_union_pattern()

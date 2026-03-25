@@ -41,8 +41,8 @@ class CheckPointBase(Base):
 
     class PatternHelper:
         """ Inner class for patterns """
-        # hostname>
-        _PATTERN_ENABLE = r"^\r{0,1}\S+\s*>\s*$"
+        # hostname> or [Global] hostname> or [WARNING! Local Member] hostname>
+        _PATTERN_ENABLE = r"^\r{0,1}(\[.+\])?\s*\S+\s*>\s*$"
         # -- More --
         _PATTERN_MORE = r"-- More --"
 

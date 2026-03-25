@@ -8,19 +8,18 @@ from re import Pattern
 from typing import Dict, Optional, List, Any, Tuple
 
 from asyncio import CancelledError, Queue, QueueFull, get_event_loop
+from asgi_correlation_id import correlation_id
 from asyncssh import PermissionDenied
 from dependency_injector.providers import Configuration
 from pydantic import IPvAnyAddress
 
 from netdriver_core import utils
 from netdriver_agent.client.channel import DEFAULT_SESSION_PROFILE, Channel, ReadBuffer
-from netdriver_agent.client.merger import Merger
 from netdriver_core.dev.mode import Mode
-from netdriver_agent.client.task import CmdTask, CmdTaskResult, PullTask, PullTaskResult
+from netdriver_agent.client.task import CmdTask, CmdTaskResult
 from netdriver_core.exception.errors import (ConnectTimeout, ExecCmdError, ExecCmdTimeout, ExecError, GetPromptFailed,
-    LoginFailed, PullConfigFailed, QueueFullError, SessionInitFailed, UnsupportedConfigType)
+    LoginFailed, QueueFullError, SessionInitFailed)
 from netdriver_core.log.logman import create_session_logger
-from netdriver_core.plugin.types import ConfigType
 from netdriver_core.utils.asyncu import AsyncTimeoutError, async_timeout
 
 
@@ -47,12 +46,6 @@ class Session:
     _config: Configuration
     _cmd_queue: Queue
     _cmd_task_consumer: asyncio.Task
-    _runconf_req_merger: Merger
-    _runconf_req_consumer: asyncio.Task
-    _route_req_merger: Merger
-    _route_req_consumer: asyncio.Task
-    _hitcount_req_merger: Merger
-    _route_req_consumer: asyncio.Task
     _channel: Channel
     # current mode
     _mode: Mode
@@ -117,7 +110,7 @@ class Session:
 
     @abc.abstractmethod
     def get_auto_confirm_patterns(self) -> Dict[Pattern, str]:
-        """ Get auto confirm patterns and cmds"""
+        """ Get auto confirm patterns and cmds """
         raise NotImplementedError("Method get_auto_confirm_patterns not implemented")
 
     @abc.abstractmethod
@@ -126,20 +119,9 @@ class Session:
         raise NotImplementedError("Method get_more_pattern not implemented")
 
     @abc.abstractmethod
-    async def pull_running_config(self, vsys: str = None) -> str:
-        """ Pull running config """
-        raise NotImplementedError("Method pull_running_config not implemented")
-
-    @abc.abstractmethod
-    async def pull_routes(self, vsys: str = None) -> str:
-        """ Pull routes """
-        raise NotImplementedError("Method pull_routes not implemented")
-
-    @abc.abstractmethod
-    async def pull_hitcounts(self, vsys: str = None) -> str:
-        """ Pull hit counts """
-        raise NotImplementedError("Method pull_hit_counts not implemented")
-
+    def get_ignore_password_change_patterns(self) -> dict[Pattern, str]:
+        """ Get pattern of all mode ignore password change prompts """
+        raise NotImplementedError("Method get_ignore_password_change_patterns not implemented")
 
     @classmethod
     async def create(cls, *args, **kwargs) -> "Session":
@@ -197,9 +179,6 @@ class Session:
         profiles = self._config.session.profiles() if self._config else {}
         self._session_profile = self.load_session_profile(profiles)
         self._cmd_queue = Queue(queue_size)
-        self._runconf_req_merger = Merger()
-        self._route_req_merger = Merger()
-        self._hitcount_req_merger = Merger()
         self._create_time = datetime.now().timestamp()
         self._last_use = None
         self._cmd_hooks = {}
@@ -238,28 +217,37 @@ class Session:
                 self._logger.debug(f"Load session profile from ip: {self.ip}, profile: {profile}")
                 return profile
 
-        model_profile = profiles.get("vendor", {}).get(self.vendor, {}).get(self.model, {})
-        if model_profile:
-            version_profile = model_profile.get(self.version, {})
-            base_profile = model_profile.get("base", {})
-            # version specific profile is the #2 priority
-            if version_profile:
-                self._logger.debug(
-                    f"Load session profile from: {self.vendor}/{self.model}/{self.version}, profile: {version_profile}")
-                return version_profile
-            # base profile is the #3 priority
-            if base_profile:
-                self._logger.debug(
-                    f"Load session profile from: {self.vendor}/{self.model}/base, profile: {base_profile}")
-                return base_profile
+        vendor_profile = profiles.get("vendor", {}).get(self.vendor, {})
+        if vendor_profile:
+            model_profile = vendor_profile.get(self.model, {})
+            if model_profile:
+                # version specific profile is the #2 priority
+                version_profile = model_profile.get(self.version, {})
+                if version_profile:
+                    self._logger.debug(
+                        f"Load session profile from: {self.vendor}/{self.model}/{self.version}, profile: {version_profile}")
+                    return version_profile
+
+                # base profile is the #3 priority
+                base_profile = model_profile.get("base", {})
+                if base_profile:
+                    self._logger.debug(
+                        f"Load session profile from: {self.vendor}/{self.model}/base, profile: {base_profile}")
+                    return base_profile
+        # base model profile is the #4 priority
+        base_model_profile = vendor_profile.get('base', {})
+        if base_model_profile:
+            self._logger.debug(
+                f"Load session profile from: {self.vendor}/base/base, profile: {base_model_profile}")
+            return base_model_profile
 
         global_profile = profiles.get("global", {})
         if global_profile:
-            # Global profile is the #4 priority
+            # Global profile is the #5 priority
             self._logger.debug(f"Load session profile from global, profile: {global_profile}")
             return global_profile
         else:
-            # Default profile is the #5 priority
+            # Default profile is the #6 priority
             self._logger.debug(f"Load session profile from default, profile: {DEFAULT_SESSION_PROFILE}")
             return DEFAULT_SESSION_PROFILE
 
@@ -269,12 +257,6 @@ class Session:
             await self._init_session()
             self._cmd_task_consumer = asyncio.create_task(self._consume_cmd_queue(),
                                                           name=f"{self.session_key}_cmd_consumer")
-            self._runconf_req_consumer = asyncio.create_task(self._consume_runconf_queue(),
-                                                             name=f"{self.session_key}_runconf_req_consumer")
-            self._route_req_consumer = asyncio.create_task(self._consume_routes_queue(),
-                                                           name=f"{self.session_key}_route_req_consumer")
-            self._hitcount_req_consumer = asyncio.create_task(self._consume_hitcounts_queue(),
-                                                              name=f"{self.session_key}_hitcount_req_consumer")
         except ConnectTimeout as e:
             raise e
         except ExecError as e:
@@ -305,6 +287,7 @@ class Session:
 
     async def _init_session(self) -> None:
         self._logger.info(f"Init session")
+        await self._ignore_password_change()
         await self._decide_init_state()
         await self.disable_pagging()
         self._logger.info(f"Session init done")
@@ -355,7 +338,7 @@ class Session:
             line_size = len(lines)
             i = 0
             while not has_error and i < line_size:
-                line = lines[i]
+                line = lines[i].strip()
                 self._logger.info((f"Exec cmd[{i}]: {line}"))
                 output += await self.exec_cmd(line)
                 if task.catch_error:
@@ -372,6 +355,10 @@ class Session:
             self._logger.info(f"Finished exec cmd task: {task}, cost: {time_consumed:.3f}s")
             task.set_result(output=output,
                             exception=ExecCmdError(err_msg, output=output) if has_error else None)
+        except asyncio.CancelledError as e:
+            self._logger.exception(e)
+            task.set_result(output=output, exception=ExecCmdTimeout(
+                msg=f"Exec timed out after {task.timeout} seconds", output=output))
         except AsyncTimeoutError as e:
             task.set_result(output=output, exception=e)
         except ExecError as e:
@@ -380,6 +367,7 @@ class Session:
             task.set_result(output=output, exception=e)
         except BaseException as e:
             # catch all exception
+            self._logger.exception(e)
             task.set_result(output=output, exception=ExecError(e, output=output))
         return output
 
@@ -390,6 +378,7 @@ class Session:
             task = await self._dequeue()
             if task is None:
                 continue
+            correlation_id.set(task.context_id)
             self._idle = False
             try:
                 # run task withtimeout
@@ -398,6 +387,7 @@ class Session:
                 self._logger.warning(f"_consume_cmd_queue cancelled: {e}", exc_info=True)
                 break
             except asyncio.TimeoutError as e:
+                self._logger.exception(e)
                 task.set_result(output=output, exception=ExecCmdTimeout(e, output=output))
             except BaseException as e:
                 self._logger.exception(e)
@@ -408,85 +398,6 @@ class Session:
                     self._cmd_queue.task_done()
                 except Exception as e:
                     self._logger.warning("Called task_done too many times.")
-
-    async def _consume_runconf_queue(self):
-        self._logger.info(f"Start consuming runconf queue")
-        output: str = ""
-        while not self._is_closing:
-            task_dict = await self._runconf_req_merger.get_mergable_tasks()
-            if not task_dict:
-                continue
-            for vsys, tasks in task_dict.items():
-                output = None
-                exception = None
-                try:
-                    self._logger.info(f"Get [{len(tasks)}] pull_running_config tasks of {vsys}.")
-                    self._logger.info(f"Pulling running config.")
-                    output = await self.pull_running_config(vsys)
-                    self._logger.info(f"Pulled running config, length: [{len(output)}].")
-                except asyncio.CancelledError as e:
-                    self._logger.warning(f"_consume_runconf_queue cancelled: {e}", exc_info=True)
-                    break
-                except ExecError as exec_e:
-                    exec_e.output = output
-                    exception = exception
-                except BaseException as e:
-                    exception = PullConfigFailed(e, output=output)
-                finally:
-                    self._runconf_req_merger.set_mergable_tasks_result(tasks=tasks, output=output, exception=exception)
-            
-    async def _consume_routes_queue(self):
-        self._logger.info(f"Start consuming routes queue")
-        output: str = ""
-        while not self._is_closing:
-            task_dict = await self._route_req_merger.get_mergable_tasks()
-            if not task_dict:
-                continue
-            for vsys, tasks in task_dict.items():
-                output = None
-                exception = None
-                try:
-                    self._logger.info(f"Get [{len(tasks)}] pull_routes tasks of {vsys}.")
-                    self._logger.info(f"Pulling routes.")
-                    output = await self.pull_routes(vsys)
-                    self._logger.info(f"Pulled routes, length: [{len(output)}].")
-                except asyncio.CancelledError as e:
-                    self._logger.warning(f"_consume_routes_queue cancelled: {e}", exc_info=True)
-                    break
-                except ExecError as exec_e:
-                    exec_e.output = output
-                    exception = exec_e
-                except BaseException as e:
-                    exception = PullConfigFailed(e, output=output)
-                finally:
-                    self._route_req_merger.set_mergable_tasks_result(tasks=tasks, output=output, exception=exception)
-
-    async def _consume_hitcounts_queue(self):
-        self._logger.info(f"Start cosuming hitcountrs queue")
-        while not self._is_closing:
-            task_dict = await self._hitcount_req_merger.get_mergable_tasks()
-            if not task_dict:
-                continue
-            output = None
-            exception = None
-            for vsys, tasks in task_dict.items():
-                output = None
-                exception = None
-                try:
-                    self._logger.info(f"Get [{len(tasks)}] pull_hitcounts tasks of {vsys}.")
-                    self._logger.info(f"Pulling hit_counts.")
-                    output = await self.pull_hitcounts(vsys)
-                    self._logger.info(f"Pulled hit_counts, length: [{len(output)}].")
-                except asyncio.CancelledError as e:
-                    self._logger.warning(f"_consume_hitcounts_queue cancelled: {e}", exc_info=True)
-                    break
-                except ExecError as exec_e:
-                    exec_e.output = output
-                    exception = exec_e
-                except BaseException as e:
-                    exception = PullConfigFailed(e, output=output)
-                finally:
-                     self._hitcount_req_merger.set_mergable_tasks_result(tasks=tasks, output=output, exception=exception)
 
     async def _get_prompt(self, write_return: bool = True) -> str:
         """ Get current prompt """
@@ -516,12 +427,6 @@ class Session:
             self._is_closing = True
             self._cmd_task_consumer.cancel()
             await self._cmd_queue.join()
-            self._runconf_req_consumer.cancel()
-            await self._runconf_req_merger.join()
-            self._route_req_consumer.cancel()
-            await self._route_req_merger.join()
-            self._hitcount_req_consumer.cancel()
-            await self._hitcount_req_merger.join()
         except Exception as e:
             self._logger.error(f"Error closing session {self.session_key}: {e}")   
         finally:
@@ -562,9 +467,8 @@ class Session:
 
     async def exec_cmd_hooks(self, command: str) -> str:
         """ Execute command hooks """
-        if command in self._cmd_hooks:
-            self._logger.info(f"Exec command hook for command: {command}")
-            return await self._cmd_hooks[command](command)
+        self._logger.info(f"Exec command hook for command: {command}")
+        return await self._cmd_hooks[command](command)
 
     async def exec_cmd(self, command: str) -> str:
         """
@@ -590,7 +494,7 @@ class Session:
         line_size = len(lines)
         i = 0
         while i < line_size:
-            line = lines[i]
+            line = lines[i].strip()
             output += await self.exec_cmd(line)
             i += 1
         return output 
@@ -621,44 +525,6 @@ class Session:
             self._logger.error(_msg)
             task.set_result(exception=QueueFullError(_msg))
 
-        return await task.get_result()
-
-    async def send_cmd_only(self, command: str, vsys: str, mode: Mode):
-        """
-        Execute command in specific mode without output
-        :param command: command to execute, supoort multi-line command
-        :param vsys: vsys to execute, if not set, use current vsys
-        :param mode: mode to execute, if not set, use current mode
-
-        """
-        task: CmdTask = CmdTask(command, vsys=vsys, mode=mode)
-        try:
-            self._enqueue(task)
-        except QueueFull:
-            _msg = f"Send cmd failed! Session: {self.session_key} Cmd: [{ task }]; \
-                Reason: Queue is full, please retry or check the agent."
-            self._logger.error(_msg)
-        finally:
-            task.cacnel()
-            # del task
-
-    async def pull(self, type: ConfigType, vsys: str, timeout: float = 10.0) -> PullTaskResult:
-        """ Send request to pull queue
-        :param task: PullTask
-        :return: PullTaskResult
-        """
-        task: PullTask = PullTask(type=type, vsys=vsys, timeout=timeout,
-                        future=get_event_loop().create_future())
-        match task.type:
-            case ConfigType.RUNNING:
-                await self._runconf_req_merger.enqueue(task)
-            case ConfigType.ROUTE:
-                await self._route_req_merger.enqueue(task)
-            case ConfigType.HIT_COUNT:
-                await self._hitcount_req_merger.enqueue(task)
-            case _:
-                self._logger.warning(f"Unsupported config type: {task.type}")
-                task.set_result(exception=UnsupportedConfigType())
         return await task.get_result()
 
     async def get_display_info(self) -> List[Any]:
@@ -711,38 +577,36 @@ class Session:
 
         return output.get_data()
 
-    async def get_runconf_templates(self) -> Dict[str, str]:
-        """ Get running config tempaltes
-        using aiofiles to load templates from ./{vendor}_{model} directory:
-        load all files which ends with .textfsm, and the filename should be runconf_{key}.textfsm,
-        content as value
-        :return: Dict[str, str]
-        """
-        directory = utils.files.get_plugin_dir(self)
-        return await utils.files.load_templates(
-            directory= f"{directory}/{self.info.vendor}_{self.info.model}", prefix="runconf")
+    @async_timeout(10)
+    async def _ignore_password_change(self, timeout: float = 10.0, auto_enter: bool = True) -> str:
+        """ Ignore password change """
+        self._logger.info("Ignore password change")
+        ignore_password_change_patterns = self.get_ignore_password_change_patterns()
+        output = ReadBuffer()
+        if ignore_password_change_patterns:
+            union_pattern = self.get_union_pattern()
+            pattern_count = len(ignore_password_change_patterns) + 1
+            while not self._channel.read_at_eof():
+                chunk = await self.read_channel()
+                output.append(chunk)
+                # make sure the last check should update the position
+                i = 1
+                is_update_pos = True if i == pattern_count else False
 
-    async def get_hitcounts_templates(self) -> Dict[str, str]:
-        """ Get hit counts tempaltes
-        using aiofiles to load templates from ./{vendor}_{model} directory:
-        load all files which ends with .textfsm, and the filename should be hitcounts_{key}.textfsm,
-        content as value
-        :return: Dict[str, str]
-        """
-        directory = utils.files.get_plugin_dir(self)
-        return await utils.files.load_templates(
-            directory= f"{directory}/{self.info.vendor}_{self.info.model}", prefix="hitcount")
+                i += 1
+                if union_pattern and output.check_pattern(union_pattern, is_update_pos):
+                    self._logger.info("Finished ignore password change")
+                    break
 
-    async def get_routes_templates(self) -> Dict[str, str]:
-        """ Get routes tempaltes
-        using aiofiles to load templates from ./{vendor}_{model} directory:
-        load all files which ends with .textfsm, and the filename should be routes_{key}.textfsm,
-        content as value
-        :return: Dict[str, str]
-        """
-        directory = utils.files.get_plugin_dir(self)
-        return await utils.files.load_templates(
-            directory= f"{directory}/{self.info.vendor}_{self.info.model}", prefix="route")
+                for pattern, cmd in ignore_password_change_patterns.items():
+                    is_update_pos = True if i == pattern_count else False
+                    i += 1
+                    if output.check_pattern(pattern, is_update_pos):
+                        self._logger.info(f"Matched ignore password change pattern: {pattern}, send ignore password change cmd: {cmd}")
+                        await self.write_channel(cmd, auto_enter=auto_enter)
+        else:
+          self._logger.info(f"Do not ignore password change")
+        return output.get_data()
 
     def check_idle_time(self) -> bool:
         """Check whether the session needs to be closed due to prolonged idle time"""

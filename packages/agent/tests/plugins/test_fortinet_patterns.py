@@ -16,6 +16,24 @@ async def test_enable_pattern():
     assert enable_pattern.search("hostname # \r\n")
     assert enable_pattern.search("\nhostname # \n")
     assert enable_pattern.search("\r\nhostname # \r\n")
+    assert enable_pattern.search("hostname (root) #")
+    assert enable_pattern.search("hostname (root) # ")
+    assert enable_pattern.search("hostname (root) # \n")
+    assert enable_pattern.search("hostname (root) # \r\n")
+    assert enable_pattern.search("\nhostname (root) # \n")
+    assert enable_pattern.search("\r\nhostname (root) # \r\n")
+    assert enable_pattern.search("hostname $")
+    assert enable_pattern.search("hostname $ ")
+    assert enable_pattern.search("hostname $ \n")
+    assert enable_pattern.search("hostname $ \r\n")
+    assert enable_pattern.search("\nhostname $ \n")
+    assert enable_pattern.search("\r\nhostname $ \r\n")
+    assert enable_pattern.search("hostname (root) $")
+    assert enable_pattern.search("hostname (root) $ ")
+    assert enable_pattern.search("hostname (root) $ \n")
+    assert enable_pattern.search("hostname (root) $ \r\n")
+    assert enable_pattern.search("\nhostname (root) $ \n")
+    assert enable_pattern.search("\r\nhostname (root) $ \r\n")
 
 
 @pytest.mark.unit
@@ -28,6 +46,12 @@ async def test_vsys_pattern():
     assert config_pattern.search("hostname (root) # \r\n")
     assert config_pattern.search("\nhostname (root) # \n")
     assert config_pattern.search("\r\nhostname (root) # \r\n")
+    assert config_pattern.search("hostname (root) $")
+    assert config_pattern.search("hostname (root) $ ")
+    assert config_pattern.search("hostname (root) $ \n")
+    assert config_pattern.search("hostname (root) $ \r\n")
+    assert config_pattern.search("\nhostname (root) $ \n")
+    assert config_pattern.search("\r\nhostname (root) $ \r\n")
 
 
 @pytest.mark.unit
@@ -46,6 +70,18 @@ async def test_union_pattern():
     assert union_pattern.search("hostname (root) # \r\n")
     assert union_pattern.search("\nhostname (root) # \n")
     assert union_pattern.search("\r\nhostname (root) # \r\n")
+    assert union_pattern.search("hostname $")
+    assert union_pattern.search("hostname $ ")
+    assert union_pattern.search("hostname $ \n")
+    assert union_pattern.search("hostname $ \r\n")
+    assert union_pattern.search("\nhostname $ \n")
+    assert union_pattern.search("\r\nhostname $ \r\n")
+    assert union_pattern.search("hostname (root) $")
+    assert union_pattern.search("hostname (root) $ ")
+    assert union_pattern.search("hostname (root) $ \n")
+    assert union_pattern.search("hostname (root) $ \r\n")
+    assert union_pattern.search("\nhostname (root) $ \n")
+    assert union_pattern.search("\r\nhostname (root) $ \r\n")
 
 
 @pytest.mark.unit

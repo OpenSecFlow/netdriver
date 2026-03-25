@@ -33,7 +33,7 @@ class H3CBase(Base):
     def get_ignore_error_patterns(self) -> list[re.Pattern]:
         return H3CBase.PatternHelper.get_ignore_error_patterns()
 
-    def get_auto_confirm_patterns(self) -> dict[str, re.Pattern]:
+    def get_auto_confirm_patterns(self) -> dict[re.Pattern, str]:
         return H3CBase.PatternHelper.get_auto_confirm_patterns()
 
     def get_mode_prompt_patterns(self) -> dict[Mode, re.Pattern]:
@@ -44,7 +44,10 @@ class H3CBase(Base):
 
     def get_more_pattern(self) -> tuple[re.Pattern, str]:
         return (H3CBase.PatternHelper.get_more_pattern(), self._CMD_MORE)
-    
+
+    def get_ignore_password_change_patterns(self) -> dict[re.Pattern, str]:
+        return H3CBase.PatternHelper.get_ignore_password_change_patterns()
+
     async def _decide_init_state(self) -> str:
         """ Decide init state
         @override
@@ -60,9 +63,9 @@ class H3CBase(Base):
     class PatternHelper:
         """ Inner class for patterns """
         # <hostname>
-        _PATTERN_ENABLE = r"^\r{0,1}(RBM_P|RBM_S)?<.+>\s*$"
+        _PATTERN_ENABLE = r"^\r{0,1}\x00{0,1}(RBM_P|RBM_S)?<.+>\s*$"
         # [hostname]
-        _PATTERN_CONFIG = r"^\r{0,1}(RBM_P|RBM_S)?\[.+\]\s*$"
+        _PATTERN_CONFIG = r"^\r{0,1}(RBM_P|RBM_S)?\[(?![Yy]\/[Nn]).+\]\s*$"
         # ---- More ----
         _PATTERN_MORE = r"---- More ----"
 
@@ -88,7 +91,9 @@ class H3CBase(Base):
                 r".+%.+",
                 r".+doesn't exist.+",
                 r".+does not exist.+",
-                r"Object group with given name exists with different type."
+                r"Object group with given name exists with different type.",
+                r"Permission denied.",
+                r"Failed to apply .+"
             ]
             return [re.compile(regex_str, re.MULTILINE) for regex_str in regex_strs]
 
@@ -98,14 +103,20 @@ class H3CBase(Base):
             return [re.compile(regex_str, re.MULTILINE) for regex_str in regex_strs]
         
         @staticmethod
-        def get_auto_confirm_patterns() -> dict[str, re.Pattern]:
+        def get_auto_confirm_patterns() -> dict[re.Pattern, str]:
             return {
-                re.compile(r"The current configuration will be written to the device. Are you sure? \[Y\/N\]:", re.MULTILINE): "Y",
+                re.compile(r"The current configuration will be written to the device\. Are you sure\? \[Y\/N\]:", re.MULTILINE): "Y",
                 re.compile(r"\(To leave the existing filename unchanged, press the enter key\):", re.MULTILINE): "",
-                re.compile(r"flash:/startup.cfg exists, overwrite? \[Y\/N\]:", re.MULTILINE): "Y",
-                re.compile(r"Are you sure you want to continue the save operation? \[Y\/N\]:", re.MULTILINE): "Y"
+                re.compile(r"flash:\/startup\.cfg exists, overwrite\? \[Y\/N\]:", re.MULTILINE): "Y",
+                re.compile(r"Are you sure you want to continue the save operation\? \[Y\/N\]:", re.MULTILINE): "Y"
             }
 
         @staticmethod
         def get_more_pattern() -> re.Pattern:
             return re.compile(H3CBase.PatternHelper._PATTERN_MORE, re.MULTILINE)
+
+        @staticmethod
+        def get_ignore_password_change_patterns() -> dict[re.Pattern, str]:
+            return {
+                re.compile(r"Your password will expire in \d+ days\. Do you want to change it\?", re.MULTILINE): "N"
+            }

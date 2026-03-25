@@ -15,6 +15,8 @@ async def test_enable_pattern():
     assert enable_pattern.search("hostname> \r\n")
     assert enable_pattern.search("\nhostname> \n")
     assert enable_pattern.search("\r\nhostname> \r\n")
+    assert enable_pattern.search("[WARNING! Local Member] hostname> ")
+    assert enable_pattern.search("[Global] hostname> ")
 
 
 @pytest.mark.unit
@@ -27,6 +29,8 @@ async def test_union_pattern():
     assert union_pattern.search("hostname> \r\n")
     assert union_pattern.search("\nhostname> \n")
     assert union_pattern.search("\r\nhostname> \r\n")
+    assert union_pattern.search("[WARNING! Local Member] hostname> ")
+    assert union_pattern.search("[Global] hostname> ")
 
 
 

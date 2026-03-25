@@ -67,3 +67,14 @@ async def test_error_catch(output: str):
     ignore_patterns = JuniperBase.PatternHelper.get_ignore_error_patterns()
     error_str = regex.catch_error_of_output(output, error_patterns, ignore_patterns)
     assert error_str
+
+
+@pytest.mark.unit
+@pytest.mark.asyncio
+@pytest.mark.parametrize("output", [
+    ("Exit with uncommitted changes? [yes,no] (yes) ")
+])
+async def test_auto_confirm(output: str):
+    auto_confirm_patterns = JuniperBase.PatternHelper.get_auto_confirm_patterns()
+    confirm_cmd = regex.catch_auto_confirm_of_output(output, auto_confirm_patterns)
+    assert confirm_cmd != None

@@ -33,7 +33,7 @@ class HuaweiBase(Base):
     def get_ignore_error_patterns(self) -> list[re.Pattern]:
         return HuaweiBase.PatternHelper.get_ignore_error_patterns()
     
-    def get_auto_confirm_patterns(self) -> dict[str, re.Pattern]:
+    def get_auto_confirm_patterns(self) -> dict[re.Pattern, str]:
         return HuaweiBase.PatternHelper.get_auto_confirm_patterns()
 
     def get_mode_prompt_patterns(self) -> dict[Mode, re.Pattern]:
@@ -44,6 +44,9 @@ class HuaweiBase(Base):
 
     def get_more_pattern(self) -> tuple[re.Pattern, str]:
         return (HuaweiBase.PatternHelper.get_more_pattern(), self._CMD_MORE)
+
+    def get_ignore_password_change_patterns(self) -> dict[re.Pattern, str]:
+        return HuaweiBase.PatternHelper.get_ignore_password_change_patterns()
 
     async def _decide_init_state(self) -> str:
         """ Decide init state
@@ -64,7 +67,7 @@ class HuaweiBase(Base):
         # HRP_M<hostname-vsys>
         _PATTERN_ENABLE = r"^\r{0,1}(HRP_M|HRP_S){0,1}<.+>\s*$"
         # HRP_S[hostname-vsys-config-config]
-        _PATTERN_CONFIG = r"^\r{0,1}(HRP_M|HRP_S){0,1}\[.+\]\s*$"
+        _PATTERN_CONFIG = r"^\r{0,1}(HRP_M|HRP_S){0,1}\[(?![Yy]\/[Nn]).+\]\s*$"
         #   ---- More ----
         _PATTERN_MORE = r"  ---- More ----"
 
@@ -96,35 +99,37 @@ class HuaweiBase(Base):
             regex_strs = [
                 # Address
                 r"Error: Address item conflicts!",
-                r"Error: The address item does not exist!",
                 r"Error: The delete configuration does not exist.",
                 r"Error: The address or address set is not created!",
                 # Service
                 r"Error: Cannot add! Service item conflicts or illegal reference!",
                 r"Error: The service item does not exist!",
                 r"Error: Service item conflicts!",
-                r"Error: The service item does not exist!",
                 r"Error: The service set is not created(.+)!",
-                # Schedule
-                r"Error: No such a time-range.",
                 # NAT
                 r"Error: The specified address-group does not exist.",
                 r"Error: The specified rule does not exist yet.",
                 # NetD
                 r"This condition has already been configured",
-                r"[a-zA-Z]* (item conflicts|Service item exists\.)",
-                r"Error: Worng parameter found at.*"
+                r"[a-zA-Z]* (item conflicts|Service item exists\.)"
             ]
             return [re.compile(regex_str, re.MULTILINE) for regex_str in regex_strs]
-        
+
         @staticmethod
         def get_auto_confirm_patterns() -> dict[re.Pattern, str]:
             return {
-                re.compile(r"Are you sure to continue\?\[Y\/N\]: ", re.MULTILINE): "Y",
-                re.compile(r"startup saved-configuration file on peer device\?\[Y\/N\]: ", re.MULTILINE): "Y",
-                re.compile(r"Warning: The current configuration will be written to the device. Continue? \[Y\/N\]: ", re.MULTILINE): "Y",
+                re.compile(r"Are you sure to continue\?\[Y\/N\]", re.MULTILINE): "Y",
+                re.compile(r"startup saved-configuration file on peer device\?\[Y\/N\]", re.MULTILINE): "Y",
+                re.compile(r"Warning: The current configuration will be written to the device\. Continue\? \[Y\/N\]", re.MULTILINE): "Y",
+                re.compile(r"Warning: This command will invalidate the rule\. Continue\?\[Y\/N\]", re.MULTILINE): "Y"
             }
-        
+
         @staticmethod
         def get_more_pattern() -> re.Pattern:
             return re.compile(HuaweiBase.PatternHelper._PATTERN_MORE, re.MULTILINE)
+
+        @staticmethod
+        def get_ignore_password_change_patterns() -> dict[re.Pattern, str]:
+            return {
+                re.compile(r"The password needs to be changed, Continue\? \[Y\/N\]", re.MULTILINE): "N"
+            }

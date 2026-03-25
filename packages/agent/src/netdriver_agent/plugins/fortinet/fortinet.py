@@ -20,6 +20,7 @@ class FortinetBase(Base):
     )
 
     _CMD_CANCEL_MORE = "config system console\nset output standard\nend"
+    _CMD_END = "end"
     _SUPPORTED_MODES = [Mode.ENABLE]
 
     def get_union_pattern(self) -> re.Pattern:
@@ -48,8 +49,8 @@ class FortinetBase(Base):
         if vsys_pattern:
             vsys_match = vsys_pattern.search(prompt)
             if vsys_match and vsys_match.group(1) != self._vsys:
-                self.write_channel("end")
-                prompt = await self._get_prompt()
+                await self.write_channel(self._CMD_END)
+                prompt = await self._get_prompt(write_return=False)
         # keep decide vsys before decide mode
         self.decide_current_vsys(prompt)
         self.decide_current_mode(prompt)
@@ -57,10 +58,10 @@ class FortinetBase(Base):
 
     class PatternHelper:
         """ Inner class for patterns """
-        # hostname # 
-        _PATTERN_ENABLE = r"^\r{0,1}\S+\s*#\s*$"
-        # hostname (root) #
-        _PATTERN_VSYS= r"^\r{0,1}\S+\s*\((\S+)\)\s*#\s*$"
+        # hostname # or hostname $
+        _PATTERN_ENABLE = r"^\r{0,1}\S+\s*(\(\S+\))?\s*(#|\$)\s*$"
+        # hostname (root) # or hostname (root) $
+        _PATTERN_VSYS= r"^\r{0,1}\S+\s*\((\S+)\)\s*(#|\$)\s*$"
         # --More--
         _PATTERN_MORE = r"--More--"
 

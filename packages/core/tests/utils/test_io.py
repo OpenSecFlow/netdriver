@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import pytest
-from netdriver_core.utils.terminal import simulate_output
+from netdriver_core.utils.terminal import simulate_output, simulate_output_oct_to_chinese
+
 
 @pytest.mark.unit
 @pytest.mark.asyncio
@@ -12,3 +14,16 @@ from netdriver_core.utils.terminal import simulate_output
 async def test_compress_output(output: str, expected: str):
     compressed_output = simulate_output(output)
     assert compressed_output == expected
+
+
+@pytest.mark.unit
+@pytest.mark.asyncio
+@pytest.mark.parametrize("output, encoding, result", [
+    (r"set name \"\744\670\655\746\626\607\"", "utf-8", r"set name \"中文\""),
+    (r"set name \"test\744\670\655\746\626\607\"", "utf-8", r"set name \"test中文\""),
+    (r"set name \"\744\670\655\746\626\607test\"", "utf-8", r"set name \"中文test\""),
+    (r"set name \"test\744\670\655\746\626\607test\"", "utf-8", r"set name \"test中文test\""),
+    (r"set name \"test\"", "utf-8", r"set name \"test\"")
+])
+async def test_oct_to_chinese(output: str, encoding: str, result: str):
+    assert simulate_output_oct_to_chinese(output, encoding) == result

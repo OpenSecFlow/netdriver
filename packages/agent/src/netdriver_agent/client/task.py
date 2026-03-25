@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 import time
 from asyncio import Future
-from typing import List
 
+from asgi_correlation_id import correlation_id
 from netdriver_core.dev.mode import Mode
 from netdriver_core.exception.errors import BaseError
-from netdriver_core.plugin.types import ConfigType
 
 
 class TaskResult:
@@ -66,14 +65,16 @@ class CmdTask(Task):
     mode: Mode
     command: str
     detail_output: bool
+    context_id: str
 
     def __init__(self, command: str, vsys: str = None, mode: Mode = None,
                  timeout: float = 10, catch_error: bool = True, 
                  detail_output: bool = True, future: Future = None):
         super().__init__(vsys, timeout, catch_error, future)
-        self.command = command.strip()
+        self.command = command
         self.mode = mode
         self.detail_output = detail_output
+        self.context_id = correlation_id.get()
 
     def __str__(self):
         return f"[{self.command}|{self.vsys}|{self.mode}|{self.timeout}]"
@@ -99,45 +100,4 @@ class CmdTask(Task):
             result.exec_time = self.exec_end_timestamp - self.exec_start_timestamp
         result.exception = self.exception
         result.output = output
-        return result
-
-
-class PullTaskResult(TaskResult):
-    """ Pull Task Result """
-
-
-class PullTask(Task):
-    """ Pull Task """
-    type: ConfigType
-
-    def __init__(self, type: ConfigType, vsys: str = None,
-                 timeout: float = 10, catch_error: bool = True,
-                 future: Future = None):
-        super().__init__(vsys, timeout, catch_error, future)
-        self.type = type
-
-    def __str__(self):
-        return f"[{self.type}|{self.vsys}|{self.timeout}]"
-
-    def set_result(self, output: str = None, exception: BaseError = None):
-        self.set_exec_end_timestamp()
-        self.exception = exception
-        if self.future and not self.future.done():
-            self.future.set_result(output)
-
-    async def get_result(self) -> PullTaskResult:
-        ouput = await self.future
-        result = PullTaskResult()
-        # If dequeue_timestamp is None, it not dequeued
-        if not self.dequeue_timestamp:
-            result.queue_time = 0.0
-        else:
-            result.queue_time = self.dequeue_timestamp - self.enqueue_timestamp
-        # If exec_start_timestamp is None, it not dequeued
-        if not self.exec_start_timestamp:
-            result.exec_time = 0.0
-        else:
-            result.exec_time = self.exec_end_timestamp - self.exec_start_timestamp
-        result.exception = self.exception
-        result.output = ouput
         return result

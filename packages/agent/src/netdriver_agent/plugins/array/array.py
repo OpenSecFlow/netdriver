@@ -46,15 +46,15 @@ class ArrayBase(Base):
     class PatternHelper:
         """ Inner class for patterns """
         # hostname> $
-        _PATTERN_LOGIN = r"^\r{0,1}[^\s<]+>\s*$"
+        _PATTERN_LOGIN = r"^\r{0,2}[^\s<]+>\s*$"
         # hostname# $
-        _PATTERN_ENABLE = r"^\r{0,1}[^\s#]+#\s*$"
+        _PATTERN_ENABLE = r"^\r{0,2}[^\s#]+#\s*$"
         # hostname(config)# $
-        _PATTERN_CONFIG = r"^\r{0,1}\S+\(\S+\)#\s*$"
+        _PATTERN_CONFIG = r"^\r{0,2}\S+\(\S+\)#\s*$"
         # vsite_namer$ $
-        _PATTERN_VSITE_ENABLE = r"^\r{0,1}\S+\$\s*$"
+        _PATTERN_VSITE_ENABLE = r"^\r{0,2}\S+\$\s*$"
         # vsite_name(config)$ $
-        _PATTERN_VSITE_CONFIG = r"^\r{0,1}\S+\(\S+\)\$\s*$"
+        _PATTERN_VSITE_CONFIG = r"^\r{0,2}\S+\(\S+\)\$\s*$"
         _PATTERN_ENABLE_PASSWORD = r"Enable password:"
         #  --More-- 
         _PATTERN_MORE = r" --More-- "
