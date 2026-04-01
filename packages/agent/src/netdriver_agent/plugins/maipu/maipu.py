@@ -28,7 +28,7 @@ class MaiPuBase(Base):
     def get_ignore_error_patterns(self) -> list[re.Pattern]:
         return MaiPuBase.PatternHelper.get_ignore_error_patterns()
 
-    def get_enable_password_pattern(self) -> re.Pattern:
+    def get_enable_password_prompt_pattern(self) -> re.Pattern:
         return MaiPuBase.PatternHelper.get_enable_password_prompt_pattern()
 
     def get_mode_prompt_patterns(self) -> dict[Mode, re.Pattern]:

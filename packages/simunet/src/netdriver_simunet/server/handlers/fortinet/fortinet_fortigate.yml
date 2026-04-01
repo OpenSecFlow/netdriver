@@ -5,14 +5,27 @@ line_feed: "\r\n"
 modes:
   enable:
     prompt: " # "
-    switch_mode_cmds:
-      - "exit"
+    switch_mode_cmds: []
     cmds: 
+      - cmd: "config global"
+        output: ""
       - cmd: "config system console"
         output: ""
       - cmd: "set output standard"
         output: ""
       - cmd: "end"
+        output: ""
+      - cmd: "config vdom"
+        output: ""
+      - cmd: "edit root"
+        output: ""
+      - cmd: "next"
+        output: ""
+      - cmd: "config firewall policy"
+        output: ""
+      - cmd: "edit 1"
+        output: ""
+      - cmd: "config firewall address"
         output: ""
 common:
   - cmd: "show full-configuration"

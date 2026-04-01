@@ -44,22 +44,19 @@ class FortinetFortiGate(FortinetBase):
         self._logger.info(f"Switching vsys: {self._vsys} -> {vsys}")
 
         output = ""
-        # Already in the target vsys
-        if vsys == self._vsys:
-            return output
 
         ret: str
         if vsys == self._DEFAULT_VSYS:
             # vsys -> default
-            ret = await self.exec_cmd_in_vsys_and_mode("end", mode=Mode.ENABLE)
+            ret = await self.switch_vsys_by_mode("end", mode=Mode.ENABLE)
             output += ret
         elif self._vsys == self._DEFAULT_VSYS:
             # default -> vsys
-            ret = await self.exec_cmd_in_vsys_and_mode(f"config vdom\nedit {vsys}", mode=Mode.ENABLE)
+            ret = await self.switch_vsys_by_mode(f"config vdom\nedit {vsys}", mode=Mode.ENABLE)
             output += ret
         else:
             # vsys1 -> vsys2
-            ret = await self.exec_cmd_in_vsys_and_mode(f"next\nedit {vsys}", mode=Mode.ENABLE)
+            ret = await self.switch_vsys_by_mode(f"next\nedit {vsys}", mode=Mode.ENABLE)
             output += ret
 
         # check errors
