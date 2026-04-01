@@ -497,7 +497,23 @@ class Session:
             line = lines[i].strip()
             output += await self.exec_cmd(line)
             i += 1
-        return output 
+        return output
+
+    async def switch_vsys_by_mode(self, command: str, mode: Mode = None) -> str:
+        """
+        Switch VSYS by mode and output
+        """
+        output = ""
+        if mode and self._mode != mode:
+            output += await self.switch_mode(mode)
+        lines = command.splitlines()
+        line_size = len(lines)
+        i = 0
+        while i < line_size:
+            line = lines[i].strip()
+            output += await self.exec_cmd(line)
+            i += 1
+        return output
 
     async def send_cmd(self, command: str, vsys: str = None, mode: Mode = None,
                        timeout: float = 10, catch_error: bool = True, detail_output: bool = True) -> CmdTaskResult:

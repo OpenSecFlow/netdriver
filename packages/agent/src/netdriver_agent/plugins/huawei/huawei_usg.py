@@ -38,21 +38,10 @@ class HuaweiUSG(HuaweiBase):
     async def switch_vsys(self, vsys: str) -> str:
         self._logger.info(f"Switching vsys: {self._vsys} -> {vsys}")
 
-        output = ""
-        # Already in the target vsys
-        if vsys == self._vsys:
-            return output
-
-        ret: str
-        if vsys == self._DEFAULT_VSYS:
-            ret = await self.exec_cmd_in_vsys_and_mode("quit", mode=Mode.ENABLE)
-            output += ret
-        else:
-            ret = await self.exec_cmd_in_vsys_and_mode(f"switch vsys {vsys}", mode=Mode.CONFIG)
-            output += ret
+        output = await self.switch_vsys_by_mode(f"switch vsys {vsys}", mode=Mode.CONFIG)
 
         # check errors
-        err = utils.regex.catch_error_of_output(ret,
+        err = utils.regex.catch_error_of_output(output,
                                                 self.get_error_patterns(),
                                                 self.get_ignore_error_patterns())
         if err:
@@ -60,5 +49,6 @@ class HuaweiUSG(HuaweiBase):
             raise SwitchVsysFailed(err, output=output)
 
         self._vsys = vsys
+        self._mode = Mode.ENABLE
         self._logger.info(f"Switched vsys to: {self._vsys}")
         return output

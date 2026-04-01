@@ -37,18 +37,15 @@ class ArrayAG(ArrayBase):
         self._logger.info(f"Switching vsys: {self._vsys} -> {vsys}")
 
         output = ""
-        # Already in the target vsys
-        if vsys == self._vsys:
-            return output
 
         ret : str
         if vsys == ArrayBase._DEFAULT_VSYS:
             # Switch to default vsys
-            ret = await self.exec_cmd_in_vsys_and_mode("exit", mode=Mode.ENABLE)
+            ret = await self.switch_vsys_by_mode("exit", mode=Mode.ENABLE)
             output += ret
         else:
             # Switch to target vsys
-            ret = await self.exec_cmd_in_vsys_and_mode(f"switch {vsys}", mode=Mode.ENABLE)
+            ret = await self.switch_vsys_by_mode(f"switch {vsys}", mode=Mode.ENABLE)
             output += ret
 
         # Check if there is any error
