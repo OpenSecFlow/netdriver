@@ -27,7 +27,7 @@ class VenustechBase(Base):
     def get_ignore_error_patterns(self) -> list[re.Pattern]:
         return VenustechBase.PatternHelper.get_ignore_error_patterns()
 
-    def get_enable_password_pattern(self) -> re.Pattern:
+    def get_enable_password_prompt_pattern(self) -> re.Pattern:
         return VenustechBase.PatternHelper.get_enable_password_prompt_pattern()
 
     def get_more_pattern(self) -> tuple[re.Pattern, str]:
