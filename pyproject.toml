@@ -47,7 +47,6 @@ dev = [
     "twine>=6.2.0",
     "httpx>=0.27.2,<0.28",
 ]
-
 [project.urls]
 Homepage = "https://github.com/OpenSecFlow/netdriver"
 Repository = "https://github.com/OpenSecFlow/netdriver"
@@ -68,6 +67,32 @@ members = [ "packages/*" ]
 [build-system]
 requires = ["uv_build>=0.9.17,<0.10.0"]
 build-backend = "uv_build"
+
+[tool.basedpyright]
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.12"
+pythonPlatform = "Linux"
+extraPaths = [
+  "packages/agent/src",
+  "packages/core/src",
+  "packages/simunet/src",
+  "packages/textfsm/src",
+]
+reportImplicitRelativeImport = false
+reportMissingTypeArgument = false
+
+[tool.pyright]
+venvPath = "."
+penv = ".venv"
+pythonVersion = "3.12"
+pythonPlatform = "Linux"
+extraPaths = [
+  "packages/agent/src",
+  "packages/core/src",
+  "packages/simunet/src",
+  "packages/textfsm/src",
+]
 
 [tool.pytest.ini_options]
 markers = ['unit', 'integration']
