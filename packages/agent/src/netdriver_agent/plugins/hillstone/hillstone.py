@@ -5,7 +5,9 @@ import re
 
 from netdriver_core.dev.mode import Mode
 from netdriver_core.plugin.plugin_info import PluginInfo
+from netdriver_core.plugin.probe import ProbeResult
 from netdriver_agent.plugins.base import Base
+from netdriver_textfsm import TextFSMParser
 
 
 # pylint: disable=abstract-method
@@ -142,4 +144,35 @@ class HillstoneBase(Base):
         @staticmethod
         def get_more_pattern() -> re.Pattern:
             return re.compile(HillstoneBase.PatternHelper._PATTERN_MORE, re.MULTILINE)
- 
+
+    @classmethod
+    def get_probe_command(cls) -> str:
+        return "show version"
+
+    @classmethod
+    def parse_probe_output(cls, output: str) -> ProbeResult:
+        rows = TextFSMParser(cls._PROBE_TEMPLATE).parse(output)
+        row = rows[0] if rows else {}
+        model = row.get("MODEL", "")
+        if not model and "hillstone" in output.lower():
+            model = "SG"
+        return ProbeResult(
+            vendor="hillstone",
+            model=model,
+            version=row.get("VERSION", ""),
+            hostname=row.get("HOSTNAME", ""),
+            serial_number=row.get("SERIAL", ""),
+        )
+
+    _PROBE_TEMPLATE = """\
+Value HOSTNAME (\\S+)
+Value MODEL (SG-\\d+\\S*)
+Value VERSION ([0-9A-Za-z.]+)
+Value SERIAL (\\S+)
+
+Start
+  ^[Hh]ostname\\s*:\\s*${HOSTNAME} -> Continue
+  ^\\s*${MODEL}\\s -> Continue
+  ^[Ss]oftware\\s+[Vv]ersion\\s+${VERSION} -> Continue
+  ^[Ss]erial\\s+[Nn]umber\\s*:\\s*${SERIAL} -> Continue
+"""

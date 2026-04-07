@@ -3,7 +3,7 @@
 import json
 import time
 
-from typing import Callable
+from typing import Any, Callable
 from fastapi import Request, Response
 from fastapi.routing import APIRoute
 
@@ -28,13 +28,31 @@ class LoggingApiRoute(APIRoute):
             self.record_url = None
         self._logger = logman.logger
 
+    @staticmethod
+    def _parse_request_body(body: bytes, content_type: str | None) -> Any | None:
+        """Parse request body for logging without breaking empty or non-JSON requests."""
+        if not body:
+            return None
+
+        normalized_content_type = (content_type or "").split(";", maxsplit=1)[0].strip().lower()
+        if normalized_content_type == "application/json" or normalized_content_type.endswith("+json"):
+            try:
+                return json.loads(body)
+            except json.JSONDecodeError:
+                return body.decode("utf-8", errors="replace")
+
+        return body.decode("utf-8", errors="replace")
+
     def get_route_handler(self) -> Callable:
         original_route_handler = super().get_route_handler()
 
         async def logging_route_handler(request: Request) -> Response:
             # before request
             start_time = time.time()
-            req_body = json.loads(await request.body())
+            req_body = self._parse_request_body(
+                await request.body(),
+                request.headers.get("content-type"),
+            )
             if self.log_level and self.log_level.upper() == "DEBUG":
                 payload = {
                     "headers": dict(request.headers),

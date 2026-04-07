@@ -104,7 +104,7 @@ jobs:
       - name: Run pylint
         run: |
           echo "Running pylint checks..."
-          uv run pylint bases/netdriver/agent components/ --exit-zero --output-format=colorized || true
+          uv run pylint packages/agent/src packages/agent/tests packages/core/src packages/core/tests packages/discovery/src packages/simunet/src packages/textfsm/src tests conftest.py --exit-zero --output-format=colorized || true
         continue-on-error: true
 
       - name: Run pytest for agent
@@ -144,7 +144,7 @@ jobs:
 
       - name: Check package metadata
         run: |
-          uv run twine check packages/agent/dist/*.whl
+          uv run --group publish twine check packages/agent/dist/*.whl
 
       - name: Publish to PyPI
         env:

@@ -4,7 +4,9 @@
 import re
 from netdriver_core.dev.mode import Mode
 from netdriver_core.plugin.plugin_info import PluginInfo
+from netdriver_core.plugin.probe import ProbeResult
 from netdriver_agent.plugins.base import Base
+from netdriver_textfsm import TextFSMParser
 
 # pylint: disable=abstract-method
 class MaiPuBase(Base):
@@ -93,3 +95,33 @@ class MaiPuBase(Base):
         @staticmethod
         def get_more_pattern() -> re.Pattern:
             return None
+
+    @classmethod
+    def get_probe_command(cls) -> str:
+        return "show version\nshow hostname"
+
+    @classmethod
+    def parse_probe_output(cls, output: str) -> ProbeResult:
+        rows = TextFSMParser(cls._PROBE_TEMPLATE).parse(output)
+        row = rows[0] if rows else {}
+        return ProbeResult(
+            vendor="maipu",
+            model=row.get("MODEL", ""),
+            version=row.get("VERSION", ""),
+            hostname=row.get("HOSTNAME", ""),
+            serial_number=row.get("SERIAL", ""),
+        )
+
+    _PROBE_TEMPLATE = """\
+Value HOSTNAME (\\S+)
+Value MODEL (NSS\\d+\\S*|MP\\d+\\S*|SM\\d+\\S*)
+Value VERSION ([0-9A-Za-z.]+)
+Value SERIAL (\\S+)
+
+Start
+  ^[Hh]ostname\\s*:\\s*${HOSTNAME} -> Continue
+  ^${HOSTNAME}\\s*$ -> Continue
+  ^\\s*${MODEL}\\s -> Continue
+  ^\\s*[Vv]ersion\\s+${VERSION} -> Continue
+  ^\\s*[Ss]erial\\s+[Nn]umber\\s*:\\s*${SERIAL} -> Continue
+"""

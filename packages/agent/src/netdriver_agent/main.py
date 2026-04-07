@@ -15,7 +15,7 @@ from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 
 from netdriver_agent.api import rest
-from netdriver_agent.containers import container
+from netdriver_agent.containers import container, configure_discovery_vendor_map
 from netdriver_agent.handlers.error_handlers import global_exception_handlers
 from netdriver_agent.client.pool import SessionPool
 from netdriver_agent.plugins.engine import PluginEngine
@@ -31,6 +31,7 @@ log = logman.logger
 container.wire(
     modules=[
         rest.v1.api,
+        rest.v1.discovery,
     ]
 )
 
@@ -42,12 +43,18 @@ async def on_startup() -> None:
     PluginEngine()
     # load session manager
     SessionPool(config=container.config)
+    # initialize discovery task store
+    task_store = container.task_store()
+    await task_store.init_db()
 
 
 async def on_shutdown() -> None:
     """put all clean logic here"""
     log.info("Pre-shutdown of NetDriver Agent")
     await SessionPool().close_all()
+    # close discovery task store
+    task_store = container.task_store()
+    await task_store.close()
 
 
 @asynccontextmanager
@@ -114,6 +121,7 @@ def start():
         os.environ["NETDRIVER_AGENT_CONFIG"] = args.config
         # Reload container configuration with new config file
         container.config.from_yaml(args.config)
+        configure_discovery_vendor_map()
         # Reconfigure logging with new config
         logman.configure_logman(
             level=container.config.logging.level(),

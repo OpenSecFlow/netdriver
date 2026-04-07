@@ -9,5 +9,5 @@ from netdriver_core.utils import files
 @pytest.mark.asyncio
 async def test_load_runconf_templates():
     templates = await files.load_templates(
-        directory="components/netdriver/plugins/cisco/cisco_asa", prefix="runconf")
+        directory="packages/agent/src/netdriver_agent/plugins/cisco", prefix="runconf")
     assert templates

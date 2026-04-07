@@ -213,16 +213,16 @@ NetDriver uses a plugin architecture to support different network devices. Here'
 
 ### 1. Create Plugin File
 
-Create a new file under `components/netdriver/plugins/[vendor]/`:
+Create a new file under `packages/agent/src/netdriver_agent/plugins/[vendor]/`:
 
 ```bash
-components/netdriver/plugins/cisco/cisco_asa.py
+packages/agent/src/netdriver_agent/plugins/cisco/cisco_asa.py
 ```
 
 ### 2. Implement Plugin Class
 
 ```python
-from netdriver_agent.plugin.plugin_info import PluginInfo
+from netdriver_core.plugin.plugin_info import PluginInfo
 from netdriver_agent.plugins.cisco import CiscoBase
 
 class CiscoASA(CiscoBase):
@@ -258,11 +258,13 @@ class CiscoASA(CiscoBase):
 
 ### 3. Add Tests
 
-Create corresponding test file:
+Create an integration test file under `tests/integration/`:
 
 ```bash
-tests/bases/netdriver/agent/test_cisco_asa.py
+tests/integration/test_cisco_asa.py
 ```
+
+If you add new prompt parsing or vendor detection logic, also extend the focused unit tests under `packages/agent/tests/plugins/`.
 
 ### 4. Update Documentation
 
@@ -276,17 +278,14 @@ Add the new plugin to the supported devices list in the README.
 # Run all tests
 uv run pytest
 
-# Run with coverage
-uv run pytest --cov=components --cov=bases
-
 # Run specific test file
-uv run pytest tests/bases/netdriver/agent/test_cisco_nexus.py
+uv run pytest tests/integration/test_cisco_nexus.py
 
 # Run unit tests only
 uv run pytest -m unit
 
 # Run integration tests only
-uv run pytest -m integration
+uv run pytest --mock-dev -m integration
 ```
 
 ### Writing Tests
@@ -457,25 +456,19 @@ Understanding the project structure will help you contribute effectively:
 
 ```text
 netdriver/
-├── bases/netdriver/          # Applications
-│   ├── agent/               # REST API service
-│   └── simunet/             # SSH simulation service
-├── components/netdriver/     # Shared libraries
-│   ├── client/              # SSH client and session management
-│   ├── exception/           # Error handling
-│   ├── log/                 # Logging utilities
-│   ├── plugin/              # Plugin system core
-│   ├── plugins/             # Device-specific plugins
-│   │   ├── cisco/           # Cisco devices
-│   │   ├── huawei/          # Huawei devices
-│   │   ├── juniper/         # Juniper devices
-│   │   └── ...
-│   ├── server/              # SSH server for simulated devices
-│   ├── textfsm/             # Output parsing
-│   └── utils/               # Utility functions
-├── config/                   # Configuration files
-├── tests/                    # Test suites
-└── docs/                     # Documentation
+├── packages/
+│   ├── agent/               # FastAPI agent package
+│   ├── core/                # Shared device, logging, plugin primitives
+│   ├── discovery/           # Device discovery helpers
+│   ├── simunet/             # Simulated SSH device service
+│   └── textfsm/             # TextFSM parsing support
+├── config/
+│   ├── agent/               # Agent runtime configuration
+│   └── simunet/             # Simulated device configuration
+├── tests/
+│   └── integration/         # Cross-package integration tests
+├── docs/                    # Project documentation
+└── scripts/                 # Development helper scripts
 ```
 
 ## Questions or Need Help?

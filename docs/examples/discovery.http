@@ -1,0 +1,55 @@
+# VSCode REST Client example for NetDriver discovery API
+
+@baseUrl = http://192.168.30.99:8000
+@correlationId = discovery-test-001
+@taskId = "" 
+
+### Start discovery
+POST {{baseUrl}}/api/v1/discovery
+Content-Type: application/json
+X-Correlation-Id: {{correlationId}}
+
+{
+  "targets": [
+    "192.168.60.99"
+  ],
+  "ports": {
+    "ssh": [22],
+    "snmp": [161]
+  },
+  "ssh_credentials": [
+    {
+      "username": "admin",
+      "password": "admin",
+      "enable_password": ""
+    },
+    {
+      "username": "adminuser",
+      "password": "r00tme",
+      "enable_password": ""
+    }
+  ],
+  "snmp_credentials": [
+    {
+      "community": "test1@123",
+      "version": "v2c"
+    },
+    {
+      "community": "public",
+      "version": "v2c"
+    },
+    {
+      "community": "test1",
+      "version": "v2c"
+    }
+  ],
+  "max_concurrent_probes": 50,
+  "probe_timeout": 30.0
+}
+
+
+### List discovery tasks
+GET {{baseUrl}}/api/v1/discovery
+
+### Get discovery task details
+GET {{baseUrl}}/api/v1/discovery/4070f410-66a5-446b-862f-f301f4065a73

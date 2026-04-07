@@ -5,7 +5,9 @@ import re
 
 from netdriver_core.dev.mode import Mode
 from netdriver_core.plugin.plugin_info import PluginInfo
+from netdriver_core.plugin.probe import ProbeResult
 from netdriver_agent.plugins.base import Base
+from netdriver_textfsm import TextFSMParser
 
 
 # pylint: disable=abstract-method
@@ -98,3 +100,37 @@ class FortinetBase(Base):
         @staticmethod
         def get_more_pattern() -> re.Pattern:
             return re.compile(FortinetBase.PatternHelper._PATTERN_MORE, re.MULTILINE)
+
+    @classmethod
+    def get_probe_command(cls) -> str:
+        return "get system status"
+
+    @classmethod
+    def parse_probe_output(cls, output: str) -> ProbeResult:
+        rows = TextFSMParser(cls._PROBE_TEMPLATE).parse(output)
+        row = rows[0] if rows else {}
+        model = row.get("MODEL", "")
+        if not model and "fortigate" in output.lower():
+            model = "FortiGate"
+        return ProbeResult(
+            vendor="fortinet",
+            model=model,
+            version=row.get("VERSION", ""),
+            hostname=row.get("HOSTNAME", ""),
+            serial_number=row.get("SERIAL", ""),
+        )
+
+    _PROBE_TEMPLATE = """\
+Value HOSTNAME (\\S+)
+Value MODEL (\\S+)
+Value VERSION ([0-9.]+)
+Value SERIAL (\\S+)
+
+Start
+  ^[Hh]ostname\\s*:\\s*${HOSTNAME} -> Continue
+  ^[Pp]latform\\s+\\S+\\s+[Nn]ame\\s*:\\s*${MODEL} -> Continue
+  ^v${VERSION}\\s -> Continue
+  ^[Ff]irmware\\s+[Vv]ersion\\s*:\\s*v?${VERSION} -> Continue
+  ^[Ss]erial-[Nn]umber\\s*:\\s*${SERIAL} -> Continue
+  ^[Ss]erial\\s+[Nn]umber\\s*:\\s*${SERIAL} -> Continue
+"""

@@ -1,0 +1,63 @@
+vendors:
+  hp:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.11
+  fortinet:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.12356
+  topsec:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.14331
+  venustech:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.15227
+  huawei:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.2011
+  allied_telesis:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.207
+  paloalto:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.25461
+    model_oids:
+      - 1.3.6.1.4.1.25461.2.1.2.2.1.0
+    version_oids:
+      - 1.3.6.1.4.1.25461.2.1.2.1.1.0
+    serial_number_oids:
+      - 1.3.6.1.4.1.25461.2.1.2.1.3
+  h3c:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.25506
+  check_point:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.2620
+  juniper:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.2636
+  hillstone:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.28557
+  arista:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.30065
+  dptech:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.31648
+  qianxin:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.47646
+      - 1.3.6.1.4.1.62722
+  chaitin:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.50737
+  maipu:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.5651
+  nokia:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.6527
+      - 1.3.6.1.4.1.94
+  cisco:
+    sysobjectid_prefixes:
+      - 1.3.6.1.4.1.9

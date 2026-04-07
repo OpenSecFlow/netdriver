@@ -46,7 +46,7 @@ NetDriver interacts with network devices over SSH and exposes a REST API. When d
 
 ### Plugin Code Execution
 
-- Plugins are loaded dynamically from the `components/netdriver/plugins/` directory at startup. Ensure that only trusted code is present in the plugin directories and that the deployment environment has appropriate file system permissions.
+- Plugins are loaded dynamically from the `packages/agent/src/netdriver_agent/plugins/` directory at startup. Ensure that only trusted code is present in the plugin directories and that the deployment environment has appropriate file system permissions.
 
 ### Simulated Devices (simunet)
 

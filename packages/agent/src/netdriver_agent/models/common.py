@@ -37,16 +37,21 @@ class CommonResponse(BaseModel):
     """ Common Response Model """
 
     code: str = Field(description="Status Code. 'OK' or error code.", examples=["OK"])
-    msg: str = Field("", description="Detail message about the error code.", examples=[""])
+    msg: str | None = Field("", description="Detail message about the error code.", examples=[""])
+    correlation_id: str | None = Field(
+        None,
+        description="Correlation ID for tracing the request across services.",
+        examples=["123e4567-e89b-12d3-a456-426614174000"]
+    )
 
     @classmethod
-    def from_error(cls, code: str, msg: str = "", cor_id: str = None) -> "CommonResponse":
+    def from_error(cls, code: str, msg: str = "", cor_id: str | None = None) -> "CommonResponse":
         """ Create a CommonResponse object with error """
         _cor_id = cor_id if cor_id else correlation_id.get()
         return cls(code=code, msg=msg, correlation_id=_cor_id)
 
     @classmethod
-    def ok(cls, msg: str = "", cor_id: str = None) -> "CommonResponse":
+    def ok(cls, msg: str = "", cor_id: str | None = None) -> "CommonResponse":
         """ Create a CommonResponse object with ok """
         _cor_id = cor_id if cor_id else correlation_id.get()
         return cls(code="OK", msg=msg, correlation_id=_cor_id)
@@ -63,7 +68,7 @@ class CommonRequest(BaseModel):
     username: str = Field(..., description="Username", examples=["admin"])
     password: str = Field(..., description="Password, support encrypted and plaintext.",
                           examples=["r00tme"])
-    enable_password: str = Field(
+    enable_password: str | None = Field(
         None, description="Enable password, For cisco, arista...", examples=[""])
     vendor: str = Field(description="Vendor", examples=["cisco"], pattern=_VENDOR_PATTERNS)
     model: str = Field(description="Model", examples=["asa"], pattern=_MODEL_PATTERNS)

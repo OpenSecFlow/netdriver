@@ -5,7 +5,9 @@ import re
 
 from netdriver_core.dev.mode import Mode
 from netdriver_core.plugin.plugin_info import PluginInfo
+from netdriver_core.plugin.probe import ProbeResult
 from netdriver_agent.plugins.base import Base
+from netdriver_textfsm import TextFSMParser
 
 
 # pylint: disable=abstract-method
@@ -133,3 +135,35 @@ class HuaweiBase(Base):
             return {
                 re.compile(r"The password needs to be changed, Continue\? \[Y\/N\]", re.MULTILINE): "N"
             }
+
+    @classmethod
+    def get_probe_command(cls) -> str:
+        return "display version\ndisplay sysname"
+
+    @classmethod
+    def parse_probe_output(cls, output: str) -> ProbeResult:
+        rows = TextFSMParser(cls._PROBE_TEMPLATE).parse(output)
+        row = rows[0] if rows else {}
+        return ProbeResult(
+            vendor="huawei",
+            model=row.get("MODEL", ""),
+            version=row.get("VERSION", ""),
+            hostname=row.get("HOSTNAME", ""),
+            serial_number=row.get("SERIAL", ""),
+        )
+
+    _PROBE_TEMPLATE = """\
+Value HOSTNAME (\\S+)
+Value MODEL (USG\\d+\\S*|S\\d+\\S*|AR\\d+\\S*|NE\\d+\\S*|CE\\d+\\S*)
+Value VERSION ([0-9.]+|V\\d+R\\d+C\\d+\\S*)
+Value SERIAL (\\S+)
+
+Start
+  ^Huawei\\s+${HOSTNAME}\\s+uptime -> Continue
+  ^\\s*[Ss]ysname\\s*:\\s*${HOSTNAME} -> Continue
+  ^\\s*${MODEL}\\s -> Continue
+  ^\\s*[Vv]ersion\\s+${VERSION} -> Continue
+  ^\\s*(V\\d+R\\d+C\\d+\\S*)\\s -> Continue
+  ^\\s*[Ss][Nn]\\s*:\\s*${SERIAL} -> Continue
+  ^\\s*[Ss]erial\\s*[Nn]umber\\s*:\\s*${SERIAL} -> Continue
+"""

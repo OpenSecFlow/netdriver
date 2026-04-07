@@ -5,7 +5,9 @@ import re
 
 from netdriver_core.dev.mode import Mode
 from netdriver_core.plugin.plugin_info import PluginInfo
+from netdriver_core.plugin.probe import ProbeResult
 from netdriver_agent.plugins.base import Base
+from netdriver_textfsm import TextFSMParser
 
 
 # pylint: disable=abstract-method
@@ -120,3 +122,34 @@ class H3CBase(Base):
             return {
                 re.compile(r"Your password will expire in \d+ days\. Do you want to change it\?", re.MULTILINE): "N"
             }
+
+    @classmethod
+    def get_probe_command(cls) -> str:
+        return "display version\ndisplay sysname"
+
+    @classmethod
+    def parse_probe_output(cls, output: str) -> ProbeResult:
+        rows = TextFSMParser(cls._PROBE_TEMPLATE).parse(output)
+        row = rows[0] if rows else {}
+        return ProbeResult(
+            vendor="h3c",
+            model=re.sub(r"\s+", " ", row.get("MODEL", "")).strip(),
+            version=row.get("VERSION", ""),
+            hostname=row.get("HOSTNAME", ""),
+            serial_number=row.get("SERIAL", ""),
+        )
+
+    _PROBE_TEMPLATE = """\
+Value HOSTNAME (\\S+)
+Value MODEL (SecPath\\s*\\S+|S\\d+\\S*|MSR\\d+\\S*|VSR\\d+\\S*)
+Value VERSION ([0-9.]+)
+Value SERIAL (\\S+)
+
+Start
+  ^H3C\\s+${HOSTNAME}\\s+uptime -> Continue
+  ^\\s*[Ss]ysname\\s*:\\s*${HOSTNAME} -> Continue
+  ^\\s*${MODEL}\\s -> Continue
+  ^\\s*[Vv]ersion\\s+${VERSION} -> Continue
+  ^\\s*[Ss]erial-[Nn]umber\\s*:\\s*${SERIAL} -> Continue
+  ^\\s*[Ss]erial\\s+[Nn]umber\\s*:\\s*${SERIAL} -> Continue
+"""

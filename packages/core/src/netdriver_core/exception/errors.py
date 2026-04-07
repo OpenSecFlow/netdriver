@@ -191,3 +191,40 @@ class SaveRepoError(BaseError):
         super().__init__(msg)
         self.status_code = 500
         self.code = ErrorCode.SAVE_REPO_ERROR
+
+
+# Discovery errors
+
+class DiscoveryScanFailed(BaseError):
+    def __init__(self, msg: str = "Network scan failed.") -> None:
+        super().__init__(msg)
+        self.status_code = 500
+        self.code = ErrorCode.DISCOVERY_SCAN_FAILED
+
+
+class DiscoveryTaskNotFound(BaseError):
+    def __init__(self, msg: str = "Discovery task not found.") -> None:
+        super().__init__(msg)
+        self.status_code = 404
+        self.code = ErrorCode.DISCOVERY_TASK_NOT_FOUND
+
+
+class DiscoveryTaskLimitExceeded(BaseError):
+    def __init__(self, msg: str = "Maximum concurrent discovery tasks exceeded.") -> None:
+        super().__init__(msg)
+        self.status_code = 429
+        self.code = ErrorCode.DISCOVERY_TASK_LIMIT_EXCEEDED
+
+
+class DiscoveryNmapNotFound(BaseError):
+    def __init__(self, msg: str = "Nmap binary not found. Please install nmap.") -> None:
+        super().__init__(msg)
+        self.status_code = 500
+        self.code = ErrorCode.DISCOVERY_NMAP_NOT_FOUND
+
+
+class DiscoveryProbeFailed(BaseError):
+    def __init__(self, msg: str = "Device probe failed.") -> None:
+        super().__init__(msg)
+        self.status_code = 500
+        self.code = ErrorCode.DISCOVERY_PROBE_FAILED

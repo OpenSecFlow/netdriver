@@ -5,8 +5,9 @@ on:
   pull_request:
     branches: [master, main]
     paths:
-      - 'bases/**'
-      - 'components/**'
+      - '.github/workflows/**'
+      - 'config/**'
+      - 'conftest.py'
       - 'packages/**'
       - 'pyproject.toml'
       - 'uv.lock'
@@ -14,8 +15,9 @@ on:
   push:
     branches: [master, main]
     paths:
-      - 'bases/**'
-      - 'components/**'
+      - '.github/workflows/**'
+      - 'config/**'
+      - 'conftest.py'
       - 'packages/**'
       - 'pyproject.toml'
       - 'uv.lock'
@@ -45,7 +47,7 @@ jobs:
       - name: Run pylint
         run: |
           echo "Running pylint checks..."
-          uv run pylint bases/ components/ --exit-zero --output-format=colorized || true
+          uv run pylint packages/agent/src packages/agent/tests packages/core/src packages/core/tests packages/discovery/src packages/simunet/src packages/textfsm/src tests conftest.py --exit-zero --output-format=colorized || true
         continue-on-error: true
 
       - name: Run unit test
@@ -98,7 +100,7 @@ jobs:
 
       - name: Check package metadata
         run: |
-          uv run twine check packages/${{ matrix.project }}/dist/*.whl
+          uv run --group publish twine check packages/${{ matrix.project }}/dist/*.whl
 
       - name: Verify package contents
         run: |

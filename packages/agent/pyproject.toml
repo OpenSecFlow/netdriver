@@ -42,6 +42,9 @@ dependencies = [
     "asyncssh>=2.17.0,<3",
     "tabulate>=0.9.0,<0.10",
     "aiofiles>=24.1.0,<25",
+    "aiosqlite>=0.20.0,<1",
+    "pydantic>=2.0.0,<3",
+    "pyyaml>=6.0.2,<7",
 ]
 
 [project.scripts]

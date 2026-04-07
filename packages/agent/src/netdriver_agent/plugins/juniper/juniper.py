@@ -5,7 +5,9 @@ import re
 
 from netdriver_core.dev.mode import Mode
 from netdriver_core.plugin.plugin_info import PluginInfo
+from netdriver_core.plugin.probe import ProbeResult
 from netdriver_agent.plugins.base import Base
+from netdriver_textfsm import TextFSMParser
 
 
 # pylint: disable=abstract-method
@@ -103,3 +105,33 @@ class JuniperBase(Base):
         @staticmethod
         def get_more_pattern() -> re.Pattern:
             return re.compile(JuniperBase.PatternHelper._PATTERN_MORE, re.MULTILINE)
+
+    @classmethod
+    def get_probe_command(cls) -> str:
+        return "show version"
+
+    @classmethod
+    def parse_probe_output(cls, output: str) -> ProbeResult:
+        rows = TextFSMParser(cls._PROBE_TEMPLATE).parse(output)
+        row = rows[0] if rows else {}
+        return ProbeResult(
+            vendor="juniper",
+            model=row.get("MODEL", ""),
+            version=row.get("VERSION", ""),
+            hostname=row.get("HOSTNAME", ""),
+            serial_number=row.get("SERIAL", ""),
+        )
+
+    _PROBE_TEMPLATE = """\
+Value HOSTNAME (\\S+)
+Value MODEL (\\S+)
+Value VERSION ([0-9A-Za-z.\\-]+)
+Value SERIAL (\\S+)
+
+Start
+  ^[Hh]ost\\s+[Nn]ame\\s*:\\s*${HOSTNAME} -> Continue
+  ^[Mm]odel\\s*:\\s*${MODEL} -> Continue
+  ^JUNOS\\S*\\s+${VERSION} -> Continue
+  ^Junos\\S*\\s+${VERSION} -> Continue
+  ^[Ss]erial\\s+[Nn]umber\\s*:\\s*${SERIAL} -> Continue
+"""

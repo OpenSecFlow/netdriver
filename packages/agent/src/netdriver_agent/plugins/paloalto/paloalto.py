@@ -5,7 +5,9 @@ import re
 
 from netdriver_core.dev.mode import Mode
 from netdriver_core.plugin.plugin_info import PluginInfo
+from netdriver_core.plugin.probe import ProbeResult
 from netdriver_agent.plugins.base import Base
+from netdriver_textfsm import TextFSMParser
 
 
 # pylint: disable=abstract-method
@@ -94,3 +96,35 @@ class PaloaltoBase(Base):
         @staticmethod
         def get_more_pattern() -> re.Pattern:
             return re.compile(PaloaltoBase.PatternHelper._PATTERN_MORE, re.MULTILINE)
+
+    @classmethod
+    def get_probe_command(cls) -> str:
+        return "show system info"
+
+    @classmethod
+    def parse_probe_output(cls, output: str) -> ProbeResult:
+        rows = TextFSMParser(cls._PROBE_TEMPLATE).parse(output)
+        row = rows[0] if rows else {}
+        model = row.get("MODEL", "")
+        if not model and "palo alto" in output.lower():
+            model = "PA"
+        return ProbeResult(
+            vendor="paloalto",
+            model=model,
+            version=row.get("VERSION", ""),
+            hostname=row.get("HOSTNAME", ""),
+            serial_number=row.get("SERIAL", ""),
+        )
+
+    _PROBE_TEMPLATE = """\
+Value HOSTNAME (\\S+)
+Value MODEL (\\S+)
+Value VERSION ([0-9.]+)
+Value SERIAL (\\S+)
+
+Start
+  ^hostname\\s*:\\s*${HOSTNAME}
+  ^model\\s*:\\s*${MODEL}
+  ^serial\\s*:\\s*${SERIAL}
+  ^sw-version\\s*:\\s*${VERSION} -> Record
+"""

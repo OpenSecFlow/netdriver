@@ -12,6 +12,7 @@ import re
 
 from netdriver_core.exception.errors import ChannelError
 from netdriver_core.log import logman
+from netdriver_core.ssh.algorithms import DEFAULT_ENCRYPTION_ALGS, DEFAULT_KEX_ALGS
 from netdriver_core.utils.asyncu import async_timeout
 
 
@@ -29,71 +30,8 @@ _DEFAUTL_SSH_CONFIG = {
     "login_timeout": 3.0,
     "keepalive_interval": 60,
     "keepalive_count_max": 3,
-    # Key exchange algorithms
-    "kex_algs": set([
-      "gss-curve25519-sha256",
-      "gss-curve448-sha512",
-      "gss-nistp521-sha512",
-      "gss-nistp384-sha384",
-      "gss-nistp256-sha256",
-      "gss-1.3.132.0.10-sha256",
-      "gss-gex-sha256",
-      "gss-group14-sha256",
-      "gss-group15-sha512",
-      "gss-group16-sha512",
-      "gss-group17-sha512",
-      "gss-group18-sha512",
-      "gss-group14-sha1",
-      "curve25519-sha256",
-      "curve25519-sha256@libssh.org",
-      "curve448-sha512",
-      "ecdh-sha2-nistp521",
-      "ecdh-sha2-nistp384",
-      "ecdh-sha2-nistp256",
-      "ecdh-sha2-1.3.132.0.10",
-      "diffie-hellman-group-exchange-sha256",
-      "diffie-hellman-group14-sha256",
-      "diffie-hellman-group15-sha512",
-      "diffie-hellman-group16-sha512",
-      "diffie-hellman-group17-sha512",
-      "diffie-hellman-group18-sha512",
-      "diffie-hellman-group14-sha256@ssh.com",
-      "diffie-hellman-group14-sha1",
-      "rsa2048-sha256",
-      "gss-gex-sha1",
-      "gss-group1-sha1",
-      "diffie-hellman-group-exchange-sha224@ssh.com",
-      "diffie-hellman-group-exchange-sha384@ssh.com",
-      "diffie-hellman-group-exchange-sha512@ssh.com",
-      "diffie-hellman-group-exchange-sha1",
-      "diffie-hellman-group14-sha224@ssh.com",
-      "diffie-hellman-group15-sha256@ssh.com",
-      "diffie-hellman-group15-sha384@ssh.com",
-      "diffie-hellman-group16-sha384@ssh.com",
-      "diffie-hellman-group16-sha512@ssh.com",
-      "diffie-hellman-group18-sha512@ssh.com",
-      "diffie-hellman-group1-sha1",
-      "rsa1024-sha1",
-    ]),
-    # Encryption algorithms
-    "encryption_algs": set([
-      "chacha20-poly1305@openssh.com",
-      "aes256-gcm@openssh.com",
-      "aes128-gcm@openssh.com",
-      "aes256-ctr",
-      "aes192-ctr",
-      "aes128-ctr",
-      "aes256-cbc",
-      "aes192-cbc",
-      "aes128-cbc",
-      "3des-cbc",
-      "blowfish-cbc",
-      "cast128-cbc",
-      "seed-cbc@ssh.com",
-      "arcfour256",
-      "arcfour128",
-      "arcfour",
-    ]),
+    "kex_algs": set(DEFAULT_KEX_ALGS),
+    "encryption_algs": set(DEFAULT_ENCRYPTION_ALGS),
 }
 _DEFAULT_READ_BUFFER_SIZE = 8192
 

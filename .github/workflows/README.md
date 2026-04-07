@@ -13,7 +13,7 @@ This directory contains GitHub Actions workflows for automated building, testing
 **What it does**:
 
 - Builds both `netdriver-agent` and `netdriver-simunet` packages
-- Verifies package metadata using `twine check`
+- Verifies package metadata using `twine check` from the `publish` group
 - Uploads build artifacts for inspection
 - Runs on Python 3.12
 
@@ -447,16 +447,17 @@ netdriver/
 │       ├── publish-pypi.yml        # Manual PyPI publishing
 │       ├── release-agent.yml       # Agent release workflow
 │       └── release-simunet.yml     # Simunet release workflow
-├── bases/
-│   └── netdriver/
-│       ├── agent/                  # REST API service
-│       └── simunet/                # Simulation network
-├── components/                     # Shared components
 └── packages/
     ├── agent/
-    │   └── pyproject.toml
+    │   ├── pyproject.toml
+    │   └── src/netdriver_agent/
+    ├── core/
+    │   └── src/netdriver_core/
+    ├── discovery/
+    │   └── src/netdriver_discovery/
     └── simunet/
-        └── pyproject.toml
+        ├── pyproject.toml
+        └── src/netdriver_simunet/
 ```
 
 ## Advanced: Custom Docker Images

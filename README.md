@@ -132,7 +132,7 @@ The plugin system allows for easy extension and customization:
 
 ### Adding Device Support
 
-To add support for a new device, create a plugin in `components/netdriver/plugins/{vendor}/` that inherits from the vendor base class or `Base` plugin. See [Development Guidelines](./CONTRIBUTING.md) for more information.
+To add support for a new device, create a plugin in `packages/agent/src/netdriver_agent/plugins/{vendor}/` that inherits from the vendor base class or `Base` plugin. See [Development Guidelines](./CONTRIBUTING.md) for more information.
 
 ## Quick Start
 

@@ -11,29 +11,22 @@ NetDriver is a network device automation framework built on AsyncSSH that provid
 
 ## Key Architecture Patterns
 
-### Polylith Architecture
+### Workspace Architecture
 
-The project uses a Polylith-inspired structure with `bases/` (applications) and `components/` (shared libraries):
+The project uses a `uv` workspace monorepo with package-local `src/` trees:
 
 ```Text
-bases/netdriver/
-├── agent/          # REST API application
-└── simunet/        # Simulation network application
-
-components/netdriver/
-├── client/         # SSH client with async session management
-├── exception/      # Centralized error handling and error codes
-├── log/            # Logging utilities (Loguru-based)
-├── plugin/         # Plugin system core and engine
-├── plugins/        # Device-specific plugins (Cisco, Huawei, Juniper, etc.)
-├── server/         # SSH server for simulated devices
-├── textfsm/        # Enhanced TextFSM for output parsing
-└── utils/          # Utility functions
+packages/
+├── agent/src/netdriver_agent/          # REST API, session handling, plugins
+├── core/src/netdriver_core/            # Shared errors, logging, plugin primitives
+├── discovery/src/netdriver_discovery/  # Device discovery logic
+├── simunet/src/netdriver_simunet/      # Simulation network service
+└── textfsm/src/netdriver_textfsm/      # Enhanced TextFSM parser
 ```
 
 ### Session Management
 
-The `SessionPool` (in `components/netdriver/client/pool.py`) is a singleton that:
+The `SessionPool` (in `packages/agent/src/netdriver_agent/client/pool.py`) is a singleton that:
 
 - Maintains persistent SSH sessions with devices (identified by `protocol:username@ip:port`)
 - Automatically monitors session health and removes closed/expired/idle sessions
@@ -42,10 +35,10 @@ The `SessionPool` (in `components/netdriver/client/pool.py`) is a singleton that
 
 ### Plugin System
 
-The plugin engine (`components/netdriver/plugin/engine.py`) dynamically loads device plugins at startup:
+The plugin engine (`packages/agent/src/netdriver_agent/plugins/engine.py`) dynamically loads device plugins at startup:
 
-- Plugins are organized by vendor directory under `components/netdriver/plugins/`
-- Each plugin inherits from `Base` (in `components/netdriver/plugins/base.py`) and implements device-specific behavior
+- Plugins are organized by vendor directory under `packages/agent/src/netdriver_agent/plugins/`
+- Each plugin inherits from `Base` (in `packages/agent/src/netdriver_agent/plugins/base.py`) and implements device-specific behavior
 - Plugins define mode patterns (LOGIN, ENABLE, CONFIG), error patterns, and command handling
 - Plugin resolution: `vendor/model/version` → `vendor/model/base` → `vendor/base/base`
 
@@ -53,7 +46,7 @@ The plugin engine (`components/netdriver/plugin/engine.py`) dynamically loads de
 
 Sessions track device state including:
 
-- **Mode**: LOGIN, ENABLE, or CONFIG (defined in `client/mode.py`)
+- **Mode**: LOGIN, ENABLE, or CONFIG (defined in `packages/core/src/netdriver_core/dev/mode.py`)
 - **Vsys**: Virtual system context (for multi-context devices like firewalls)
 - Mode switching is handled automatically by the base plugin via `switch_mode()`
 
@@ -86,10 +79,10 @@ uv run pytest
 uv run pytest -m unit
 
 # Run integration tests only
-uv run pytest -m integration
+uv run pytest --mock-dev -m integration
 
 # Run specific test file
-uv run pytest tests/bases/netdriver/agent/test_cisco_nexus.py
+uv run pytest tests/integration/test_cisco_nexus.py
 ```
 
 ### Configuration
@@ -105,7 +98,7 @@ Configuration files in `config/`:
 
 ### Adding a New Device Plugin
 
-1. Create vendor directory under `components/netdriver/plugins/` if it doesn't exist
+1. Create vendor directory under `packages/agent/src/netdriver_agent/plugins/` if it doesn't exist
 2. Create plugin file named `{vendor}_{model}.py` (e.g., `cisco_nexus.py`)
 3. Inherit from vendor base class or `Base` plugin
 4. Define `PluginInfo` with vendor, model, version, and description
@@ -119,7 +112,7 @@ Configuration files in `config/`:
 Example:
 
 ```python
-from netdriver_agent.plugin.plugin_info import PluginInfo
+from netdriver_core.plugin.plugin_info import PluginInfo
 from netdriver_agent.plugins.cisco import CiscoBase
 
 class CiscoNexus(CiscoBase):
@@ -133,7 +126,7 @@ class CiscoNexus(CiscoBase):
 
 ### Testing Plugins
 
-Integration tests are in `tests/bases/netdriver/agent/` and typically:
+Integration tests are in `tests/integration/` and typically:
 
 1. Start the simunet service with test fixtures in `conftest.py`
 2. Use httpx client to make API calls to the agent
@@ -141,7 +134,7 @@ Integration tests are in `tests/bases/netdriver/agent/` and typically:
 
 ### Error Handling
 
-All custom exceptions are in `components/netdriver/exception/errors.py` and inherit from `BaseError`:
+All custom exceptions are in `packages/core/src/netdriver_core/exception/errors.py` and inherit from `BaseError`:
 
 - Include HTTP status code and error code
 - For command execution errors, include output
@@ -149,7 +142,7 @@ All custom exceptions are in `components/netdriver/exception/errors.py` and inhe
 
 ### Dependency Injection
 
-The agent uses `dependency-injector` (see `bases/netdriver/agent/containers.py`) to wire:
+The agent uses `dependency-injector` (see `packages/agent/src/netdriver_agent/containers.py`) to wire:
 
 - Configuration providers
 - Request handlers

@@ -66,3 +66,27 @@ session:
     #     expiration_time: "16:00"
     #     max_idle_time: 600.0
     #     server_host_key_algs: []
+
+# Auto-discovery configuration
+discovery:
+  # Nmap binary path
+  nmap_path: nmap
+  # Vendor OID mapping file
+  vendor_map_file: config/agent/vendor_oid_map.yml
+  # SQLite database path for task persistence
+  db_path: data/discovery.db
+  # Maximum concurrent probes per task
+  max_concurrent_probes: 50
+  # Per-probe timeout (seconds)
+  probe_timeout: 30.0
+  ssh:
+    connect_timeout: 15.0
+    read_timeout: 5.0
+  snmp:
+    timeout: 5.0
+    retries: 1
+  task:
+    # Maximum concurrent discovery tasks
+    max_tasks: 5
+    # Result retention time (seconds), default 24 hours
+    result_retention: 86400

@@ -37,6 +37,8 @@ classifiers = [
 dependencies = [
     "dependency-injector>=4.42.0,<5",
     "loguru>=0.7.2,<0.8",
+    "python-nmap>=0.7.1,<1",
+    "pysnmp>=6.2.0,<7",
 ]
 
 [project.urls]

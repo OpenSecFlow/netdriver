@@ -6,8 +6,10 @@ from netdriver_agent.client.channel import ReadBuffer
 from netdriver_core.dev.mode import Mode
 from netdriver_core.exception.errors import EnableFailed
 from netdriver_core.plugin.plugin_info import PluginInfo
+from netdriver_core.plugin.probe import ProbeResult
 from netdriver_agent.plugins.base import Base
 from netdriver_core.utils.asyncu import async_timeout
+from netdriver_textfsm import TextFSMParser
 
 
 # pylint: disable=abstract-method
@@ -144,3 +146,51 @@ class CiscoBase(Base):
         @staticmethod
         def get_more_pattern() -> re.Pattern:
             return re.compile(CiscoBase.PatternHelper._PATTERN_MORE, re.MULTILINE)
+
+    _GENERIC_MODEL_MAP = {
+        "nexus": "nexus",
+        "nx-os": "nexus",
+        "adaptive security appliance": "asa",
+        "asa": "asa",
+        "catalyst": "catalyst",
+        "isr": "isr",
+        "asr": "asr",
+    }
+
+    _PROBE_TEMPLATE = """\
+Value HOSTNAME (\\S+)
+Value MODEL (Nexus\\d+\\s+\\S+|Nexus\\s*\\d+\\S*|WS-\\S+|C\\d+\\S*|ASA\\s*\\d+\\S*|ISR\\s*\\d+\\S*|ASR\\s*\\d+\\S*)
+Value VERSION ([0-9A-Za-z.()\\-]+)
+Value SERIAL (\\S+)
+
+Start
+  ^(\\S+)\\s+uptime\\s+is -> Continue
+  ^${HOSTNAME}\\s+uptime -> Continue
+  ^\\s*[Cc]isco\\s+${MODEL} -> Continue
+  ^\\s*[Vv]ersion\\s+${VERSION} -> Continue
+  ^\\s*[Pp]rocessor\\s+[Bb]oard\\s+ID\\s+${SERIAL} -> Continue
+  ^\\s*[Ss]erial\\s+[Nn]umber\\s*:\\s*${SERIAL} -> Continue
+"""
+
+    @classmethod
+    def get_probe_command(cls) -> str:
+        return "show version"
+
+    @classmethod
+    def parse_probe_output(cls, output: str) -> ProbeResult:
+        rows = TextFSMParser(cls._PROBE_TEMPLATE).parse(output)
+        row = rows[0] if rows else {}
+        model = row.get("MODEL", "")
+        if not model:
+            lower = output.lower()
+            for keyword, fallback in cls._GENERIC_MODEL_MAP.items():
+                if keyword in lower:
+                    model = fallback
+                    break
+        return ProbeResult(
+            vendor="cisco",
+            model=re.sub(r"\s+", " ", model).strip(),
+            version=row.get("VERSION", ""),
+            hostname=row.get("HOSTNAME", ""),
+            serial_number=row.get("SERIAL", ""),
+        )
