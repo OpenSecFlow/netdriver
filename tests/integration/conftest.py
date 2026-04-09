@@ -62,20 +62,17 @@ def simunet_process(request: pytest.FixtureRequest):
     num_workers = os.getenv("NUM_WORKERS", "1")
     logman.logger.info(f"Starting simunet process for integration tests (NUM_WORKERS={num_workers})...")
     
-    cmd = ["uv", "run", "simunet", "--no-reload"]
-    if int(num_workers) > 1:
-        cmd.extend(["--workers", num_workers])
+    cmd = ["uv", "run", "simunet", "--no-reload", "--workers", num_workers]
     
     process = subprocess.Popen(
         cmd,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        text=True,
-        env={**os.environ, "NUM_WORKERS": num_workers}
+        text=True
     )
 
     # Wait for simunet to start up (give it more time for multi-worker mode)
-    wait_time = 10 if int(num_workers) > 1 else 5
+    wait_time = 15 if int(num_workers) > 1 else 5
     logman.logger.info(f"Waiting {wait_time}s for simunet to start up...")
     time.sleep(wait_time)
 
