@@ -321,22 +321,31 @@ def start():
             # Auto-detect: CPU cores - 2, minimum 1
             cpu_count = os.cpu_count() or 1
             num_workers = max(1, cpu_count - 2)
-            log.info(f"Auto-detected {cpu_count} CPU cores, using {num_workers} workers")
+            auto_msg = f"Auto-detected {cpu_count} CPU cores, using {num_workers} workers"
+            print(auto_msg)
+            log.info(auto_msg)
     
     # Get total devices, limit worker count to not exceed device count
     all_devices = container.config()["devices"]
     total_devices = len(all_devices)
     if num_workers > total_devices:
-        log.warning(f"Worker count ({num_workers}) exceeds device count ({total_devices}), "
-                   f"adjusting to {total_devices} workers")
+        adjust_msg = (f"Worker count ({num_workers}) exceeds device count ({total_devices}), "
+                     f"adjusting to {total_devices} workers")
+        print(adjust_msg)
+        log.warning(adjust_msg)
         num_workers = total_devices
     
     if num_workers > 1:
         # Multi-worker mode: auto-start multiple processes
-        log.info("=" * 60)
-        log.info(f"Starting Simunet with {num_workers} workers (multi-process mode)")
-        log.info(f"Note: Auto-reload is disabled in multi-worker mode")
-        log.info("=" * 60)
+        startup_msg = [
+            "=" * 60,
+            f"Starting Simunet with {num_workers} workers (multi-process mode)",
+            f"Note: Auto-reload is disabled in multi-worker mode",
+            "=" * 60
+        ]
+        for msg in startup_msg:
+            print(msg)
+            log.info(msg)
         
         # Create and start multiple processes
         processes = []
@@ -347,36 +356,56 @@ def start():
                 name=f"simunet-worker-{worker_id}"
             )
             p.start()
-            log.info(f"✓ Worker {worker_id}/{num_workers} started (PID: {p.pid})")
+            worker_msg = f"✓ Worker {worker_id}/{num_workers} started (PID: {p.pid})"
+            print(worker_msg)
+            log.info(worker_msg)
             processes.append(p)
         
-        log.info("=" * 60)
-        log.info("All workers started successfully!")
-        log.info(f"Press Ctrl+C to stop all workers")
-        log.info("=" * 60)
+        completion_msg = [
+            "=" * 60,
+            "All workers started successfully!",
+            f"Press Ctrl+C to stop all workers",
+            "=" * 60
+        ]
+        for msg in completion_msg:
+            print(msg)
+            log.info(msg)
         
         # Wait for all processes
         try:
             for p in processes:
                 p.join()
         except KeyboardInterrupt:
-            log.info("\n" + "=" * 60)
-            log.info("Stopping all workers...")
-            log.info("=" * 60)
+            shutdown_msg = [
+                "\n" + "=" * 60,
+                "Stopping all workers...",
+                "=" * 60
+            ]
+            for msg in shutdown_msg:
+                print(msg)
+                log.info(msg)
+            
             for p in processes:
                 p.terminate()
             for p in processes:
                 p.join()
-            log.info("✓ All workers stopped")
+            
+            stop_msg = "✓ All workers stopped"
+            print(stop_msg)
+            log.info(stop_msg)
     else:
         # Single-worker mode: start all devices
-        log.info("Starting in single-worker mode (all devices)")
+        startup_msg = f"Starting in single-worker mode (all {total_devices} devices)"
+        print(startup_msg)
+        log.info(startup_msg)
         
         # Handle reload flag
         reload = args.reload and not args.no_reload
         
         if reload:
-            log.info("Auto-reload is enabled for development")
+            reload_msg = "Auto-reload is enabled for development"
+            print(reload_msg)
+            log.info(reload_msg)
         
         uvicorn.run(
             "netdriver_simunet.main:app",
