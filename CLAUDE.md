@@ -73,7 +73,16 @@ uv sync
 uv run agent
 
 # Start simulation network service (SSH servers on configured ports)
+# Default: auto-detects CPU cores and uses (cores - 2) workers, minimum 1
 uv run simunet
+
+# Specify custom number of workers
+NUM_WORKERS=4 uv run simunet
+# or
+uv run simunet --workers 4
+
+# Force single worker mode (enables auto-reload for development)
+NUM_WORKERS=1 uv run simunet
 ```
 
 ### Testing
@@ -97,9 +106,42 @@ uv run pytest tests/bases/netdriver/agent/test_cisco_nexus.py
 Configuration files in `config/`:
 
 - `config/agent/agent.yml` - Agent service settings (logging, session timeouts, SSH parameters, profiles)
-  - Logs are written to `logs/netdriver_agent.log`
+ - Logs are written to `logs/netdriver_agent.log`
 - `config/simunet/simunet.yml` - Simulated device definitions and logging settings
-  - Logs are written to `logs/netdriver_simunet.log`
+ - Logs are written to `logs/netdriver_simunet.log`
+ - In multi-worker mode: `logs/netdriver_simunet_worker_0.log`, `logs/netdriver_simunet_worker_1.log`, etc.
+
+### Multi-Process Mode
+
+Simunet **automatically** uses multi-process mode for improved performance:
+
+**Default Behavior:**
+- Automatically detects CPU cores: `workers = max(1, cpu_cores - 2)`
+- Example: 8-core system → 6 workers, 4-core → 2 workers, 2-core → 1 worker
+- Reserves 2 cores for system and other processes
+- **Smart adjustment**: If worker count exceeds device count, automatically adjusts to match device count
+
+**Override Default:**
+```bash
+# Specify custom number of workers
+NUM_WORKERS=4 uv run simunet
+# or
+uv run simunet --workers 4
+
+# Force single worker (enables auto-reload)
+NUM_WORKERS=1 uv run simunet
+```
+
+**Performance Guidelines:**
+- Small scale (< 10 devices): 1-2 workers
+- Medium scale (10-30 devices): 2-4 workers
+- Large scale (> 30 devices): 4-8 workers
+
+**Notes:**
+- Multi-worker mode (workers > 1) does not support auto-reload
+- Single worker mode supports auto-reload for development
+- Each worker handles a portion of devices automatically
+- Separate log files are created for each worker: `logs/simunet_worker_N.log`
 
 ## Development Guidelines
 

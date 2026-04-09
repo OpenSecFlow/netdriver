@@ -19,6 +19,7 @@ class CommandHandler(abc.ABC):
     _mode = Mode  # current mode
     _mode_cmd_map: Dict[str, str]  # mode command dictionary
     _common_cmd_map: Dict[str, str]  # common command dictionary
+    _config_cache: Dict[str, DeviceConfig] = {}  # config cache (class variable, shared by all instances)
     info: DeviceBaseInfo
     conf_path: str
     config: DeviceConfig
@@ -44,9 +45,18 @@ class CommandHandler(abc.ABC):
 
     def _load_config(self):
         """ Load config from file """
+        # check cache
+        if self.conf_path in self._config_cache:
+            self.config = self._config_cache[self.conf_path]
+            self._logger.info(f"Config loaded from cache: {self.conf_path}")
+            return
+        
         try:
             conf_dict = yaml.safe_load(Path(self.conf_path).read_text(encoding='utf-8'))
             self.config = DeviceConfig(**conf_dict)
+            # cache config
+            self._config_cache[self.conf_path] = self.config
+            self._logger.info(f"Config loaded and cached: {self.conf_path}")
         except Exception as e:
             self._logger.error(f"Config load failed: {e}")
 

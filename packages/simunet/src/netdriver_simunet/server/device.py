@@ -24,6 +24,11 @@ class MockSSHDevice(asyncssh.SSHServer):
     _server: asyncssh.SSHAcceptor
     _logger = log
     _handlers = List[CommandHandler]
+    _conn: Optional[asyncssh.SSHServerConnection] = None
+    _client_ip: Optional[str] = None
+    _client_port: Optional[int] = None
+    _server_ip: Optional[str] = None
+    _server_port: Optional[int] = None
 
     vendor: str
     model: str
@@ -70,24 +75,43 @@ class MockSSHDevice(asyncssh.SSHServer):
 
     def connection_made(self, conn: asyncssh.SSHServerConnection):
         """ Hook after connection established """
+        self._conn = conn
         peer_name = conn.get_extra_info('peername')
-        client_ip, client_port = peer_name[0], peer_name[1]
-        self._logger.info(f"SSH connection received from {client_ip}:{client_port}")
+        sock_name = conn.get_extra_info('sockname')
+        self._client_ip, self._client_port = peer_name[0], peer_name[1]
+        self._server_ip, self._server_port = sock_name[0], sock_name[1]
+        self._logger.info(f"SSH connection received from {self._client_ip}:{self._client_port} on port {self._server_port}")
+
 
     def connection_lost(self, exc: Optional[Exception]):
         """ Hook after connection lost """
+        port_info = f" on port {self._server_port}" if self._server_port else ""
+        
         if exc:
-            self._logger.error(f"SSH connection error: {exc}")
+            self._logger.error(f"SSH connection error{port_info}: {exc}, type: {type(exc).__name__}")
         else:
-            self._logger.info('SSH connection closed')
+            self._logger.info(f"SSH connection closed{port_info}")
+
 
     def password_auth_supported(self) -> bool:
         """ Configure to use password authentication """
+        self._logger.info(f"password_auth_supported() called on port {self._server_port}")
         return True
 
     def begin_auth(self, username: str) -> bool:
         """ Begin user authentication """
+        self._logger.info(f"begin_auth() called for user: {username} on port {self._server_port}")
         return True
+    
+    def public_key_auth_supported(self) -> bool:
+        """ Indicate if public key authentication is supported """
+        self._logger.info(f"public_key_auth_supported() called on port {self._server_port}")
+        return False  # We only use password auth
+    
+    def kbdint_auth_supported(self) -> bool:
+        """ Indicate if keyboard-interactive authentication is supported """
+        self._logger.info(f"kbdint_auth_supported() called on port {self._server_port}")
+        return False  # We only use password auth
 
     async def validate_password(self, username: str, password: str) -> bool:
         """ Validate user password """
@@ -97,8 +121,10 @@ class MockSSHDevice(asyncssh.SSHServer):
     async def handle_process(self, process: asyncssh.SSHServerProcess):
         """ Handle process created by SSH client """
         width, height, pixwidth, pixheight = process.term_size
-        self._logger.info(f"Process started with size [{width}x{height}] pixels \
-                          [{pixwidth}x{pixheight}]")
+        if self._client_ip and self._client_port and self._server_ip and self._server_port:
+            self._logger.info(f"Process started with size [{width}x{height}] pixels [{pixwidth}x{pixheight}] from {self._client_ip}:{self._client_port} -> {self._server_ip}:{self._server_port}")
+        else:
+            self._logger.info(f"Process started with size [{width}x{height}] pixels [{pixwidth}x{pixheight}]")
 
         try:
             _handler = CommandHandlerFactory.create_handler(process, self.vendor, self.model,

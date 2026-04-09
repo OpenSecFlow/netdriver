@@ -51,6 +51,7 @@ Features:
 - 📋 **Command Queue** : Ensures sequential command execution on devices, preventing configuration errors and failures caused by concurrent modifications
 - ⚡ **AsyncSSH Foundation** : Superior concurrency capabilities through asynchronous SSH implementation
 - 🔌 **Plugin Architecture** : Simplified and accelerated development of new vendor support
+- 🚀 **Multi-Process Support** : Automatic worker detection based on CPU cores for optimal performance (SimuNet)
 
 ## Comparison
 
