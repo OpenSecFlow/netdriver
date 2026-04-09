@@ -121,23 +121,25 @@ python -c "import netdriver.simunet; print('NetDriver Agent installed successful
 **Basic Usage**:
 
 ```bash
-# Start SimuNet service
+# Start SimuNet service (auto-detects CPU cores and sets workers)
 simunet
 
 # Start without auto-reload (production)
 simunet --no-reload
 
-# Force cleanup occupied ports before starting
-simunet --force
+# Start with specific number of workers
+simunet --workers 4 --no-reload
 ```
 
 **Custom Configuration**:
 
 ```bash
+# Use custom config file
 simunet --config /path/to/simunet.yml --port 8001
-```
 
-**Note**: When ports are already occupied, use the `--force` flag to automatically clean up and restart, avoiding manual intervention.
+# Set workers via environment variable
+NUM_WORKERS=4 simunet --no-reload
+```
 
 ### Option 2: Install via Docker
 

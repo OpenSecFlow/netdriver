@@ -83,9 +83,6 @@ uv run simunet --workers 4
 
 # Force single worker mode (enables auto-reload for development)
 NUM_WORKERS=1 uv run simunet
-
-# Auto-cleanup occupied ports before starting
-uv run simunet --force
 ```
 
 ### Testing
