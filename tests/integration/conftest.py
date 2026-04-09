@@ -56,18 +56,28 @@ def simunet_process(request: pytest.FixtureRequest):
         yield None
         return
 
-    # Start simunet process using uvicorn directly
-    logman.logger.info("Starting simunet process for integration tests...")
+    # Start simunet process with --no-reload to avoid conflicts
+    # Support NUM_WORKERS environment variable for multi-process testing
+    import os
+    num_workers = os.getenv("NUM_WORKERS", "1")
+    logman.logger.info(f"Starting simunet process for integration tests (NUM_WORKERS={num_workers})...")
+    
+    cmd = ["uv", "run", "simunet", "--no-reload"]
+    if int(num_workers) > 1:
+        cmd.extend(["--workers", num_workers])
+    
     process = subprocess.Popen(
-        ["uv", "run", "simunet"],
+        cmd,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        text=True
+        text=True,
+        env={**os.environ, "NUM_WORKERS": num_workers}
     )
 
-    # Wait for simunet to start up (give it some time to initialize all SSH servers)
-    logman.logger.info("Waiting for simunet to start up...")
-    time.sleep(5)
+    # Wait for simunet to start up (give it more time for multi-worker mode)
+    wait_time = 10 if int(num_workers) > 1 else 5
+    logman.logger.info(f"Waiting {wait_time}s for simunet to start up...")
+    time.sleep(wait_time)
 
     # Check if process is still running
     if process.poll() is not None:
