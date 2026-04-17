@@ -148,7 +148,7 @@ class Channel:
             kwargs, term_size = update_ssh_config(kwargs, profile, config)
             conn = await asyncssh.connect(
                 host=str(ip), port=port, username=username, password=password,
-                encoding=encode, **kwargs)
+                encoding=encode, utf8_decode_errors='replace', **kwargs)
             terminal = await conn.create_process(term_type="ansi", term_size=term_size)
             terminal.stdout.channel.set_encoding(encoding=encode, errors='replace')
             return SSHChannel(conn, terminal, logger=logger, encode=encode)
